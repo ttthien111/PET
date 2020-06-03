@@ -1,0 +1,365 @@
+﻿@model IEnumerable<PETSHOP.Models.ModelView.ProductModelView>
+@{
+    string catName = ViewBag.CategoryName as string;
+    var filter = ViewBag.Filter as PETSHOP.Models.ModelView.Filter;
+    if (filter == null)
+        filter = new PETSHOP.Models.ModelView.Filter();
+}
+
+@section breadcumb {
+    <section>
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row no-gutters slider-text align-items-end">
+                <div class="col-md-9 ftco-animate pb-5">
+                    <p class="breadcrumbs mb-2"><span class="mr-2"><a href="index.html">Trang chủ <i class="ion-ios-arrow-forward"></i></a></span> <span>Dịch vụ <i class="ion-ios-arrow-forward"></i></span></p>
+                    <h1 class="mb-0 bread" id="catName">@catName.ToUpper()</h1>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+
+
+<section class="ftco-section bg-light ftco-faqs" style="padding: 2rem 0">
+    <div class="container-fluid card-body">
+        <div class="row">
+            <div class="container col-md-10 col-lg-10 col-sm-10">
+                <div class="row flex-row justify-content-end">  
+                    <div class="justify-content-sm-start">
+                        <input type="text" class="form-control-sm" id="txtSearch" name="txtSearch" value="" placeholder="Searching..." />
+                    </div>
+                    <div>
+                        <select class="custom-select custom-select-sm">
+                            @{
+                                if (filter.sort == true)
+                                {
+                                    <option value="ascPrice">Giá tăng giần</option>
+                                    <option selected value="descPrice">Giá giảm dần</option>
+                                }
+                                else
+                                {
+                                    <option selected value="ascPrice">Giá tăng giần</option>
+                                    <option value="descPrice">Giá giảm dần</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <hr />
+                <div id="contentProduct" class="row">
+                    @foreach (var p in Model)
+                    {
+                        <div class="card card-body col-sm-4 col-md-3 col-lg-2 col-xl-2" style="border-radius:8px;">
+                            <img class="card-img-top" src="~/images/products/@p.ProductImage" alt="Card image cap" style="height: 170px">
+                            <div>
+                                <span class="card-title text-xl">
+                                    <b>
+                                        <a class="card-link" asp-action="ProductDetail" asp-controller="Category" asp-route-slugCategory="@catName" asp-route-slugProductName="@p.SlugName">
+                                            @p.ProductName
+                                            @if (p.ProductDiscount > 0)
+                                            {
+                                                <span class="badge badge-danger"><i>-@(p.ProductDiscount*100)%</i></span>
+                                            }
+                                            @if (p.isNew)
+                                            {
+                                                <span class="badge badge-primary">NEW</span>
+                                            }
+                                            <span class="text text-danger">(@p.Rating<i class="fa fa-star" style="color:orangered"></i>)</span>
+                                        </a>
+                                    </b>
+                                </span>
+                                <p class="card-text">@p.ProductDescription</p>
+                                <div style="list-style:none">
+                                    <div>
+                                        <div style="text-align:center">
+                                            @for (int i = 1; i <= (int)p.Rating; i++)
+                                            {
+                                                <i class="fa fa-star" style="color:orangered"></i>
+                                            }
+
+                                            @for (int i = 1; i <= 5 - (int)p.Rating; i++)
+                                            {
+                                                <i class="fa fa-star" style="color: whitesmoke"></i>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div style="text-align:center">
+                                            @if (p.ProductDiscount > 0)
+                                            {
+                                                <span><del>@p.ProductPrice.ToString("#,##") đ</del> - @((p.ProductPrice * (1 - p.ProductDiscount)).ToString("#,##")) đ</span>
+                                            }
+                                            else
+                                            {
+                                                <span>@((p.ProductPrice*(1-p.ProductDiscount)).ToString("#,##")) đ</span>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <div style="text-align:center">
+                                        <a class="btn-sm btn-warning" asp-action="ProductDetail" asp-controller="Category" asp-route-slugCategory="@catName" asp-route-slugProductName="@p.SlugName">Xem chi tiết</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="container col-md-2 col-lg-2 col-sm-2">
+                <div style="text-align:center"><h5>Thông tin lọc</h5></div>
+                <hr />
+                <div class="card" style="width: 100%;">
+                    <div class="card-header">
+                        Giá cả
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <div class="row" style="display:inline-block">
+                                <span>Giá từ : </span>
+                                <input type="text" name="priceFrom" value="@filter.PriceFrom" placeholder="0" class="form-control-sm price" />
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="row" style="display:inline-block">
+                                <span>Giá từ : </span>
+                                <input type="text" name="priceTo" value="@filter.PriceTo" placeholder="0" class="form-control-sm price" />
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="card" style="width: 100%;">
+                    <div class="card-header">
+                        Loại hàng
+                    </div>
+                    @{ 
+                        var checkedNew = filter.isNew == true ? "checked" : "";
+                        var checkedDiscount = filter.isDiscount == true ? "checked" : "";
+                    }
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <div class="custom-control custom-checkbox" style="padding-left:20%">
+                                <input type="checkbox" class="custom-control-input" id="customNew" name="customNew" @checkedNew>
+                                <label class="custom-control-label" for="customNew">Hàng mới <span class="badge badge-primary">NEW</span></label>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="custom-control custom-checkbox" style="padding-left:20%">
+                                <input type="checkbox" class="custom-control-input" id="customDiscount" name="customDiscount" @checkedDiscount>
+                                <label class="custom-control-label" for="customDiscount">Hàng giảm giá <span class="badge badge-danger"><i class="fa fa-arrow-down"></i></span></label>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="card" style="width: 100%;">
+                    <div class="card-header">
+                        Rating
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <div class="custom-control custom-checkbox" style="padding-left:20%">
+                                <input type="checkbox" class="custom-control-input" id="rating4" name="rating4">
+                                <label class="custom-control-label" for="rating4" style="width:50%">
+                                    <span class="row" style="display:block ;text-align:center" href="#">
+                                        <i class="fa fa-star" style="color:orangered"></i>
+                                        <i class="fa fa-star" style="color:orangered"></i>
+                                        <i class="fa fa-star" style="color:orangered"></i>
+                                        <i class="fa fa-star" style="color:orangered"></i>
+                                        <i class="fa fa-star"></i>
+                                    </span>
+                                </label>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="custom-control custom-checkbox" style="padding-left:20%">
+                                <input type="checkbox" class="custom-control-input" id="rating3" name="rating3">
+                                <label class="custom-control-label" for="rating3" style="width:50%">
+                                    <span class="row" style="display:block ;text-align:center" href="#">
+                                        <i class="fa fa-star" style="color:orangered"></i>
+                                        <i class="fa fa-star" style="color:orangered"></i>
+                                        <i class="fa fa-star" style="color:orangered"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                    </span>
+                                </label>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="custom-control custom-checkbox" style="padding-left:20%">
+                                <input type="checkbox" class="custom-control-input" id="rating2" name="rating2">
+                                <label class="custom-control-label" for="rating2" style="width:50%">
+                                    <span class="row" style="display:block ;text-align:center" href="#">
+                                        <i class="fa fa-star" style="color:orangered"></i>
+                                        <i class="fa fa-star" style="color:orangered"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                    </span>
+                                </label>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="custom-control custom-checkbox" style="padding-left:20%">
+                                <input type="checkbox" class="custom-control-input" id="rating1" name="rating1">
+                                <label class="custom-control-label" for="rating1" style="width:50%">
+                                    <span class="row" style="display:block ;text-align:center" href="#">
+                                        <i class="fa fa-star" style="color:orangered"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                    </span>
+                                </label>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card" style="width: 100%;">
+                    <div class="card-body" style="text-align:center">
+                        <button id="filter" class="btn-sm btn-warning">Lọc sản phẩm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script type="text/javascript">
+    $(function () {
+
+        $('select').on('change', function () {
+            var categorySlugName = document.getElementById("catName").textContent;
+            var priceFrom = $('input[type=text][name=priceFrom]').val();
+            var priceTo = $('input[type=text][name=priceTo]').val();
+            var isNew = $('input[type=checkbox][name=customNew]:checked').val() == "on" ? true : false;
+            var isDiscount = $('input[type=checkbox][name=customDiscount]:checked').val() == "on" ? true : false;
+            var sort = $(this).val() == "descPrice" ? true : false;
+            var ratings = [];
+
+            for (var i = 1; i <= 4; i++) {
+                var isCheck = $('input[type=checkbox][name=rating' + i + ']:checked').val() == "on";
+                if (isCheck == true)
+                    ratings.push(i.toString());  
+            }
+
+            console.log(ratings);
+
+            $.ajax({
+                url: "/Category/Filter",
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                data: {
+                    "categorySlugName": categorySlugName,
+                    "priceFrom": priceFrom,
+                    "priceTo": priceTo,
+                    "isNew": isNew,
+                    "isDiscount": isDiscount,
+                    "ratings": ratings,
+                    "sort": sort,
+                },
+                async: true,
+                success: function (res) {
+                    $("#contentProduct").html("");
+                    $("#contentProduct").html(res);
+                }
+            });
+        });
+
+        $('#filter').click(function () {
+            var categorySlugName = document.getElementById("catName").textContent;
+            var priceFrom = $('input[type=text][name=priceFrom]').val();
+            var priceTo = $('input[type=text][name=priceTo]').val();
+            var isNew = $('input[type=checkbox][name=customNew]:checked').val() == "on" ? true : false;
+            var isDiscount = $('input[type=checkbox][name=customDiscount]:checked').val() == "on" ? true : false;
+            var sort = $('select').val() == "descPrice" ? true : false; 
+            var ratings = "";
+
+            for (var i = 1; i <= 4; i++) {
+                var isCheck = $('input[type=checkbox][name=rating' + i + ']:checked').length > 0;
+                if (isCheck == true)
+                    if (i == 1) {
+                        ratings = i.toString();
+                    }
+                    else {
+                        ratings += "-" + i.toString();
+                    }   
+            }
+            $.ajax({
+                url: "/Category/Filter",
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                data: {
+                    "categorySlugName": categorySlugName,
+                    "priceFrom": priceFrom,
+                    "priceTo": priceTo,
+                    "isNew": isNew,
+                    "isDiscount": isDiscount,
+                    "ratings": ratings,
+                    "sort": sort
+                },
+                async: true,
+                success: function (res) {
+                    $("#contentProduct").html("");
+                    $("#contentProduct").html(res);
+                }
+            });
+        });
+    }); 
+</script>
+
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script type="text/javascript">
+    $(function () {
+        var timeout = null;
+        $('input[type=text][name=txtSearch]').keyup(function () {
+            clearTimeout(timeout);
+
+            var textSearch = $(this).val();
+            var categorySlugName = document.getElementById("catName").textContent;
+            var priceFrom = $('input[type=text][name=priceFrom]').val();
+            var priceTo = $('input[type=text][name=priceTo]').val();
+            var isNew = $('input[type=checkbox][name=customNew]:checked').val() == "on" ? true : false;
+            var isDiscount = $('input[type=checkbox][name=customDiscount]:checked').val() == "on" ? true : false;
+            var sort = $(this).val() == "descPrice" ? true : false;
+            var ratings = [];
+
+            for (var i = 1; i <= 4; i++) {
+                var isCheck = $('input[type=checkbox][name=rating' + i + ']:checked').val() == "on";
+                if (isCheck == true)
+                    ratings.push(i.toString());
+            }
+
+            timeout = setTimeout(function () {
+                $.ajax({
+                    url: "/Category/SearchProduct",
+                    type: "GET",
+                    contentType: "application/json; charset=utf-8",
+                    data: {
+                        "categorySlugName": categorySlugName,
+                        "textSearch": textSearch,
+                        "priceFrom": priceFrom,
+                        "priceTo": priceTo,
+                        "isNew": isNew,
+                        "isDiscount": isDiscount,
+                        "ratings": ratings,
+                        "sort": sort
+                    },
+                    async: true,
+                    success: function (res) {
+                        $("#contentProduct").html("");
+                        $("#contentProduct").html(res);
+                    }
+                });
+            }, 1000);
+            
+        });
+    });
+</script>
+
+

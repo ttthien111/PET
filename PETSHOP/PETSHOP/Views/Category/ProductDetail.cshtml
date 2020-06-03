@@ -1,0 +1,163 @@
+﻿@model PETSHOP.Models.ModelView.ProductModelViewDetail
+@{
+    string catName = ViewBag.CategoryName as string;
+
+}
+@section breadcumb {
+    <section>
+        <div class="container">
+            <div class="row no-gutters slider-text align-items-end">
+                <div class="col-md-9 ftco-animate pb-5">
+                    <p class="breadcrumbs mb-2"><span class="mr-2"><a href="index.html">Trang chủ <i class="ion-ios-arrow-forward"></i></a></span> <span>Dịch vụ <i class="ion-ios-arrow-forward"></i></span></p>
+                    <h1 class="mb-0 bread">@catName.ToUpper()</h1>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+
+
+<section class="ftco-section bg-light ftco-faqs" style="padding: 2rem 0">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 order-md-last">
+                <div class="img img-video d-flex align-self-stretch align-items-center justify-content-center justify-content-md-center mb-4 mb-sm-0" style="background-image:url(../../images/products/@Model.ProductImage);">
+                    <a href="https://vimeo.com/45830194" class="icon-video popup-vimeo d-flex justify-content-center align-items-center">
+                        <span class="fa fa-play"></span>
+                    </a>
+                </div>
+                <div class="d-flex mt-3">
+                    <div class="img img-2 mr-md-2" style="background-image:url(../../images/products/@Model.ProductImage);"></div>
+                    <div class="img img-2 ml-md-2" style="background-image:url(../../images/products/@Model.ProductImage);"></div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="heading-section mb-5 mt-5 mt-lg-0">
+                    <h2 class="mb-3">@Model.ProductName.ToUpper()</h2>
+                    <p>@Model.ProductDescription</p>
+                </div>
+                <div id="accordion" class="myaccordion w-100" aria-multiselectable="true">
+                    <div class="card">
+                        <div class="card-header p-0" id="headingOne">
+                            <h2 class="mb-0">
+                                <button href="#collapseOne" class="d-flex py-3 px-4 align-items-center justify-content-between btn btn-link" data-parent="#accordion" data-toggle="collapse" aria-expanded="true" aria-controls="collapseOne">
+                                    <p class="mb-0">Thông tin sản phẩm</p>
+                                    <i class="fa" aria-hidden="true"></i>
+                                </button>
+                            </h2>
+                        </div>
+                        <div class="collapse show" id="collapseOne" role="tabpanel" aria-labelledby="headingOne">
+                            <div class="card-body py-3 px-0">
+                                <ol>
+                                    @if (Model.CategoryName == "food")
+                                    {
+                                        <li>Ngày hết hạn: @Model.FoodExpiredDate.ToString("dd/MM/yyyy")</li>
+                                        <li>Số lượng còn : @Model.Amount</li>
+                                        <li>Nhà phân phối: @Model.DistributorName</li>
+                                        <li>Giá tiền: @((Model.ProductPrice*(1 - Model.ProductDiscount)).ToString("#,##"))</li>
+                                    }
+                                    else if (Model.CategoryName == "costume")
+                                    {
+                                        <li>
+                                            Kích cỡ :
+                                            <ul>
+                                                @foreach (var item in Model.CostumeSize)
+                                                {
+                                                    <li>@item.CostumeSize - @item.CostumeAmountSize</li>
+
+                                                }
+                                            </ul>
+                                        </li>
+                                        <li>Nhà phân phối: @Model.DistributorName</li>
+                                        <li>Giá tiền: @((Model.ProductPrice*(1 - Model.ProductDiscount)).ToString("#,##"))</li>
+                                    }
+                                    else
+                                    {
+                                        <li>Số lượng còn : @Model.Amount</li>
+                                        <li>Nhà phân phối: @Model.DistributorName</li>
+                                        <li>Giá tiền: @((Model.ProductPrice*(1 - Model.ProductDiscount)).ToString("#,##"))</li>
+                                    }
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header p-0" id="headingThree">
+                            <h2 class="mb-0">
+                                <button href="#collapseThree" class="d-flex py-3 px-4 align-items-center justify-content-between btn btn-link" data-parent="#accordion" data-toggle="collapse" aria-expanded="true" aria-controls="collapseOne">
+                                    <p class="mb-0">Lựa chọn</p>
+                                    <i class="fa" aria-hidden="true"></i>
+                                </button>
+                            </h2>
+                        </div>
+                        <div class="collapse show" id="collapseThree" role="tabpanel" aria-labelledby="headingThree">
+                            <div class="card-body py-3 px-0">
+                                <ol>
+                                    @if (Model.CategoryName == "food")
+                                    {
+                                        <li>Ngày hết hạn: @Model.FoodExpiredDate.ToString("dd/MM/yyyy")</li>
+                                        <li>Số lượng còn : @Model.Amount</li>
+                                        <li>Nhà phân phối: @Model.DistributorName</li>
+                                        <li>Giá tiền: @((Model.ProductPrice*(1 - Model.ProductDiscount)).ToString("#,##"))</li>
+                                    }
+                                    else if (Model.CategoryName == "costume")
+                                    {
+                                        <li>
+                                            Kích cỡ :
+                                            <ul>
+                                                @foreach (var item in Model.CostumeSize)
+                                                {
+                                                    <li>@item.CostumeSize - @item.CostumeAmountSize</li>
+
+                                                }
+                                            </ul>
+                                        </li>
+                                        <li>Nhà phân phối: @Model.DistributorName</li>
+                                        <li>Giá tiền: @((Model.ProductPrice*(1 - Model.ProductDiscount)).ToString("#,##"))</li>
+                                    }
+                                    else
+                                    {
+                                        <li>Số lượng còn : @Model.Amount</li>
+                                        <li>Nhà phân phối: @Model.DistributorName</li>
+                                        <li>Giá tiền: @((Model.ProductPrice*(1 - Model.ProductDiscount)).ToString("#,##"))</li>
+                                    }
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header p-0" id="headingTwo">
+                            <h2 class="mb-0">
+                                <button href="#collapseTwo" class="d-flex py-3 px-4 align-items-center justify-content-between btn btn-link" data-parent="#accordion" data-toggle="collapse" aria-expanded="true" aria-controls="collapseOne">
+                                    <p class="mb-0">Đánh giá<span class="text text-danger">(@Model.Rating sao)</span></p>
+                                    <i class="fa" aria-hidden="true"></i>
+                                </button>
+                            </h2>
+                        </div>
+                        <div class="collapse show" id="collapseTwo" role="tabpanel" aria-labelledby="headingTwo">
+                            <div class="card-body py-3 px-0" style="text-align:center">
+                                <ul style="list-style:none">
+                                    <li>
+                                        <span>
+                                            @for (int i = 1; i <= (int)Model.Rating; i++)
+                                            {
+                                                <i class="fa fa-star" style="color:orangered;"></i>
+                                            }
+
+                                            @for (int i = 1; i <= 5 - (int)Model.Rating; i++)
+                                            {
+                                                <i class="fa fa-star" style="color: whitesmoke"></i>
+                                            }
+                                        </span>
+                                    </li>
+                                </ul>
+                                 <a class="btn-sm btn-success" href="#"><span class="text-xl-center text-white">Di chuyển tới trang đánh giá cho sản phẩm này</span></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,138 @@
+﻿@model IEnumerable<PETSHOP.Areas.Admin.Models.ProductModelView>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/frontEndAdmin.cshtml";
+}
+
+@section breadcrumb {
+    <div class="col-lg-6 col-7">
+        <h6 class="h2 text-white d-inline-block mb-0">PETSHOP</h6>
+        <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+            <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                <li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i></a></li>
+                <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Sản phẩm</li>
+            </ol>
+        </nav>
+    </div>
+}
+
+<div class="row">
+    <div class="col">
+        <div class="card">
+            <!-- Card header -->
+            <div class="card-header border-0">
+                <div class="row align-items-center">
+                    <div class="col-8">
+                        <h3 class="mb-0">Danh sách sản phẩm </h3>
+                    </div>
+                    <div class="col-4 text-right">
+                        <div class="form-group mb-0">
+                            <div class="input-group input-group-alternative input-group-merge">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                </div>
+                                <input class="form-control" placeholder="Search" name="textSearch" type="text">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table align-items-center table-flush">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col" class="sort" data-sort="name">STT</th>
+                            <th scope="col" class="sort" data-sort="budget">Tên hàng hóa</th>
+                            <th scope="col" class="sort" data-sort="status">Mô tả</th>
+                            <th scope="col" class="sort" data-sort="completion">Đơn giá</th>
+                            <th scope="col" class="sort" data-sort="completion">Giảm giá</th>
+                            <th scope="col" class="sort" data-sort="completion">Loại hàng hóa</th>
+                            <th scope="col" class="sort" data-sort="completion">Nhà phân phối</th>
+                            <th scope="col">Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody class="list" id="productContent">
+                        @{
+                            int i = 1;
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="budget">
+                                        @i
+                                    </td>
+                                    <th scope="row">
+                                        <div class="media align-items-center">
+                                            <a href="#" class="avatar rounded-circle mr-3">
+                                                <img alt="Image placeholder" src="~/Admin/assets/img/theme/bootstrap.jpg">
+                                            </a>
+                                            <div class="media-body">
+                                                <span class="name mb-0 text-sm">@item.ProductName.ToUpper()</span>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <td class="budget">
+                                        @item.ProductDescription
+                                    </td>
+                                    <td class="budget">
+                                        @item.ProductPrice
+                                    </td>
+                                    <td class="budget">
+                                        @item.ProductDiscount
+                                    </td>
+                                    <td class="budget">
+                                        @item.CategoryName.ToUpper()
+                                    </td>
+                                    <td class="budget">
+                                        @item.DistributorName.ToUpper()
+                                    </td>
+                                    <td>
+                                        @if (item.IsActivated)
+                                        {
+                                            <span class="badge badge-dot mr-4">
+                                                <i class="bg-primary"></i>
+                                                <span class="status">Đang kinh doanh</span>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-dot mr-4">
+                                                <i class="bg-purple"></i>
+                                                <span class="status">Ngừng kinh doanh</span>
+                                            </span>
+                                        }
+
+                                    </td>
+                                </tr>
+                                i++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>    
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $('input[type=text][name=textSearch]').keyup(function () {
+            var textSearch = $(this).val();
+            //console.log(textSearch);
+            $.ajax({
+                url: "/admin/products/Search",
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                data: { "textSearch": textSearch },
+                async: true,
+                success: function (res) {
+                    console.log(res);
+                    $("#productContent").html("");
+                    $("#productContent").html(res);
+                }
+            });
+        });
+    });
+</script>
+

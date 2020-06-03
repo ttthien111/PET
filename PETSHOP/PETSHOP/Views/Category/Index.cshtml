@@ -1,0 +1,46 @@
+﻿@section breadcumb {
+    <section class="hero-wrap hero-wrap-2" style="background-image: url('images/bg_2.jpg');" data-stellar-background-ratio="0.5">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row no-gutters slider-text align-items-end">
+                <div class="col-md-9 ftco-animate pb-5">
+                    <p class="breadcrumbs mb-2"><span class="mr-2"><a href="index.html">Trang chủ <i class="ion-ios-arrow-forward"></i></a></span> <span>Dịch vụ <i class="ion-ios-arrow-forward"></i></span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+<section class="ftco-section bg-light ftco-no-pt ftco-intro">
+    <div class="container">
+        <div class="row">
+            @foreach (var cat in ViewBag.Category as List<Category>)
+            {
+                string icon = "";
+                if (cat.CategoryName == "food")
+                {
+                    icon = "flaticon-dog-eating";
+                }
+                else if (cat.CategoryName == "costume")
+                {
+                    icon = "flaticon-grooming";
+                }
+                else
+                {
+                    icon = "flaticon-blind";
+                }
+                <div class="col-md-4 d-flex align-self-stretch px-4 ftco-animate">
+                    <div class="d-block services text-center">
+                        <div class="icon d-flex align-items-center justify-content-center">
+                            <span class="@icon"></span>
+                        </div>
+                        <div class="media-body">
+                            <h3 class="heading">@cat.CategoryName.ToUpper()</h3>
+                            <p>Go shopping</p>
+                            <a asp-action="CategoryById" asp-controller="Category" asp-route-slugCategory="@cat.CategoryName" class="btn-custom d-flex align-items-center justify-content-center"><span class="fa fa-chevron-right"></span><i class="sr-only"></i></a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>

@@ -1,0 +1,39 @@
+﻿@model IEnumerable<PETSHOP.Models.Product>
+@{
+    string catName = ViewBag.CategoryName as string;
+    var i = 0;
+    string color1 = "#ffc107";
+    string color2 = "#e9ecef";
+}
+
+@foreach (var product in Model)
+{
+    string color = color1;
+    if (i % 2 == 0)
+    {
+        color = color1;
+        i++;
+    }
+    else
+    {
+        color = color2;
+        i++;
+    }
+    <div class="row" style="padding: 10px 20px; background-color: @color;width: 100%;">
+        <div class="col-lg-3 col-md-4 col-sm-6">
+            <a asp-action="ProductDetail" asp-controller="Category" asp-route-slugCategory="@catName" asp-route-slugProductName="@product.SlugName"><img style="width:200px;height:200px;" class="img img-video img-2 mr-md-2 img-wrap" src="~/images/products/@product.ProductImage" /></a>
+        </div>
+        <div class="col-lg-9 col-md-8 col-sm-6">
+            <div class="heading-section mb-5 mt-5 mt-lg-0">
+                <a asp-action="ProductDetail" asp-controller="Category" asp-route-slugCategory="@catName" asp-route-slugProductName="@product.SlugName"><h4 class="mb-3">@product.ProductName.ToUpper()</h4></a>
+                <p>@product.ProductDescription</p>
+                <div>
+                    <span>@product.ProductPrice.ToString("#,##")</span>
+                    @if (product.ProductDiscount > 0)
+                    {<span> - @((product.ProductPrice * (1 - product.ProductDiscount)).ToString("#,##"))</span>}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+}

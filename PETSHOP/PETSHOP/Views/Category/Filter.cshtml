@@ -1,0 +1,62 @@
+﻿@model IEnumerable<PETSHOP.Models.ModelView.ProductModelView>
+@{
+    string catName = ViewBag.CategoryName as string;
+}
+
+@foreach (var p in Model)
+{
+    <div class="card card-body col-sm-4 col-md-3 col-lg-2 col-xl-2" style="border-radius:8px;">
+        <img class="card-img-top" src="~/images/products/@p.ProductImage" alt="Card image cap" style="height: 170px">
+        <div>
+            <span class="card-title text-xl">
+                <b>
+                    <a class="card-link" asp-action="ProductDetail" asp-controller="Category" asp-route-slugCategory="@catName" asp-route-slugProductName="@p.SlugName">
+                        @p.ProductName
+                        @if (p.ProductDiscount > 0)
+                        {
+                            <span class="badge badge-danger"><i>-@(p.ProductDiscount*100)%</i></span>
+                        }
+                        @if (p.isNew)
+                        {
+                            <span class="badge badge-primary">NEW</span>
+                        }
+                        <span class="text text-danger">(@p.Rating<i class="fa fa-star" style="color:orangered"></i>)</span>
+                    </a>
+                </b>
+            </span>
+            <p class="card-text">@p.ProductDescription</p>
+            <div style="list-style:none">
+                <div>
+                    <div style="text-align:center">
+                        @for (int i = 1; i <= (int)p.Rating; i++)
+                        {
+                            <i class="fa fa-star" style="color:orangered"></i>
+                        }
+
+                        @for (int i = 1; i <= 5 - (int)p.Rating; i++)
+                        {
+                            <i class="fa fa-star" style="color: whitesmoke"></i>
+                        }
+                    </div>
+                </div>
+                <div>
+                    <div style="text-align:center">
+                        @if (p.ProductDiscount > 0)
+                        {
+                            <span><del>@p.ProductPrice.ToString("#,##") đ</del> - @((p.ProductPrice * (1 - p.ProductDiscount)).ToString("#,##")) đ</span>
+                        }
+                        else
+                        {
+                            <span>@((p.ProductPrice*(1-p.ProductDiscount)).ToString("#,##")) đ</span>
+                        }
+                    </div>
+                </div>
+
+                <div style="text-align:center">
+                    <a class="btn-sm btn-warning" asp-action="ProductDetail" asp-controller="Category" asp-route-slugCategory="@catName" asp-route-slugProductName="@p.SlugName">Xem chi tiết</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+

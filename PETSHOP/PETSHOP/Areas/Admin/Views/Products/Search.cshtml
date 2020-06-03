@@ -1,0 +1,46 @@
+﻿@model IEnumerable<PETSHOP.Areas.Admin.Models.ProductModelView>
+
+
+@{
+    int i = 1;
+    foreach (var item in Model)
+    {
+        <tr>
+            <td class="budget">
+                @i
+            </td>
+            <th scope="row">
+                <div class="media align-items-center">
+                    <a href="#" class="avatar rounded-circle mr-3">
+                        <img alt="Image placeholder" src="~/Admin/assets/img/theme/bootstrap.jpg">
+                    </a>
+                    <div class="media-body">
+                        <span class="name mb-0 text-sm">@item.ProductName.ToUpper()</span>
+                    </div>
+                </div>
+            </th>
+            <td class="budget">
+                @item.ProductDescription
+            </td>
+            <td class="budget">
+                @item.ProductPrice
+            </td>
+            <td class="budget">
+                @item.ProductDiscount
+            </td>
+            <td class="budget">
+                @item.CategoryName.ToUpper()
+            </td>
+            <td class="budget">
+                @item.DistributorName.ToUpper()
+            </td>
+            <td>
+                <span class="badge badge-dot mr-4">
+                    <i class="bg-primary"></i>
+                    <span class="status">Active</span>
+                </span>
+            </td>
+        </tr>
+        i++;
+    }
+}

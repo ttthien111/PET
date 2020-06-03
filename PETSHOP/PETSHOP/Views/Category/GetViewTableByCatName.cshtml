@@ -1,0 +1,37 @@
+﻿@model IEnumerable<PETSHOP.Models.Product>
+@{
+    string catName = ViewBag.CategoryName as string;
+}
+
+@foreach (var p in Model)
+{
+    <div class="card col-sm-4 col-md-3 col-lg-2 col-xl-2" @*style="width: 18%; margin-right:5px;margin-bottom: 5px"*@>
+        <img class="card-img-top" src="~/images/products/@p.ProductImage" alt="Card image cap" style="height: 170px">
+        <div class="card-body">
+            <h6 class="card-title"><b>@p.ProductName</b></h6>
+            <p class="card-text">@p.ProductDescription</p>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <div style="text-align:center">
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div style="text-align:center">Giảm giá: @(p.ProductDiscount*100) %</div>
+            </li>
+            <li class="list-group-item">
+                <div style="text-align:center">
+                    <del>@p.ProductPrice.ToString("#,##")</del> - @((p.ProductPrice*(1-p.ProductDiscount)).ToString("#,##"))
+                </div>
+            </li>
+        </ul>
+        <div class="card-body" style="height: 5%; text-align:center">
+            <a class="card-link" asp-action="ProductDetail" asp-controller="Category" asp-route-slugCategory="@catName" asp-route-slugProductName="@p.SlugName">Xem chi tiết</a>
+        </div>
+    </div>
+}
