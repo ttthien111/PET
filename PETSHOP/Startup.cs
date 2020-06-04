@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -31,6 +32,9 @@ namespace PETSHOP
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             ); ;
             services.AddDbContext<PETSHOPContext>(options => options.UseSqlServer(Configuration.GetConnectionString("PETSHOP")));
+            services.AddControllers(mvcOptions =>
+                mvcOptions.EnableEndpointRouting = false);
+            services.AddOData();
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
@@ -38,6 +42,7 @@ namespace PETSHOP
                     .AllowAnyMethod()
                     .AllowAnyHeader());
             });
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -56,10 +61,16 @@ namespace PETSHOP
 
             app.UseCors("CorsPolicy");
 
-            app.UseEndpoints(endpoints =>
+            app.UseMvc(routeBuilder =>
             {
-                endpoints.MapControllers();
+                routeBuilder.EnableDependencyInjection();
+                routeBuilder.Select().OrderBy().Filter().Count().Expand();
             });
+
+            //app.UseEndpoints(endpoints =>
+            //{
+            //    endpoints.MapControllers();
+            //});
         }
     }
 }
