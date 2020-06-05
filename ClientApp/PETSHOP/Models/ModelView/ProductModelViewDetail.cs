@@ -17,8 +17,11 @@ namespace PETSHOP.Models.ModelView
         public string SlugName { get; set; }
         public DateTime InitAt { get; set; }
         public double Rating { get; set; }
+        public int No_Ratings { get; set; }
         public DateTime FoodExpiredDate { get; set; }
         public List<CostumeSizeModel> CostumeSize { get; set; }
         public int? Amount { get; set; }
+        public List<UserComment> Comments { get; set; }
+        public UserProfile User { get; set; }
     }
 }
