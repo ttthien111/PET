@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNet.OData;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ using PETSHOP.Models;
 
 namespace PETSHOP.Controllers
 {
+    [EnableQuery()]
     [Route("api/[controller]")]
     [ApiController]
     public class AccountRolesController : ControllerBase
@@ -21,6 +23,7 @@ namespace PETSHOP.Controllers
         }
 
         // GET: api/AccountRoles
+        
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AccountRole>>> GetAccountRole()
         {
