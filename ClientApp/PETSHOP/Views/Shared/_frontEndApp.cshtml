@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="~/css/style.css">
 
     <link href="https://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" rel="Stylesheet"></link>
+
 </head>
 <body>
     <div class="wrap">
@@ -37,6 +38,7 @@
                 <div class="col-md-6 d-flex justify-content-md-end">
                     <div class="social-media">
                         <p class="mb-0 d-flex">
+                            <a href="#" class="d-flex align-items-center justify-content-center" id="checklogin"><span class="fa fa-sign-in"><i class="sr-only">Login</i></span></a>
                             <a href="#" class="d-flex align-items-center justify-content-center"><span class="fa fa-facebook"><i class="sr-only">Facebook</i></span></a>
                             <a href="#" class="d-flex align-items-center justify-content-center"><span class="fa fa-twitter"><i class="sr-only">Twitter</i></span></a>
                             <a href="#" class="d-flex align-items-center justify-content-center"><span class="fa fa-instagram"><i class="sr-only">Instagram</i></span></a>
@@ -46,6 +48,42 @@
             </div>
         </div>
     </div>
+
+    <div class="container">
+        <div class="modal fade" tabindex="-1" id="loginModal" data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <p>Đăng nhập</p>
+                        <button type="button" class="close" data-dismiss="modal">
+                            ×
+                        </button>
+                    
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <input class="form-control" type="text"
+                                       placeholder="Tên tài khoản" id="inputUserName" />
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control" placeholder="Mật khẩu"
+                                       type="password" id="inputPassword" />
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" id="login" class="btn btn-primary button button4">Đăng nhập</button>
+                        <button type="button" id="btnHideModal" class="btn btn-primary button button4">
+                            Thoát
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
         <div class="container">
             <a class="navbar-brand" href="index.html"><span class="flaticon-pawprint-1 mr-2"></span>PETSHOP</a>
@@ -158,6 +196,47 @@
     <script src="~/js/scrollax.min.js"></script>
     <script src="~/js/main.js"></script>
 
+    <script type="text/javascript">
+        $(function () {
+            document.getElementById('checklogin').onclick = function () {
+                $(document).ready(function () {
+                    $("#loginModal").modal('show');
+                });
+                $("#btnHideModal").click(function () {
+                    $("#loginModal").modal('hide');
+                });
+            };
+            document.getElementById('login').onclick = function () {
+                var username = document.getElementById('inputUserName').value; 
+                var password = document.getElementById('inputPassword').value;
+                var loginInformation = {
+                    'Username': username,
+                    'Password': password
+                }
+                console.log(loginInformation);
+                $.ajax({
+                    url: "https://localhost:44380/api/LoginAuthentication/Authenticate",
+                    type: "POST",
+                    data: JSON.stringify(loginInformation),
+                    contentType: "application/json",
+                    success: function (data) {
+
+                        alert("Welcome back " + data.accountUserName);
+                        setTimeout(function () {
+                            window.location = "https://localhost:44337/";
+                        }, 1000);
+                        
+                        console.log(data);
+                    },
+                    error: function (err) {
+                        alert("Login failed");
+                        console.log(err);
+                    }
+                });
+            }
+
+        })
+    </script>
 
     <script src="https://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
 </body>
