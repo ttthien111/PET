@@ -56,10 +56,10 @@
             <div class="collapse navbar-collapse" id="ftco-nav">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item @(ViewContext.RouteData.Values["controller"].ToString() == "Home" ? "active" : "")"><a asp-action="Index" asp-controller="Home" name="Home" class="nav-link">Trang chủ</a></li>
-                    <li class="nav-item @(ViewContext.RouteData.Values["controller"].ToString() == "Category" ? "active" : "")"><a asp-action="Index" asp-controller="Category" class="nav-link">Dịch vụ</a></li>
-                    <li class="nav-item @(ViewContext.RouteData.Values["controller"].ToString() == "Index" ? "active" : "")"><a href="vet.html" class="nav-link">Tin tức</a></li>
-                    <li class="nav-item @(ViewContext.RouteData.Values["controller"].ToString() == "Index" ? "active" : "")"><a href="services.html" class="nav-link">Về chúng tôi</a></li>
-                    <li class="nav-item @(ViewContext.RouteData.Values["controller"].ToString() == "Index" ? "active" : "")"><a href="gallery.html" class="nav-link">Liên hệ</a></li>
+                    <li class="nav-item @(ViewContext.RouteData.Values["controller"].ToString() == "Category" ? "active" : "")"><a asp-action="Index" asp-controller="Category" class="nav-link">Sản phẩm</a></li>
+                    <li class="nav-item @(ViewContext.RouteData.Values["controller"].ToString() == "Ratings" ? "active" : "")"><a asp-action="Index" asp-controller="Ratings" class="nav-link">Đánh giá</a></li>
+                    <li class="nav-item @(ViewContext.RouteData.Values["controller"].ToString() == "About" ? "active" : "")"><a asp-action="Contact" asp-controller="Me" class="nav-link">Về chúng tôi</a></li>
+                    <li class="nav-item @(ViewContext.RouteData.Values["controller"].ToString() == "Contact" ? "active" : "")"><a asp-action="Index" asp-controller="Cart" class="nav-link">Giỏ hàng(0)</a></li>
                 </ul>
             </div>
         </div>
