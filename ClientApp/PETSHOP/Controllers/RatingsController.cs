@@ -56,7 +56,7 @@ namespace PETSHOP.Controllers
                 Comments = new List<UserComment>()
             };
 
-            List<UserComment> comments = GetApiUserComments.GetUserComments().Where(k => k.ProductId == p.ProductId).ToList();
+            List<UserComment> comments = GetApiUserComments.GetUserComments().Where(k => k.ProductId == p.ProductId).OrderByDescending(p=>p.UserCommentPostedDate).ToList();
 
             foreach (var cmt in comments)
             {

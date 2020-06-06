@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PETSHOP.Models;
+using PETSHOP.Models.LoginModel;
 
 namespace PETSHOP.Controllers
 {
@@ -77,6 +79,7 @@ namespace PETSHOP.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
+        //[Authorize(Roles = Role.Customer + "," + Role.Admin + "," + Role.User)]
         public async Task<ActionResult<UserComment>> PostUserComment(UserComment userComment)
         {
             _context.UserComment.Add(userComment);
@@ -87,6 +90,7 @@ namespace PETSHOP.Controllers
 
         // DELETE: api/UserComments/5
         [HttpDelete("{id}")]
+        //[Authorize(Roles = Role.Customer + "," + Role.Admin + "," + Role.User)]
         public async Task<ActionResult<UserComment>> DeleteUserComment(int id)
         {
             var userComment = await _context.UserComment.FindAsync(id);

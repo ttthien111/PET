@@ -10,6 +10,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
 
 namespace PETSHOP.Services
 {
@@ -32,7 +33,7 @@ namespace PETSHOP.Services
 
         public Account Authenticate(string username, string password)
         {
-            var user = _context.Account.SingleOrDefault(x => x.AccountUserName == username && x.AccountPassword == password);
+            var user = _context.Account.SingleOrDefault(x => x.AccountUserName == username && x.AccountPassword == Helper.Encryptor.MD5Hash(password));
             if (user == null)
                 return null;
 
@@ -43,7 +44,7 @@ namespace PETSHOP.Services
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, user.AccountId.ToString())
+                new Claim(ClaimTypes.Name, user.AccountId.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -51,12 +52,16 @@ namespace PETSHOP.Services
             var token = tokenHandler.CreateToken(tokenDescriptor);
             user.JWToken = tokenHandler.WriteToken(token);
 
+            UserProfile profile = _context.UserProfile.SingleOrDefault(x => x.AccountId == user.AccountId);
+            user.UserProfile.Add(profile);
+
             return user;
             throw new NotImplementedException();
+           
         }
-
+                
         public IEnumerable<Account> GetAll()
-        {
+        {       
             throw new NotImplementedException();
         }
     }
