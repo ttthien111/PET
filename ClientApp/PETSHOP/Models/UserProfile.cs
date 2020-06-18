@@ -15,7 +15,7 @@ namespace PETSHOP.Models
         public string UserProfileFirstName { get; set; }
         public string UserProfileMiddleName { get; set; }
         public string UserProfileLastName { get; set; }
-        public DateTime? UserProfileDob { get; set; }
+        public string UserProfileDob { get; set; }
         public string UserProfileIdentityCard { get; set; }
         public string UserProfilePhoneNumber { get; set; }
         public string UserProfileAvatar { get; set; }

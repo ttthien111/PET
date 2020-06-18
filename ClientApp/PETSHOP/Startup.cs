@@ -27,7 +27,6 @@ namespace PETSHOP
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddDbContext<PETSHOPContext>(option => option.UseSqlServer(Configuration.GetConnectionString("PETSHOP")));
 
             services.AddDistributedMemoryCache();
             services.AddSession(options => {

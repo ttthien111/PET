@@ -35,5 +35,15 @@ namespace PETSHOP.Controllers
                 return BadRequest(new { message = "Wrong" });
             return Ok(user);
         }
+
+        [AllowAnonymous]
+        [HttpPost("AuthenticateExternal")]
+        public IActionResult AuthenticateExternal([FromBody] AuthenticateExternal model)
+        {
+            var user = _user.AuthenticateExternal(model);
+            if (user == null)
+                return BadRequest(new { message = "Wrong" });
+            return Ok(user);
+        }
     }
 }

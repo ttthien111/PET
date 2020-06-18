@@ -10,7 +10,7 @@ namespace PETSHOP.Models
         public string DeliveryProductAddress { get; set; }
         public string DeliveryProductPhoneNumber { get; set; }
         public string DeliveryProductNote { get; set; }
-        public int? DeliveryProductStateId { get; set; }
+        public int DeliveryProductStateId { get; set; }
         public int? DeliveryProductTypeId { get; set; }
 
         public virtual Bill DeliveryProductBill { get; set; }

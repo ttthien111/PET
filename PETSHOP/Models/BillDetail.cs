@@ -11,6 +11,7 @@ namespace PETSHOP.Models
         public double? ProductPriceCurrent { get; set; }
         public int? ProductAmount { get; set; }
         public double? ProductTotalPrice { get; set; }
+        public string NoteSize { get; set; }
 
         public virtual Bill Bill { get; set; }
         public virtual Product Product { get; set; }

@@ -4,6 +4,12 @@ using System.Linq;
 using PETSHOP.Models;
 using PETSHOP.Models.ModelView;
 using PETSHOP.Utils;
+using System.Web.Http.ModelBinding;
+using Microsoft.AspNetCore.Http;
+using PETSHOP.Common;
+using Newtonsoft.Json;
+using System.Net.Http;
+using System;
 
 namespace PETSHOP.Controllers
 {
@@ -84,6 +90,34 @@ namespace PETSHOP.Controllers
             }
             rating = rating / (userComments.Count() == 0 ? 1 : userComments.Count());
             return rating;
+        }
+
+        [HttpPost]
+        public IActionResult AddComment(string comment)
+        {
+            if (ModelState.IsValid)
+            {
+                CommentModel cmt = JsonConvert.DeserializeObject<CommentModel>(comment);
+                CredentialModel credential = JsonConvert.DeserializeObject<CredentialModel>(HttpContext.Session.GetString("vm")) ;
+                string token = credential.JwToken;
+
+                // post comment
+                using (HttpClient client = Common.HelperClient.GetClient(token))
+                {
+                    client.BaseAddress = new Uri(Common.Constants.BASE_URI);
+
+                    var postTask = client.PostAsJsonAsync<CommentModel>("usercomments", cmt);
+                    postTask.Wait();
+
+                    var result = postTask.Result;
+                    if (result.IsSuccessStatusCode)
+                    {
+                        return NoContent();
+                    }
+                }
+            }
+
+            return NoContent();
         }
     }
 }

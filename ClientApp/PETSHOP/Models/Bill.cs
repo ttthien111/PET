@@ -15,10 +15,11 @@ namespace PETSHOP.Models
         public int UserProfileId { get; set; }
         public DateTime DateOfPurchase { get; set; }
         public DateTime? DateOfDelivered { get; set; }
-        public double? TotalPrice { get; set; }
-        public bool? IsDelivery { get; set; }
-        public int? PaymentMethodTypeId { get; set; }
-
+        public double TotalPrice { get; set; }
+        public bool IsDelivery { get; set; }
+        public int PaymentMethodTypeId { get; set; }
+        public string GenerateCodeCheck { get; set; }
+        public bool IsCancel { get; set; }
         public virtual PaymentMethodType PaymentMethodType { get; set; }
         public virtual ICollection<BillDetail> BillDetail { get; set; }
         public virtual ICollection<DeliveryProduct> DeliveryProduct { get; set; }

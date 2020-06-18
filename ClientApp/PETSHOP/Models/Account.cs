@@ -15,7 +15,7 @@ namespace PETSHOP.Models
         public string AccountPassword { get; set; }
         public bool? IsActive { get; set; }
         public int? AccountRoleId { get; set; }
-
+        public bool IsLoginExternal { get; set; }
         public virtual AccountRole AccountRole { get; set; }
         public virtual ICollection<UserProfile> UserProfile { get; set; }
     }

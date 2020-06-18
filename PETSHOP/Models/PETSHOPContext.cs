@@ -26,6 +26,7 @@ namespace PETSHOP.Models
         public virtual DbSet<DeliveryProductState> DeliveryProductState { get; set; }
         public virtual DbSet<DeliveryProductType> DeliveryProductType { get; set; }
         public virtual DbSet<Distributor> Distributor { get; set; }
+        public virtual DbSet<Feedback> Feedback { get; set; }
         public virtual DbSet<FoodProduct> FoodProduct { get; set; }
         public virtual DbSet<InventoryReceivingNote> InventoryReceivingNote { get; set; }
         public virtual DbSet<InventoryReceivingNoteDetailForCostume> InventoryReceivingNoteDetailForCostume { get; set; }
@@ -43,7 +44,7 @@ namespace PETSHOP.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=.;Database=PETSHOP;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer("Server=MSI\\SQL_EXPRESS;Database=PETSHOP;Trusted_Connection=True;");
             }
         }
 
@@ -64,6 +65,10 @@ namespace PETSHOP.Models
                     .IsRequired()
                     .HasColumnName("Account_UserName")
                     .HasMaxLength(30);
+
+                entity.Property(e => e.IsLoginExternal).HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.Jwtoken).HasColumnName("JWToken");
 
                 entity.HasOne(d => d.AccountRole)
                     .WithMany(p => p.Account)
@@ -98,6 +103,12 @@ namespace PETSHOP.Models
 
                 entity.Property(e => e.DateOfPurchase).HasColumnType("datetime");
 
+                entity.Property(e => e.GenerateCodeCheck).IsUnicode(false);
+
+                entity.Property(e => e.IsCancel).HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.IsDelivery).HasDefaultValueSql("((0))");
+
                 entity.Property(e => e.PaymentMethodTypeId).HasColumnName("PaymentMethodType_ID");
 
                 entity.Property(e => e.UserProfileId).HasColumnName("UserProfile_ID");
@@ -113,6 +124,10 @@ namespace PETSHOP.Models
                 entity.Property(e => e.BillDetailId).HasColumnName("BillDetail_ID");
 
                 entity.Property(e => e.BillId).HasColumnName("Bill_ID");
+
+                entity.Property(e => e.NoteSize)
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.ProductAmount).HasColumnName("Product_Amount");
 
@@ -247,6 +262,21 @@ namespace PETSHOP.Models
                     .IsUnicode(false);
             });
 
+            modelBuilder.Entity<Feedback>(entity =>
+            {
+                entity.Property(e => e.CreatedAt)
+                    .HasColumnName("Created_At")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.Email)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.FullName).HasMaxLength(200);
+
+                entity.Property(e => e.Subject).HasMaxLength(100);
+            });
+
             modelBuilder.Entity<FoodProduct>(entity =>
             {
                 entity.HasKey(e => e.FoodId);
@@ -367,6 +397,8 @@ namespace PETSHOP.Models
                     .HasColumnType("datetime");
 
                 entity.Property(e => e.IsActivated).HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.NumberOfPurchases).HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.ProductImage)
                     .IsRequired()

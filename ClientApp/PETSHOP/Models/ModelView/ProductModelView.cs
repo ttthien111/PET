@@ -20,5 +20,7 @@ namespace PETSHOP.Models.ModelView
         public DateTime InitAt { get; set; }
         public bool isNew => DateTime.Now.Subtract(InitAt).Days < 10 ? true : false;
         public double Rating { get; set; }
+        public int NumberOfPurchases { get; set; }
+        public string CatName { get; set; }
     }
 }

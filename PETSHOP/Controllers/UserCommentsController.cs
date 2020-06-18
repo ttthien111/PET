@@ -47,6 +47,7 @@ namespace PETSHOP.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
+        
         public async Task<IActionResult> PutUserComment(int id, UserComment userComment)
         {
             if (id != userComment.UserCommentId)
@@ -80,6 +81,7 @@ namespace PETSHOP.Controllers
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
         //[Authorize(Roles = Role.Customer + "," + Role.Admin + "," + Role.User)]
+        [Authorize]
         public async Task<ActionResult<UserComment>> PostUserComment(UserComment userComment)
         {
             _context.UserComment.Add(userComment);

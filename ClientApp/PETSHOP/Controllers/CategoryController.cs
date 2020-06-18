@@ -13,11 +13,6 @@ namespace PETSHOP.Controllers
 {
     public class CategoryController : Controller
     {
-        public readonly PETSHOPContext _ctx;
-        public CategoryController(PETSHOPContext ctx)
-        {
-            _ctx = ctx;
-        }
         public IActionResult Index()
         {
             // get category from api
@@ -35,7 +30,7 @@ namespace PETSHOP.Controllers
             ViewBag.CategoryName = category.CategoryName;
 
             // create filter
-            Filter filter = HttpContext.Session.GetComplexData<Filter>("filter") == null ? GetFilter() : HttpContext.Session.GetComplexData<Filter>("filter");
+            Filter filter = HttpContext.Session.GetObject<Filter>("filter") == null ? GetFilter() : HttpContext.Session.GetObject<Filter>("filter");
             ViewBag.Filter = filter;
 
             // list product view to show
@@ -110,7 +105,7 @@ namespace PETSHOP.Controllers
 
             if (slugCategory == "food")
             {
-                food = _ctx.FoodProduct.SingleOrDefault(p => p.ProductId == product.ProductId);
+                food = GetApiFoodProducts.GetFoodProducts().SingleOrDefault(p => p.ProductId == product.ProductId);
                 res = new ProductModelViewDetail()
                 {
                     ProductId = product.ProductId,
@@ -122,8 +117,9 @@ namespace PETSHOP.Controllers
                     SlugName = product.SlugName,
                     CategoryName = category.CategoryName,
                     Rating = 0,
+                    No_Ratings = GetApiUserComments.GetUserComments().Where(p=>p.ProductId == product.ProductId).Count(),
                     InitAt = product.InitAt,
-                    DistributorName = _ctx.Distributor.Find(product.DistributorId).DistributorName,
+                    DistributorName = GetApiDistributors.GetDistributors().SingleOrDefault(p => p.DistributorId == product.DistributorId).DistributorName,
                     FoodExpiredDate = food.FoodExpiredDate,
                     IsActivated = product.IsActivated,
                     CostumeSize = new List<CostumeSizeModel>(),
@@ -134,7 +130,7 @@ namespace PETSHOP.Controllers
             }
             else if(slugCategory == "costume")
             {
-                costume = _ctx.CostumeProduct.Where(p => p.ProductId == product.ProductId).Select(p=> new CostumeProduct() { 
+                costume = GetApiCostumeProducts.GetCostumeProducts().Where(p => p.ProductId == product.ProductId).Select(p=> new CostumeProduct() { 
                     ProductId = p.ProductId,
                     CostumeId = p.CostumeId,
                     CostumeAmountSize = p.CostumeAmountSize,
@@ -151,8 +147,9 @@ namespace PETSHOP.Controllers
                     ProductDiscount = product.ProductDiscount,
                     SlugName = product.SlugName,
                     CategoryName = category.CategoryName,
-                    DistributorName = _ctx.Distributor.Find(product.DistributorId).DistributorName,
+                    DistributorName = GetApiDistributors.GetDistributors().SingleOrDefault(p=>p.DistributorId == product.DistributorId).DistributorName,
                     Rating = 0,
+                    No_Ratings = GetApiUserComments.GetUserComments().Where(p => p.ProductId == product.ProductId).Count(),
                     InitAt = product.InitAt,
                     IsActivated = product.IsActivated,
                     FoodExpiredDate = DateTime.Now,
@@ -170,7 +167,7 @@ namespace PETSHOP.Controllers
             }
             else
             {
-                toy = _ctx.ToyProduct.SingleOrDefault(p => p.ProductId == product.ProductId);
+                toy = GetApiToyProducts.GetToyProducts().SingleOrDefault(p => p.ProductId == product.ProductId);
                 res = new ProductModelViewDetail()
                 {
                     ProductId = product.ProductId,
@@ -181,8 +178,9 @@ namespace PETSHOP.Controllers
                     ProductDiscount = product.ProductDiscount,
                     SlugName = product.SlugName,
                     CategoryName = category.CategoryName,
-                    DistributorName = _ctx.Distributor.Find(product.DistributorId).DistributorName,
+                    DistributorName = GetApiDistributors.GetDistributors().SingleOrDefault(p => p.DistributorId == product.DistributorId).DistributorName,
                     Rating = 0,
+                    No_Ratings = GetApiUserComments.GetUserComments().Where(p => p.ProductId == product.ProductId).Count(),
                     InitAt = product.InitAt,
                     IsActivated = product.IsActivated,
                     FoodExpiredDate = DateTime.Now,
@@ -199,7 +197,7 @@ namespace PETSHOP.Controllers
         public IActionResult Filter(string categorySlugName = null,long priceFrom = 0, long priceTo = 0, bool isNew = false, bool isDiscount = false, string ratings = null, bool sort = false)
         {
             List<ProductModelView> products = new List<ProductModelView>();
-            HttpContext.Session.SetComplexData("filter", GetFilter(priceFrom, priceTo, isNew, isDiscount, ratings, sort));
+            HttpContext.Session.SetObject("filter", GetFilter(priceFrom, priceTo, isNew, isDiscount, ratings, sort));
             
             // create filter
             Filter filter = GetFilter(priceFrom, priceTo, isNew, isDiscount, ratings, sort);
@@ -246,7 +244,8 @@ namespace PETSHOP.Controllers
                                 IsActivated = p.IsActivated,
                                 InitAt = p.InitAt,
                                 Rating = 0,
-                                SlugName = p.SlugName
+                                SlugName = p.SlugName,
+                                NumberOfPurchases = p.NumberOfPurchases
                         }).ToList();
 
             // update rating for each product

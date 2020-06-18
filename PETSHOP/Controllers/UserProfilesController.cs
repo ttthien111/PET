@@ -70,7 +70,7 @@ namespace PETSHOP.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(userProfile);
         }
 
         // POST: api/UserProfiles

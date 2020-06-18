@@ -25,6 +25,7 @@ namespace PETSHOP.Models
         public bool? IsActivated { get; set; }
         public string SlugName { get; set; }
         public DateTime? InitAt { get; set; }
+        public int? NumberOfPurchases { get; set; }
 
         public virtual Category Category { get; set; }
         public virtual Distributor Distributor { get; set; }

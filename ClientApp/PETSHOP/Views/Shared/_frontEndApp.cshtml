@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http;
+@using PETSHOP.Models.ModelView;
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <title>Pet Sitting - Free Bootstrap 4 Template by Colorlib</title>
@@ -14,37 +16,107 @@
     <link rel="stylesheet" href="~/css/owl.carousel.min.css">
     <link rel="stylesheet" href="~/css/owl.theme.default.min.css">
     <link rel="stylesheet" href="~/css/magnific-popup.css">
-
-
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-notify/0.2.0/js/bootstrap-notify.min.js" rel="stylesheet" />
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/bootstrap-datepicker.css">
     <link rel="stylesheet" href="~/css/jquery.timepicker.css">
-
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-notify/0.2.0/css/bootstrap-notify.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/flaticon.css">
     <link rel="stylesheet" href="~/css/style.css">
     <link rel="stylesheet" href="~/css/mycss.css">
     <link href="https://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" rel="Stylesheet" />
+    <link href="https://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" rel="Stylesheet" />
 
-    <link href="https://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" rel="Stylesheet"/>
+    <style>
+        .divider-text {
+            position: relative;
+            text-align: center;
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+
+            .divider-text span {
+                padding: 7px;
+                font-size: 12px;
+                position: relative;
+                z-index: 2;
+            }
+
+            .divider-text:after {
+                content: "";
+                position: absolute;
+                width: 100%;
+                border-bottom: 1px solid #ddd;
+                top: 55%;
+                left: 0;
+                z-index: 1;
+            }
+
+        .btn-facebook {
+            background-color: #405D9D;
+            color: #fff;
+        }
+
+        .btn-twitter {
+            background-color: #42AEEC;
+            color: #fff;
+        }
+    </style>
+    <!-- Load Facebook SDK for JavaScript -->
+    <script>
+        window.fbAsyncInit = function () {
+            FB.init({
+                xfbml: true,
+                version: 'v7.0'
+            });
+        };
+
+        (function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = 'https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js';
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));</script>
+
+    <!-- Your Chat Plugin code -->
 </head>
-<body>
+<body style="margin:auto; color: black">
+    <div id="fb-root"></div>
+    <div class="fb-customerchat"
+         attribution=setup_tool
+         page_id="576962259424147"
+         theme_color="#67b868">
+    </div>
     <div class="wrap">
-        <div class="container-fluid">
+        <div class="container">
             <div class="row">
-                <div class="col-md-6 d-flex align-items-center">
+                <div class="col-md-4 d-flex align-items-center">
                     <p class="mb-0 phone pl-md-2">
                         <a href="#" class="mr-2"><span class="fa fa-phone mr-1"></span> +00 1234 567</a>
                         <a href="#"><span class="fa fa-paper-plane mr-1"></span> petshop@gmail.com</a>
                     </p>
                 </div>
-                <div class="col-md-6 d-flex justify-content-md-end">
+                <div class="col-md-8 d-flex justify-content-md-end">
                     <div class="social-media">
                         <p class="mb-0 d-flex">
-                            <span id="authen">
+                            <a data-toggle="tooltip" title="Đăng kí" asp-action="Register" asp-controller="Auth" class="col-md-3 d-flex align-items-center justify-content-center text-white" style=""><span class="fa fa-edit"><i class="sr-only"></i></span></a>
+                            @{
+                                var credential = new CredentialModel();
+                                var profile = new UserProfile();
+                                if (Context.Session.GetString("vm") != null)
+                                {
+                                    credential = Newtonsoft.Json.JsonConvert.DeserializeObject<CredentialModel>(Context.Session.GetString("vm"));
+                                    profile = credential.Profile as UserProfile;
 
-                            </span>
-                            <a href="#" class="d-flex align-items-center justify-content-center"><span class="fa fa-facebook"><i class="sr-only">Facebook</i></span></a>
-                            <a href="#" class="d-flex align-items-center justify-content-center"><span class="fa fa-twitter"><i class="sr-only">Twitter</i></span></a>
-                            <a href="#" class="d-flex align-items-center justify-content-center"><span class="fa fa-instagram"><i class="sr-only">Instagram</i></span></a>
+                                    <a data-toggle="tooltip" title="Thông tin" asp-action="Index" asp-controller="Profile" class="d-flex align-items-center justify-content-center"><span class="fa fa-user"><i class="sr-only">Thông tin</i></span></a>
+                                    <a href="#" data-toggle="tooltip" title="Đăng xuất" class="d-flex align-items-center justify-content-center" id="checkLogout"><span class="fa fa-sign-out"><i class="sr-only">Đăng xuất</i></span></a>
+                                }
+                                else
+                                {
+                                    <a data-toggle="tooltip" title="Đăng nhập" class="col-md-5 d-flex align-items-center justify-content-center text-white" asp-action="Login" asp-controller="Auth"><span class="fa fa-sign-in"><i class="sr-only"></i></span></a>
+                                }
+                            }
                         </p>
                     </div>
                 </div>
@@ -89,25 +161,26 @@
     <div class="container">
         <div class="modal fade" tabindex="-1" id="logoutModal" data-keyboard="false" data-backdrop="static">
             <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <p>Đăng xuất</p>
-                        <button type="button" class="close" data-dismiss="modal">
-                            ×
-                        </button>
 
-                    </div>
-                    <div class="modal-body">
-                        <div>
-                            Bạn có chắc muốn kết thúc phiên đăng nhập này không ?
+                <div class="modal-content">
+                    <form asp-action="Logout" asp-controller="Auth" method="post">
+                        <div class="modal-header">
+                            <p>Đăng xuất</p>
+                            <button type="button" class="close" data-dismiss="modal">
+                                ×
+                            </button>
+
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" id="logout" class="btn btn-primary button button4">Đăng xuất</button>
-                        <button type="button" id="btnHideModalLogout" class="btn btn-primary button button4">
-                            Thoát
-                        </button>
-                    </div>
+                        <div class="modal-body">
+                            Bạn có chắc muốn kết thúc phiên đăng nhập ?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" id="logout" class="btn btn-primary button button4">Đăng xuất</button>
+                            <button type="button" id="btnHideModalLogout" class="btn btn-primary button button4">
+                                Thoát
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -120,13 +193,21 @@
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="fa fa-bars"></span> Menu
             </button>
+            @{
+                var sumCart = 0;
+                @if (Context.Session.GetInt32("sizeCart") != null)
+                {
+                    sumCart = Convert.ToInt32(Context.Session.GetInt32("sizeCart"));
+                }
+            }
+
             <div class="collapse navbar-collapse" id="ftco-nav">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item @(ViewContext.RouteData.Values["controller"].ToString() == "Home" ? "active" : "")"><a asp-action="Index" asp-controller="Home" name="Home" class="nav-link">Trang chủ</a></li>
                     <li class="nav-item @(ViewContext.RouteData.Values["controller"].ToString() == "Category" ? "active" : "")"><a asp-action="Index" asp-controller="Category" class="nav-link">Sản phẩm</a></li>
                     <li class="nav-item @(ViewContext.RouteData.Values["controller"].ToString() == "Ratings" ? "active" : "")"><a asp-action="Index" asp-controller="Ratings" class="nav-link">Đánh giá</a></li>
-                    <li class="nav-item @(ViewContext.RouteData.Values["controller"].ToString() == "About" ? "active" : "")"><a asp-action="Contact" asp-controller="Me" class="nav-link">Về chúng tôi</a></li>
-                    <li class="nav-item @(ViewContext.RouteData.Values["controller"].ToString() == "Contact" ? "active" : "")"><a asp-action="Index" asp-controller="Cart" class="nav-link">Giỏ hàng(0)</a></li>
+                    <li class="nav-item @(ViewContext.RouteData.Values["controller"].ToString() == "Me" ? "active" : "")"><a asp-action="Contact" asp-controller="Me" class="nav-link">Về chúng tôi</a></li>
+                    <li class="nav-item @(ViewContext.RouteData.Values["controller"].ToString() == "Cart" ? "active" : "")"><a asp-action="Index" asp-controller="Cart" class="nav-link">Giỏ hàng( @(sumCart.ToString("##,#")) VNĐ )</a></li>
                 </ul>
             </div>
         </div>
@@ -137,7 +218,7 @@
     <footer class="footer">
         <div class="container">
             <div class="row">
-                <div class="col-md-6 col-lg-3 mb-4 mb-md-0">
+                <div class="col-md-4 col-lg-4 mb-4 mb-md-0">
                     <h2 class="footer-heading">PETSHOP</h2>
                     <p>Thiên đường dành cho thú cưng</p>
                     <ul class="ftco-footer-social p-0">
@@ -146,42 +227,16 @@
                         <li class="ftco-animate"><a href="#" data-toggle="tooltip" data-placement="top" title="Instagram"><span class="fa fa-instagram"></span></a></li>
                     </ul>
                 </div>
-                <div class="col-md-6 col-lg-3 mb-4 mb-md-0">
-                    <h2 class="footer-heading">Tin tức mới</h2>
-                    <div class="block-21 mb-4 d-flex">
-                        <a class="img mr-4 rounded" style="background-image: url(/images/image_1.jpg);"></a>
-                        <div class="text">
-                            <h3 class="heading"><a href="#">Even the all-powerful Pointing has no control about</a></h3>
-                            <div class="meta">
-                                <div><a href="#"><span class="icon-calendar"></span> April 7, 2020</a></div>
-                                <div><a href="#"><span class="icon-person"></span> Admin</a></div>
-                                <div><a href="#"><span class="icon-chat"></span> 19</a></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="block-21 mb-4 d-flex">
-                        <a class="img mr-4 rounded" style="background-image: url(/images/image_2.jpg);"></a>
-                        <div class="text">
-                            <h3 class="heading"><a href="#">Even the all-powerful Pointing has no control about</a></h3>
-                            <div class="meta">
-                                <div><a href="#"><span class="icon-calendar"></span> April 7, 2020</a></div>
-                                <div><a href="#"><span class="icon-person"></span> Admin</a></div>
-                                <div><a href="#"><span class="icon-chat"></span> 19</a></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-3 pl-lg-5 mb-4 mb-md-0">
+                <div class="col-md-4 col-lg-4 pl-lg-5 mb-4 mb-md-0">
                     <h2 class="footer-heading">PETSHOP</h2>
                     <ul class="list-unstyled">
-                        <li><a href="#" class="py-2 d-block">Trang chủ</a></li>
-                        <li><a href="#" class="py-2 d-block">Dịch vụ</a></li>
-                        <li><a href="#" class="py-2 d-block">Tin tức</a></li>
-                        <li><a href="#" class="py-2 d-block">Về chúng tôi</a></li>
-                        <li><a href="#" class="py-2 d-block">Liên hệ</a></li>
+                        <li><a asp-action="Index" asp-controller="Home" class="py-2 d-block">Trang chủ</a></li>
+                        <li><a asp-action="Index" asp-controller="Category" class="py-2 d-block">Sản phẩm</a></li>
+                        <li><a asp-action="Index" asp-controller="Ratings" class="py-2 d-block">Đánh giá</a></li>
+                        <li><a asp-action="Contact" asp-controller="Me" class="py-2 d-block">Về chúng tôi</a></li>
                     </ul>
                 </div>
-                <div class="col-md-6 col-lg-3 mb-4 mb-md-0">
+                <div class="col-md-4 col-lg-4 mb-4 mb-md-0">
                     <h2 class="footer-heading">Thông tin liên hệ</h2>
                     <div class="block-23 mb-3">
                         <ul>
@@ -225,8 +280,23 @@
     <script src="~/js/scrollax.min.js"></script>
     <script src="~/js/main.js"></script>
     <script src="https://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-notify/0.2.0/js/bootstrap-notify.js"></script>
 
-    @*modify script login logout here !*@
-    <script src="~/js/_js/authen.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            // login or logout
+
+            $("#checkLogout").click(function (e) {
+                $("#logoutModal").modal('show');
+
+                $("#btnHideModalLogout").click(function () {
+                    $("#logoutModal").modal('hide');
+                });
+            });
+
+            // logout
+
+        })
+    </script>
 </body>
 </html>
