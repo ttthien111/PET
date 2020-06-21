@@ -1,0 +1,86 @@
+﻿@model PETSHOP.Models.UserProfile 
+
+<link href="~/css/css/profile_css.css" rel="stylesheet" />
+<div class="row" style="text-align: center">
+    <div class="card-body">
+        <a asp-action="Index" asp-controller="Profile" class="btn btn-outline-default">Thông tin cá nhân</a>
+        <a asp-action="Index" asp-controller="MyBills" class="btn btn-outline-default">Đơn hàng</a>
+        <a asp-action="VerifyChangePassword" asp-controller="Profile" class="btn btn-outline-default">Đổi mật khẩu</a>
+    </div>
+</div>
+<section class="ftco-section bg-light ftco-faqs" style="padding: 2rem 0">
+    <div class="container">
+        <div class="row ">
+            <div class="card-body col-md-3">
+                <div class="profile-img">
+                    <div style="margin: 10px">
+                        @if (Model.UserProfileAvatar != null)
+                        {
+                            <img src="~/images/avatar/@Model.UserProfileAvatar" style="width:200px; border-radius: 200px" alt="" />
+                        }
+                        else
+                        {
+                            <img src="~/images/avatar/noimage.png" style="width:200px; border-radius: 200px" alt="" />
+                        }
+                    </div>
+                </div>
+                <div>
+                    
+                </div>
+            </div>
+            <div class="card-body col-md-8" style="margin-left: 10px">
+                <div style="padding: 0 1rem"><b>Hồ sơ của tôi</b></div>
+                <div style="padding: 0 1rem">
+                    @if(ViewBag.error != null)
+                    {
+                        <span class="text text-danger">@ViewBag.error</span>
+                    }
+                </div>
+                <hr />
+                <form asp-action="EditProfile" method="post" enctype="multipart/form-data">
+                    <div class="row" style="padding: 0 2rem">
+                        <label class="col-md-4">Tên đăng nhập: </label>
+                        <input type="email" name="Email" class="form-control col-md-8" disabled value="@Model.UserProfileEmail" />
+                        <input type="hidden" name="UserProfileEmail" class="form-control col-md-8" value="@Model.UserProfileEmail" />
+                        <input type="hidden" name="UserProfileId" class="form-control col-md-8" value="@Model.UserProfileId" />
+                    </div>
+                    <hr />
+                    <div class="row" style="padding: 0 2rem">
+                        <label class="col-md-4">Họ: </label>
+                        <input type="text" name="UserProfileFirstName" class="form-control col-md-8" value="@Model.UserProfileFirstName" />
+                    </div>
+                    <hr />
+                    <div class="row" style="padding: 0 2rem">
+                        <label class="col-md-4">Tên Lót: </label>
+                        <input type="text" name="UserProfileMiddleName" class="form-control col-md-8" value="@Model.UserProfileMiddleName" />
+                    </div>
+                    <hr />
+                    <div class="row" style="padding: 0 2rem">
+                        <label class="col-md-4">Tên: </label>
+                        <input type="text" name="UserProfileLastName" class="form-control col-md-8" value="@Model.UserProfileLastName" />
+                    </div>
+                    <hr />
+                    <div class="row" style="padding: 0 2rem">
+                        <label class="col-md-4">Địa chỉ: </label>
+                        <input type="text" name="UserProfileAddress" class="form-control col-md-8" value="@Model.UserProfileAddress" />
+                    </div>
+                    <hr />
+                    <div class="row" style="padding: 0 2rem">
+                        <label class="col-md-4">Số điện thoại: </label>
+                        <input type="text" name="UserProfilePhoneNumber" class="form-control col-md-8" value="@Model.UserProfilePhoneNumber" />
+                    </div>
+                    <hr />
+                    <div class="row" style="padding: 0 2rem">
+                        <label class="col-md-4">Ảnh đại diện: </label>
+                        <input type="file" name="avatarFile" class="form-control col-md-8"  />
+                    </div>
+                    <hr />
+                    <div>
+                        <a class="btn btn-warning" asp-action="Index" asp-controller="Home">Trở về</a>
+                        <button type="submit" class="btn btn-danger">Lưu</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>

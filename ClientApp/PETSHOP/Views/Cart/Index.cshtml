@@ -1,0 +1,231 @@
+﻿@model IEnumerable<PETSHOP.Models.ModelView.CartItem>
+@using Microsoft.AspNetCore.Http;
+@using PETSHOP.Models.ModelView;
+@section breadcumb {
+    <section>
+        <div class="container">
+            <div class="row no-gutters slider-text align-items-end">
+                <div class="col-md-9 ftco-animate pb-5">
+                    <p class="breadcrumbs mb-2"><span class="mr-2"><a href="index.html">Trang chủ <i class="ion-ios-arrow-forward"></i></a></span> <span>Dịch vụ <i class="ion-ios-arrow-forward"></i></span></p>
+                    <h1 class="mb-0 bread">Giỏ hàng</h1>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+
+<style>
+    .param {
+        margin-bottom: 7px;
+        line-height: 1.4;
+    }
+
+    .param-inline dt {
+        display: inline-block;
+    }
+
+    .param dt {
+        margin: 0;
+        margin-right: 7px;
+        font-weight: 600;
+    }
+
+    .param-inline dd {
+        vertical-align: baseline;
+        display: inline-block;
+    }
+
+    .param dd {
+        margin: 0;
+        vertical-align: baseline;
+    }
+
+    .shopping-cart-wrap .price {
+        color: #007bff;
+        font-size: 18px;
+        font-weight: bold;
+        margin-right: 5px;
+        display: block;
+    }
+
+    var {
+        font-style: normal;
+    }
+
+    .media img {
+        margin-right: 1rem;
+    }
+
+    .img-sm {
+        width: 90px;
+        max-height: 75px;
+        object-fit: cover;
+    }
+</style>
+
+
+<section class="ftco-section bg-light ftco-faqs" style="padding: 3rem 0">
+    <div class="container card-body table-responsive">
+        <div class="card-body row p-0" id="headingThree" style="justify-content: space-between">
+            <span class="d-flex py-3 px-4 col-md-9 align-items-center justify-content-between btn ">
+                <p class="mb-0">Giỏ hàng chứa : @Model.Count() sản phẩm</p>
+                <i class="fa" aria-hidden="true"></i>
+            </span>
+            <span class="d-flex py-3 col-md-3 col-md-offset-0 px-4 align-items-center justify-content-between btn btn-link  right">
+                <a href="/category" class="mb-0">Tiếp tục mua sắm</a>
+                <i class="fa" aria-hidden="true"></i>
+            </span>
+        </div>
+        <table class="table table-hover shopping-cart-wrap">
+            <thead style="color: black">
+                <tr>
+                    <th scope="col" width="120" style="text-align:center">Hình ảnh</th>
+                    <th scope="col">Sản phẩm</th>
+                    <th scope="col" width="120" style="text-align:center">Số lượng</th>
+                    <th scope="col" width="160" style="text-align:center">Đơn Giá</th>
+                    <th scope="col" width="160" style="text-align:center">Tổng</th>
+                    <th scope="col" width="160" class="text-right"></th>
+                </tr>
+            </thead>
+            <tbody style="color: black" id="contentCart">
+                @if (Model.Count() > 0)
+                {
+                    @foreach (var cartItem in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div class="img-wrap"><img src="~/images/products/@cartItem.Image" class="img-thumbnail img-2"></div>
+                            </td>
+                            <td>
+                                <figure class="media">
+
+                                    <figcaption class="media-body">
+                                        <h6 class="title text-truncate">@cartItem.Name</h6>
+                                        <dl class="param param-inline small">
+                                            <dt>Mô tả:</dt>
+                                            <dd>@cartItem.Desc</dd>
+                                        </dl>
+                                    </figcaption>
+                                </figure>
+                            </td>
+                            <td>
+                                <input type="hidden" name="nameEditCart" value="@cartItem.Name" />
+                                <input type="text" class="form-control" style="text-align:center" name="amount" value="@cartItem.Amount" />
+                            </td>
+                            <td style="text-align:center">
+                                <div class="price-wrap">
+                                    <var class="price">@cartItem.Price.ToString("#,##")</var>
+                                    <small class="text-muted">(VND)</small>
+                                </div> <!-- price-wrap .// -->
+                            </td>
+                            <td style="text-align:center">
+                                <div class="price-wrap">
+                                    <var class="price">@((cartItem.Price * cartItem.Amount).ToString("#,##"))</var>
+                                    <small class="text-muted">(VND)</small>
+                                </div> <!-- price-wrap .// -->
+                            </td>
+                            <td class="text-right">
+                                <a class="btn btn-outline-danger" asp-action="DeleteItemCart" asp-route-Name="@cartItem.Name"> × Xóa</a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr style="text-align: center">
+                        <td colspan="6" style="color: black"><i>Giỏ hàng trống</i></td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="ftco-section bg-light ftco-faqs" style="padding: 2rem 0">
+    <div class="container card-body" style="color: black">
+        <div class="row">
+            <div class="col-md-2">
+                Tổng sản phẩm : <span style="color: orangered">@Model.Count()</span> (sản phẩm)
+            </div>
+            <div class="col-md-6">
+                <ul>
+                    @foreach (var p in Model)
+                    {
+                        <li>
+                            <div>@p.Name</div>
+                            <div><i>( @p.Price.ToString("#,##") x @p.Amount = @((p.Price * p.Amount).ToString("#,##")) )</i></div>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div class="col-md-2">
+                <div><h3>Tổng tiền:</h3></div>
+                <div>
+                    <h4><span style="color: orangered"><u>đ</u> @Model.Sum(p => p.Amount * p.Price).ToString("#,##")</span></h4>
+                </div>
+            </div>
+            <div class="col-md-2">
+                @if (Context.Session.GetString("vm") != null)
+                {
+                    if (Model.Count() > 0)
+                    {
+                        <a class="btn btn-outline-danger" asp-action="Index" asp-controller="CheckOut">Mua hàng</a>
+                    }
+                    else
+                    {
+                        <button class="btn btn-outline-danger errorBuy" name="errorBuy">Mua hàng</button>
+                    }
+                }
+                else
+                {
+
+                    <button class="btn btn-outline-danger errorBuy" name="errorBuy">Vui lòng đăng nhập để mua hàng</button>
+                }
+            </div>
+    </div>
+</section>
+
+<div class="toast" id="myToast" role="alert" aria-live="assertive" aria-atomic="true" style="position:fixed; top: 20px; right: 10px; width: 400px; height: 100px; background-color: orangered; z-index: 999999">
+    <div class="toast-header">
+        <strong class="mr-auto">Thông báo</strong>
+        <small class="text-muted">0 giây trước</small>
+        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="toast-body" style="background-color: white">
+        Giỏ hàng trống hoặc có thể bạn chưa đăng nhập !
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script type="text/javascript">
+    $(function () {
+
+        $("input[type=text][name=amount]").change(function () {
+            var currentAmount = $(this);
+            var Name = $(currentAmount.siblings("input[name='nameEditCart']")[0]);
+
+
+            // request to server
+            $.ajax({
+                url: "/Cart/EditCart",
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                data: { "Name": Name.val(), "Amount": currentAmount.val() },
+                async: true,
+                success: function (res) {
+                    location.reload();
+                }
+            });
+        });
+
+        $(".errorBuy").click(function () {
+            $('.toast').toast({
+                delay: 5000
+            });
+            $("#myToast").toast('show');
+        });
+    });
+</script>

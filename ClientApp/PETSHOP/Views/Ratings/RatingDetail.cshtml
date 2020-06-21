@@ -1,0 +1,400 @@
+﻿@model PETSHOP.Models.ModelView.ProductModelViewDetail
+@using Microsoft.AspNetCore.Http;
+@using PETSHOP.Models.ModelView;
+
+@section breadcumb {
+    <section style="margin-top:10px">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row no-gutters slider-text align-items-end">
+                <div class="col-md-9 ftco-animate pb-5">
+                    <p class="breadcrumbs mb-2"><span class="mr-2"><a asp-action="Index" asp-controller="Home">Trang chủ <i class="ion-ios-arrow-forward"></i></a></span> <span>Đánh giá sản phẩm<i class="ion-ios-arrow-forward"></i></span></p>
+                    <h1 class="mb-0 bread">@Model.ProductName.ToUpper()</h1>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+
+<style>
+    body {
+        margin-top: 20px;
+    }
+
+    .comment-wrapper .panel-body {
+        max-height: 650px;
+        overflow: auto;
+    }
+
+    .comment-wrapper .media-list .media img {
+        width: 64px;
+        height: 64px;
+        border: 2px solid #e5e7e8;
+    }
+
+    .comment-wrapper .media-list .media {
+        border-bottom: 1px dashed #efefef;
+        margin-bottom: 25px;
+    }
+
+    .box-info.full {
+        padding: 0px;
+    }
+
+    .box-info:hover {
+        color: #393E48;
+    }
+
+    .box-info {
+        position: relative;
+        padding: 15px;
+        background: #fff;
+        color: #5b5b5b;
+        margin-bottom: 20px;
+        -webkit-transition: All 0.4s ease;
+        -moz-transition: All 0.4s ease;
+        -o-transition: All 0.4s ease;
+        background: #FFFFFF;
+        margin-top: 20px;
+    }
+
+        .box-info .nav-tabs {
+            background: #1B1E24;
+        }
+
+            .box-info .nav-tabs li.active a, .box-info .nav-tabs li.active a:hover, .box-info .nav-tabs li.active a:focus {
+                cursor: default;
+                border-top: none;
+                border-right: none;
+                border-left: none;
+                border-bottom: none;
+                background-color: #ffffff;
+                color: #1B1E24;
+            }
+
+                .box-info .nav-tabs li.active a i, .box-info .nav-tabs li.active a:hover i, .box-info .nav-tabs li.active a:focus i {
+                    color: #212121;
+                }
+
+            .box-info .nav-tabs li a i {
+                color: #fff;
+            }
+
+        .box-info.full .box-footer {
+            padding: 20px 20px 15px 20px;
+        }
+
+        .box-info .media-list {
+            margin-top: 30px;
+        }
+
+            .box-info .media-list .media {
+                padding: 5px 20px;
+                border-bottom: 1px solid #eaeaea;
+            }
+
+                .box-info .media-list .media .media-object {
+                    width: 50px;
+                }
+
+    .scroll-widget {
+        overflow: hidden;
+        width: auto;
+        height: 325px;
+    }
+
+    a:hover {
+        color: pink;
+    }
+
+    a:after {
+        color: pink;
+    }
+</style>
+
+
+<section class="ftco-section bg-light ftco-faqs" style="padding: 2rem 0">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card-body p-0" id="headingThree">
+                    <h2 class="mb-0">
+                        <span class="d-flex py-3 px-4 align-items-center justify-content-between btn btn-link">
+                            <p class="mb-0">Thông tin sản phẩm</p>
+                            <i class="fa" aria-hidden="true"></i>
+                        </span>
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <div class="order-md-first">
+                        <div class="work img d-flex align-items-end" style="background-image: url(/images/products/@Model.ProductImage); height:350px;">
+                            <a href="~/images/products/@Model.ProductImage" class="icon image-popup d-flex justify-content-center align-items-center">
+                                <span class="fa fa-expand"></span>
+                            </a>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="show" role="tabpanel">
+                        <div class="card-body py-3 px-0">
+                            <div class="text-center">
+                                <h2 class="padding-bottom-7">@(Math.Round(Model.Rating, 1))<small>/ 5.0</small></h2>
+                                <input type="hidden" id="productID" value="@Model.ProductId" />
+                                @for (int i = 1; i <= (int)Model.Rating; i++)
+                                {
+                                    <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                                        <span class="fa fa-star" aria-hidden="true"></span>
+                                    </button>
+                                }
+
+                                @for (int i = 1; i <= 5 - (int)Model.Rating; i++)
+                                {
+                                    <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
+                                        <span class="fa fa-star" aria-hidden="true"></span>
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="card-body">
+                        <div>
+                            <div class="py-3 px-0">
+                                <ol>
+                                    <li>Tên sản phẩm: <span style="color: dodgerblue"><a href="/category/@Model.CategoryName/@Model.SlugName">@Model.ProductName</a></span></li>
+                                    <li>Số lượt đánh giá : <span style="color: orange">@Model.No_Ratings</span></li>
+                                    <li>Nhà phân phối: <span style="color: dodgerblue">@Model.DistributorName</span></li>
+                                    <li>Giá tiền: @((Model.ProductPrice*(1 - Model.ProductDiscount)).ToString("#,##"))</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="card-body p-0" id="headingThree">
+                    <h2 class="mb-0">
+                        <span class="d-flex py-3 px-4 align-items-center justify-content-between btn btn-link">
+                            <p class="mb-0">Tổng quan đánh giá (<i id="no_ratings">@Model.No_Ratings</i>)</p>
+                            <i class="fa" aria-hidden="true"></i>
+                        </span>
+                    </h2>
+                </div>
+                <div class="show" role="tabpanel">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="review-block card-body">
+                                <div class="row" style="padding:20px" id="comment">
+                                    @{
+                                        var credential = new CredentialModel();
+                                        var profile = new UserProfile();
+                                        if (Context.Session.GetString("vm") != null)
+                                        {
+                                            credential = Newtonsoft.Json.JsonConvert.DeserializeObject<CredentialModel>(Context.Session.GetString("vm"));
+                                            profile = credential.Profile as UserProfile;
+                                            <div class="col-sm-3">
+                                                <span id="avatar">
+                                                    <img style="width:60px;height:60px;" src="/images/avatar/@profile.UserProfileAvatar" alt="Ảnh đại diện" />
+                                                </span>
+                                                <div class="review-block-name" id="infoLogin">
+                                                    @(profile.UserProfileFirstName + " " + profile.UserProfileMiddleName + " " + profile.UserProfileLastName)
+                                                </div>
+                                                <input type="hidden" value="@profile.UserProfileId" id="userProfileId" />
+                                            </div>
+                                            <div class="col-sm-9 form-group" id="rating-ability-wrapper">
+                                                <div class="review-block-rate right row" style="justify-content:space-between">
+                                                    <div>
+                                                        <input type="hidden" id="selected_rating" name="selected_rating" value="" required="required">
+                                                        <button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-attr="1" id="rating-star-1">
+                                                            <span class="fa fa-star" aria-hidden="true"></span>
+                                                        </button>
+                                                        <button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-attr="2" id="rating-star-2">
+                                                            <span class="fa fa-star" aria-hidden="true"></span>
+                                                        </button>
+                                                        <button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-attr="3" id="rating-star-3">
+                                                            <span class="fa fa-star" aria-hidden="true"></span>
+                                                        </button>
+                                                        <button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-attr="4" id="rating-star-4">
+                                                            <span class="fa fa-star" aria-hidden="true"></span>
+                                                        </button>
+                                                        <button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-attr="5" id="rating-star-5">
+                                                            <span class="fa fa-star" aria-hidden="true"></span>
+                                                        </button>
+                                                    </div>
+
+                                                </div>
+                                                <div class="panel-body row">
+                                                    <textarea class="form-control" id="content" style="margin:15px" placeholder="Viết đánh giá..." rows="3"></textarea>
+                                                    <br>
+                                                    <span id="cmt" class="btn btn-info pull-right" style="margin:15px"><i class="fa fa-send"></i> &nbsp; Bình luận</span>
+                                                    <div class="clearfix"></div>
+                                                    <hr>
+                                                </div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span>Vui lòng <a asp-controller="Auth" asp-action="Login">đăng nhập</a> để thêm đánh giá </span>
+                                        }
+                                    }
+                                </div>
+                                <hr />
+                                @if (Model.Comments.Count == 0)
+                                {
+                                    <div class="review-block-rate text-center">
+                                        Hiện chưa có đánh giá
+                                    </div>
+                                }
+                                else
+                                {
+                                    var c = 1;
+                                    foreach (var cmt in Model.Comments)
+                                    {
+                                        <div class="row">
+                                            <div class="col-sm-3">
+                                                <input type="hidden" name="cmtID" value="@cmt.UserProfileId" />
+                                                <img src="~/images/avatar/@cmt.UserProfile.UserProfileAvatar" class="img-rounded" style="width:60px;height:60px;">
+                                                <div class="review-block-name">@cmt.UserProfile.UserProfileFirstName @cmt.UserProfile.UserProfileMiddleName @cmt.UserProfile.UserProfileLastName</div>
+                                                <div class="review-block-date">
+                                                    @{
+                                                        if ((DateTime.Now.Date - cmt.UserCommentPostedDate.Value.Date).Days < 1)
+                                                        {
+                                                            if ((DateTime.Now.Hour - cmt.UserCommentPostedDate.Value.Hour) < 1)
+                                                            {
+                                                                <i>@((DateTime.Now.Minute - cmt.UserCommentPostedDate.Value.Minute)) phút trước</i>
+                                                            }
+                                                            else
+                                                            {
+                                                                <i>@((DateTime.Now.Hour - cmt.UserCommentPostedDate.Value.Hour)) giờ trước</i>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            if ((DateTime.Now.Date - cmt.UserCommentPostedDate.Value.Date).Days >= 365)
+                                                            {
+                                                                <i>@((int)(DateTime.Now.Date - cmt.UserCommentPostedDate.Value.Date).Days / 365) năm trước</i>
+                                                            }
+                                                            else
+                                                            {
+                                                                if ((DateTime.Now.Date - cmt.UserCommentPostedDate.Value.Date).Days >= 30)
+                                                                {
+                                                                    <i>@((int)(DateTime.Now.Date - cmt.UserCommentPostedDate.Value.Date).Days / 30) tháng trước</i>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <i>@((DateTime.Now.Date - cmt.UserCommentPostedDate.Value.Date).Days) ngày trước</i>
+                                                                }
+                                                            }
+
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-9">
+                                                <div class="review-block-rate row" style="justify-content:space-between">
+                                                    <div>
+                                                        @for (int i = 1; i <= (int)cmt.Score; i++)
+                                                        {
+                                                            <button type="button" class="btn btn-warning btn-xs" aria-label="Left Align">
+                                                                <span class="fa fa-star" aria-hidden="true"></span>
+                                                            </button>
+                                                        }
+
+                                                        @for (int i = 1; i <= 5 - (int)cmt.Score; i++)
+                                                        {
+                                                            <button type="button" class="btn btn-default btn-grey btn-xs" aria-label="Left Align">
+                                                                <span class="fa fa-star-o" aria-hidden="true"></span>
+                                                            </button>
+                                                        }
+                                                    </div>
+
+                                                    @*<div style="padding-right:20px" name="deleteCmt">
+                                                    <a href="#" style=""><i class="fa fa-trash"></i></a>
+                                                </div>*@
+                                                </div>
+                                                <div class="review-block-title">@cmt.UserCommentContent</div>
+
+                                            </div>
+                                        </div>
+                                        <hr />
+
+                                        c++;
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="~/js/jquery.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        //ratings
+
+        $(".btn-xs").on('click', (function (e) {
+
+            var previous_value = $("#selected_rating").val();
+
+            var selected_value = $(this).attr("data-attr");
+            $("#selected_rating").val(selected_value);
+
+            $(".selected-rating").empty();
+            $(".selected-rating").html(selected_value);
+
+            for (i = 1; i <= selected_value; ++i) {
+                $("#rating-star-" + i).toggleClass('btn-warning');
+                $("#rating-star-" + i).toggleClass('btn-default');
+            }
+
+            for (ix = 1; ix <= previous_value; ++ix) {
+                $("#rating-star-" + ix).toggleClass('btn-warning');
+                $("#rating-star-" + ix).toggleClass('btn-default');
+            }
+        }));
+
+        // thêm bình luận
+
+        $("#cmt").click(function () {
+            var userProfileId = $("#userProfileId").val();
+            var productId = $("#productID").val();
+            var score = $("#selected_rating").val() == "" ? "5" : $("#selected_rating").val();
+            var content = $("#content").val();
+
+            var today = new Date();
+            var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+            var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+            var dateTime = date + ' ' + time;
+
+            var comment = {
+                "UserProfileId": userProfileId,
+                "ProductId": productId,
+                "Score": score,
+                "UserCommentContent": content,
+                "UserCommentPostedDate": dateTime,
+                "UserCommentApproved": true
+            }
+
+            console.log(comment);
+
+            $.ajax({
+                url: "/Ratings/AddComment",
+                type: "POST",
+                data: { comment: JSON.stringify(comment) },
+                dataType: "text",
+                success: function (data) {
+                    location.reload();
+                },
+                error: function (err) {
+                    alert("What's wrong!");
+                    console.log(err);
+                }
+            });
+        });
+
+
+    });
+</script>

@@ -1,0 +1,490 @@
+﻿
+@model IEnumerable<PETSHOP.Models.ModelView.CartItem>
+@using Microsoft.AspNetCore.Http;
+@using PETSHOP.Models.ModelView;
+
+@{
+    var credential = new CredentialModel();
+    var profile = new UserProfile();
+
+    credential = Newtonsoft.Json.JsonConvert.DeserializeObject<CredentialModel>(Context.Session.GetString("vm"));
+    profile = credential.Profile as UserProfile;
+}
+
+@section breadcumb {
+    <section>
+        <div class="container">
+            <div class="row no-gutters slider-text align-items-end">
+                <div class="col-md-9 ftco-animate pb-5">
+                    <p class="breadcrumbs mb-2"><span class="mr-2"><a href="index.html">Trang chủ <i class="ion-ios-arrow-forward"></i></a></span></p>
+                    <h1 class="mb-0 bread">Thanh toán</h1>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+
+<style>
+    .param {
+        margin-bottom: 7px;
+        line-height: 1.4;
+    }
+
+    .param-inline dt {
+        display: inline-block;
+    }
+
+    .param dt {
+        margin: 0;
+        margin-right: 7px;
+        font-weight: 600;
+    }
+
+    .param-inline dd {
+        vertical-align: baseline;
+        display: inline-block;
+    }
+
+    .param dd {
+        margin: 0;
+        vertical-align: baseline;
+    }
+
+    .shopping-cart-wrap .price {
+        color: #007bff;
+        font-size: 18px;
+        font-weight: bold;
+        margin-right: 5px;
+        display: block;
+    }
+
+    var {
+        font-style: normal;
+    }
+
+    .media img {
+        margin-right: 1rem;
+    }
+
+    .img-sm {
+        width: 90px;
+        max-height: 75px;
+        object-fit: cover;
+    }
+</style>
+
+<script src="https://www.paypal.com/sdk/js?client-id=Ab3tKPoFC5qwO5jnl5GTYzxF4GreVWIlddFbjLBPHBkd7KN0IHRUmMGfLhIphPtAT1kJhytO7ymLPZ3W">
+    // Required. Replace SB_CLIENT_ID with your sandbox client ID.
+</script>
+<section class="ftco-section bg-light ftco-faqs" style="padding: 3rem 0; ">
+    <div class="container card-body table-responsive">
+        <div class="container card-body p-0" style="justify-content: space-between; background-color: #00bd56;">
+            <span class="d-flex py-3 px-4 col-md-9 align-items-center justify-content-between btn ">
+                <p class="mb-0" style="color: white;"><i class="fa fa-shopping-bag"></i> &nbsp; Giỏ hàng của bạn </p>
+                <i class="fa" aria-hidden="true"></i>
+            </span>
+        </div>
+        <table class="table table-hover shopping-cart-wrap">
+            <thead style="color: black">
+                <tr>
+                    <th scope="col" width="120" style="text-align:center">Hình ảnh</th>
+                    <th scope="col">Sản phẩm</th>
+                    <th scope="col" width="120" style="text-align:center">Số lượng</th>
+                    <th scope="col" width="160" style="text-align:center">Đơn Giá</th>
+                    <th scope="col" width="160" style="text-align:center">Tổng</th>
+                </tr>
+            </thead>
+            <tbody style="color: black" id="contentCart">
+                @if (Model.Count() > 0)
+                {
+                    @foreach (var cartItem in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div class="img-wrap"><img src="~/images/products/@cartItem.Image" class="img-thumbnail img-2"></div>
+                            </td>
+                            <td>
+                                <figure class="media">
+
+                                    <figcaption class="media-body">
+                                        <h6 class="title text-truncate">@cartItem.Name</h6>
+                                        <dl class="param param-inline small">
+                                            <dt>Mô tả:</dt>
+                                            <dd>@cartItem.Desc</dd>
+                                        </dl>
+                                    </figcaption>
+                                </figure>
+                            </td>
+                            <td style="text-align: center; color: black">
+                                @cartItem.Amount
+                            </td>
+                            <td style="text-align:center">
+                                <div class="price-wrap">
+                                    <var class="price">@cartItem.Price.ToString("#,##")</var>
+                                    <small class="text-muted">(VND)</small>
+                                </div> <!-- price-wrap .// -->
+                            </td>
+                            <td style="text-align:center">
+                                <div class="price-wrap">
+                                    <var class="price">@((cartItem.Price * cartItem.Amount).ToString("#,##"))</var>
+                                    <small class="text-muted">(VND)</small>
+                                </div> <!-- price-wrap .// -->
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr style="text-align: center">
+                        <td colspan="6" style="color: black"><i>Giỏ hàng trống</i></td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="ftco-section bg-light ftco-faqs" style="padding: 3rem 0">
+    <form class="needs-validation container card-body" novalidate>
+        <div class="container card-body p-0" style="justify-content: space-between; background-color: #00bd56;">
+            <span class="d-flex py-3 px-4 col-md-9 align-items-center justify-content-between btn ">
+                <p class="mb-0" style="color: white;"><i class="fa fa-truck"></i> &nbsp; Thông tin vận chuyển</p>
+                <i class="fa" aria-hidden="true"></i>
+            </span>
+        </div>
+        <div class="form-row">
+            <div class="col-md-6 mb-3">
+                <label for="validationCustom01">Họ tên</label>
+                <input type="text" class="form-control" id="validationCustom01" placeholder="First name" value="@(profile.UserProfileFirstName + " " + profile.UserProfileMiddleName + " " + profile.UserProfileLastName )" required disabled>
+                <div class="valid-feedback">
+                    Tốt
+                </div>
+            </div>
+            <input type="hidden" id="userProfileId" value="@profile.UserProfileId" />
+            <div class="col-md-6 mb-3">
+                <label for="validationCustom02">Số điện thoại</label>
+                <input type="text" class="form-control" id="phone" placeholder="+84123466872" value="@profile.UserProfilePhoneNumber" required>
+                <div class="valid-feedback">
+                    Tốt
+                </div>
+            </div>
+            <div class="col-md-12 mb-3">
+                <label for="validationCustom02">Địa chỉ</label>
+                <textarea type="text" class="form-control" id="address" placeholder="Địa chỉ giao hàng..." required>@profile.UserProfileAddress</textarea>
+                <div class="valid-feedback">
+                    Tốt
+                </div>
+            </div>
+            <div class="col-md-12 mb-3">
+                <label for="validationCustom02">Ghi chú</label>
+                <input type="text" class="form-control" id="note" placeholder="Nhắn nhủ người bán ..." value="" required>
+                <div class="valid-feedback">
+                    Tốt
+                </div>
+            </div>
+        </div>
+
+
+        <script>
+            // Example starter JavaScript for disabling form submissions if there are invalid fields
+            (function () {
+                'use strict';
+                window.addEventListener('load', function () {
+                    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                    var forms = document.getElementsByClassName('needs-validation');
+                    // Loop over them and prevent submission
+                    var validation = Array.prototype.filter.call(forms, function (form) {
+                        form.addEventListener('submit', function (event) {
+                            if (form.checkValidity() === false) {
+                                event.preventDefault();
+                                event.stopPropagation();
+                            }
+                            form.classList.add('was-validated');
+                        }, false);
+                    });
+                }, false);
+            })();
+        </script>
+
+        <div class="container card-body p-0" style="justify-content: space-between; background-color: #00bd56;">
+            <span class="d-flex py-3 px-4 col-md-9 align-items-center justify-content-between btn ">
+                <p class="mb-0" style="color: white;"><i class="fa fa-money"></i> &nbsp; Thanh toán</p>
+                <i class="fa" aria-hidden="true"></i>
+            </span>
+        </div>
+        <div class="container">
+            <div class="row card-body">
+                <div class="col-md-8">
+                    <div class="btn btn-info clearfix">Chọn loại hình vận chuyển:</div>
+                    <div style="margin: 10px">
+                        @foreach (var type in ViewBag.DeliveryType as List<DeliveryProductType>)
+                        {
+                            <div class="form-check-inline">
+                                <label class="form-check-label">
+                                    <input type="radio" class="form-check-input" name="deliveryType" checked value="@type.DeliveryProductTypePrice-@type.DeliveryProductTypeId">@type.DeliveryProductTypeName
+                                </label>
+                            </div>
+                        }                        
+                    </div>
+                </div>
+                <div class="col-md-4 col-md-offset-6 right">
+                    <input type="hidden" id="totalPrice" value="@Model.Sum(p=>p.Amount * p.Price)" />
+                    <input type="hidden" id="moneyOfTypeHidden" value="35000" />
+                    <div>Tổng đơn hàng:  <span style="color: orangered"><u>đ</u> @(Model.Sum(p=>p.Amount * p.Price).ToString("#,##"))</span></div>
+                    <div>Phí shipping: <u style="color: orangered">đ</u><span style="color: orangered" id="moneyOfType">35000</span> </div>
+                    <div>Tổng thanh toán:  <h2 style="color: orangered"><u>đ</u><span id="totalCheckout">@((Model.Sum(p=>p.Amount * p.Price) + 35000).ToString("#,##"))</span></h2> </div>
+                </div>
+                <hr />
+            </div>
+            <div class="row">
+                <div class="col-md-4"><button type="submit" id="submit" class="btn btn-outline-info">Thanh toán khi nhận hàng</button></div>
+
+                <div class="col-md-4" id="paypal-button-container">
+                </div>
+
+                <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+                <script>
+                    var orderItems = [];
+                    var totalValue = 0.0;
+                    var exchangeRate = 20000.0;
+                    var shippingValue = $("#moneyOfTypeHidden").val();
+                    var shipping = Math.round((parseFloat(shippingValue) / exchangeRate) * 10) / 10;
+                    console.log("shipping: " + shipping);
+                    function Update() {
+                        $.ajax({
+                            type: "get",
+                            url: "/Checkout/GetCart",
+                            dataType: "json",
+                            success: function (response) {
+                                response.forEach(item => {
+                                    var shippingItem = Math.round(shipping / (response.length * item.amount) * 10) /10;
+                                    console.log("shipping mỗi item : " + shippingItem);
+                                    totalValue += Math.round(((Math.round((item.price / exchangeRate) * 10) / 10) + shippingItem) * 10) / 10 * item.amount;
+                                    var orderItem = {
+                                        name: item.name,
+                                        unit_amount: {
+                                            value: Math.round((Math.round((item.price / exchangeRate) * 10) / 10 + shippingItem ) * 10) /10 ,
+                                            currency_code: 'USD'
+                                        },
+                                        quantity: item.amount,
+                                        sku: item.cartItemSlugName
+                                    };
+                                    orderItems.push(orderItem);
+
+                                });
+
+                                totalValue = Math.round(totalValue * 10) / 10;
+                                console.log(totalValue)
+                            }
+                        });
+                    }
+                    Update();
+
+                    console.log(orderItems);
+                    paypal.Buttons({
+                        createOrder: function (data, actions) {
+                            // This function sets up the details of the transaction, including the amount and line item details.
+                            return actions.order.create({
+                                purchase_units: [{
+                                    amount: {
+                                        value: totalValue,
+                                        currency_code: 'USD',
+                                        breakdown: {
+                                            item_total: { value: totalValue, currency_code: 'USD' }
+                                        },
+                                    },
+                                    items: orderItems
+                                }]
+                            });
+                        },
+                        onApprove: function (data, actions) {
+                            // This function captures the funds from the transaction.
+                            return actions.order.capture().then(function (details) {
+                                var shipping = details.purchase_units[0].shipping;
+
+                                // Create bill
+                                // get value
+                                //Bill
+
+                                var today = new Date();
+                                var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+                                var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+                                var dateTime = date + ' ' + time;
+
+                                var UserProfileId = $("#userProfileId").val();
+                                var DateOfPurchase = dateTime;
+                                var TotalPrice = parseInt($("#totalPrice").val()) + parseInt($("#moneyOfTypeHidden").val());
+                                var IsDelivery = true;
+                                var PaymentMethodTypeId = 2;
+
+                                // Delivery
+
+                                var DeliveryProductAddress = $("#address").val();
+                                var DeliveryProductPhoneNumber = $("#phone").val();
+                                var DeliveryProductNote = $("#note").val();
+                                var DeliveryProductStateId = 1; // Đã xác nhận
+                                var DeliveryProductTypeId = 1;
+                                var types = document.getElementsByName('deliveryType');
+                                for (i = 0; i < types.length; i++) {
+                                    if (types[i].checked) {
+                                        DeliveryProductTypeId = types[i].value.split("-")[1];
+                                    }
+                                }
+
+                                var Bill = {
+                                    UserProfileId,
+                                    DateOfPurchase,
+                                    TotalPrice,
+                                    IsDelivery,
+                                    PaymentMethodTypeId,
+                                    DeliveryProductAddress,
+                                    DeliveryProductPhoneNumber,
+                                    DeliveryProductNote,
+                                    DeliveryProductStateId,
+                                    DeliveryProductTypeId
+                                }
+
+                                console.log(Bill);
+
+                                // request to server
+                                $.ajax({
+                                    url: "/CheckOut/CheckOutSimple",
+                                    type: "GET",
+                                    contentType: "application/json; charset=utf-8",
+                                    data: { "bill": JSON.stringify(Bill) },
+                                    async: true,
+                                    success: function (res) {
+                                        console.log(res);
+                                        document.getElementById("billId").innerText = res.generateCodeCheck;
+
+                                        $('.toast').toast({
+                                            delay: 5000
+                                        });
+                                        $("#myToast").toast('show');
+                                    }
+                                });
+                            });
+                        }
+                    }).render('#paypal-button-container');
+                </script>
+            </div>
+        </div>
+    </form>
+</section>
+
+<div class="toast" id="myToast" role="alert" aria-live="assertive" aria-atomic="true" style="position:fixed; top: 20px; right: 10px; width: 400px; height: 100px; background-color: #20c997">
+    <div class="toast-header">
+        <strong class="mr-auto">Thông báo</strong>
+        <small class="text-muted">0 giây trước</small>
+        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="toast-body" style="background-color: white">
+       Đơn hàng của bạn đã đươc chuyển đến cửa hàng <a href="#">#<span id="billId"></span></a>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script type="text/javascript">
+    $(function () {
+
+        $("input[type=text][name=amount]").change(function () {
+            var currentAmount = $(this);
+            var Name = $(currentAmount.siblings("input[name='nameEditCart']")[0]);
+
+
+            // request to server
+            $.ajax({
+                url: "/Cart/EditCart",
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                data: { "Name": Name.val(), "Amount": currentAmount.val() },
+                async: true,
+                success: function (res) {
+                    location.reload();
+                }
+            });
+        });
+
+        $("input[type=radio][name=deliveryType]").change(function () {
+            var moneyOfType = $(this).val().split("-")[0];
+            var totalPrice = $("#totalPrice").val();
+            var totalCheckout = parseInt(moneyOfType) + parseInt(totalPrice);
+            document.getElementById("totalCheckout").textContent = totalCheckout;
+            document.getElementById("moneyOfType").textContent = moneyOfType;
+            $("#moneyOfTypeHidden").val(moneyOfType);
+        });
+
+        $("#submit").click(function (e) {
+            e.preventDefault();
+            // get value
+            //Bill
+
+            var today = new Date();
+            var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+            var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+            var dateTime = date + ' ' + time;
+
+            var UserProfileId = $("#userProfileId").val();
+            var DateOfPurchase = dateTime;
+            var TotalPrice = parseInt($("#totalPrice").val()) + parseInt($("#moneyOfTypeHidden").val());
+            var IsDelivery = false;
+            var PaymentMethodTypeId = 1;
+
+            // Delivery
+
+            var DeliveryProductAddress = $("#address").val();
+            var DeliveryProductPhoneNumber = $("#phone").val();
+            var DeliveryProductNote = $("#note").val();
+            var DeliveryProductStateId = 1; // Đã xác nhận
+            var DeliveryProductTypeId = 1;
+            var types = document.getElementsByName('deliveryType');
+            for (i = 0; i < types.length; i++) {
+                if (types[i].checked) {
+                    DeliveryProductTypeId = types[i].value.split("-")[1];
+                }
+            }
+
+            var Bill = {
+                UserProfileId,
+                DateOfPurchase,
+                TotalPrice,
+                IsDelivery,
+                PaymentMethodTypeId,
+                DeliveryProductAddress,
+                DeliveryProductPhoneNumber,
+                DeliveryProductNote,
+                DeliveryProductStateId,
+                DeliveryProductTypeId
+            }
+
+            console.log(Bill);
+
+            // request to server
+            $.ajax({
+                url: "/CheckOut/CheckOutSimple",
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                data: { "bill": JSON.stringify(Bill) },
+                async: true,
+                success: function (res) {
+                    console.log(res);
+                    document.getElementById("billId").innerText = res.generateCodeCheck;
+
+                    $('.toast').toast({
+                        delay: 5000
+                    });
+                    $("#myToast").toast('show');
+
+                    $('#myToast').on('hidden.bs.toast', function () {
+                        location.reload();
+                    });
+                }
+            });
+        });
+
+        
+    });
+</script>

@@ -1,0 +1,229 @@
+﻿@model IEnumerable<PETSHOP.Models.ModelView.CartItem>
+
+@section breadcumb {
+    <section>
+        <div class="container">
+            <div class="row no-gutters slider-text align-items-end">
+                <div class="col-md-9 ftco-animate pb-5">
+                    <p class="breadcrumbs mb-2"><span class="mr-2"><a href="index.html">Trang chủ <i class="ion-ios-arrow-forward"></i></a></span></p>
+                    <h1 class="mb-0 bread">Thanh toán</h1>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+
+<style>
+    .param {
+        margin-bottom: 7px;
+        line-height: 1.4;
+    }
+
+    .param-inline dt {
+        display: inline-block;
+    }
+
+    .param dt {
+        margin: 0;
+        margin-right: 7px;
+        font-weight: 600;
+    }
+
+    .param-inline dd {
+        vertical-align: baseline;
+        display: inline-block;
+    }
+
+    .param dd {
+        margin: 0;
+        vertical-align: baseline;
+    }
+
+    .shopping-cart-wrap .price {
+        color: #007bff;
+        font-size: 18px;
+        font-weight: bold;
+        margin-right: 5px;
+        display: block;
+    }
+
+    var {
+        font-style: normal;
+    }
+
+    .media img {
+        margin-right: 1rem;
+    }
+
+    .img-sm {
+        width: 90px;
+        max-height: 75px;
+        object-fit: cover;
+    }
+</style>
+
+
+<section class="ftco-section bg-light ftco-faqs" style="padding: 3rem 0">
+    <div class="container card-body table-responsive">
+        <div class="card-body row p-0" id="headingThree" style="justify-content: space-between">
+            <span class="d-flex py-3 px-4 col-md-9 align-items-center justify-content-between btn ">
+                <p class="mb-0">Giỏ hàng của bạn</p>
+                <i class="fa" aria-hidden="true"></i>
+            </span>
+
+        </div>
+        <table class="table table-hover shopping-cart-wrap">
+            <thead style="color: black">
+                <tr>
+                    <th scope="col" width="120" style="text-align:center">Hình ảnh</th>
+                    <th scope="col">Sản phẩm</th>
+                    <th scope="col" width="120" style="text-align:center">Số lượng</th>
+                    <th scope="col" width="160" style="text-align:center">Đơn Giá</th>
+                    <th scope="col" width="160" style="text-align:center">Tổng</th>
+                    <th scope="col" width="160" class="text-right"></th>
+                </tr>
+            </thead>
+            <tbody style="color: black" id="contentCart">
+                @if (Model.Count() > 0)
+                {
+                    @foreach (var cartItem in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div class="img-wrap"><img src="~/images/products/@cartItem.Image" class="img-thumbnail img-2"></div>
+                            </td>
+                            <td>
+                                <figure class="media">
+
+                                    <figcaption class="media-body">
+                                        <h6 class="title text-truncate">@cartItem.Name</h6>
+                                        <dl class="param param-inline small">
+                                            <dt>Mô tả:</dt>
+                                            <dd>@cartItem.Desc</dd>
+                                        </dl>
+                                    </figcaption>
+                                </figure>
+                            </td>
+                            <td style="text-align: center; color: black">
+                                @cartItem.Amount
+                            </td>
+                            <td style="text-align:center">
+                                <div class="price-wrap">
+                                    <var class="price">@cartItem.Price.ToString("#,##")</var>
+                                    <small class="text-muted">(VND)</small>
+                                </div> <!-- price-wrap .// -->
+                            </td>
+                            <td style="text-align:center">
+                                <div class="price-wrap">
+                                    <var class="price">@((cartItem.Price * cartItem.Amount).ToString("#,##"))</var>
+                                    <small class="text-muted">(VND)</small>
+                                </div> <!-- price-wrap .// -->
+                            </td>
+                            <td class="text-right">
+                                <a class="btn btn-outline-danger" asp-action="DeleteItemCart" asp-route-Name="@cartItem.Name"> × Xóa</a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr style="text-align: center">
+                        <td colspan="6" style="color: black"><i>Giỏ hàng trống</i></td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="ftco-section bg-light ftco-faqs" style="padding: 3rem 0">
+    <div class="container card-body">
+        <form class="needs-validation" novalidate>
+            <div class="form-row">
+                <div class="col-md-4 mb-3">
+                    <label for="validationCustom01">First name</label>
+                    <input type="text" class="form-control" id="validationCustom01" placeholder="First name" value="Mark" required>
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="validationCustom02">Last name</label>
+                    <input type="text" class="form-control" id="validationCustom02" placeholder="Last name" value="Otto" required>
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="validationCustomUsername">Username</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroupPrepend">s</span>
+                        </div>
+                        <input type="text" class="form-control" id="validationCustomUsername" placeholder="Username" aria-describedby="inputGroupPrepend" required>
+                        <div class="invalid-feedback">
+                            Please choose a username.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-6 mb-3">
+                    <label for="validationCustom03">City</label>
+                    <input type="text" class="form-control" id="validationCustom03" placeholder="City" required>
+                    <div class="invalid-feedback">
+                        Please provide a valid city.
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="validationCustom04">State</label>
+                    <input type="text" class="form-control" id="validationCustom04" placeholder="State" required>
+                    <div class="invalid-feedback">
+                        Please provide a valid state.
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="validationCustom05">Zip</label>
+                    <input type="text" class="form-control" id="validationCustom05" placeholder="Zip" required>
+                    <div class="invalid-feedback">
+                        Please provide a valid zip.
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+                    <label class="form-check-label" for="invalidCheck">
+                        Agree to terms and conditions
+                    </label>
+                    <div class="invalid-feedback">
+                        You must agree before submitting.
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-primary" type="submit">Submit form</button>
+        </form>
+
+        <script>
+            // Example starter JavaScript for disabling form submissions if there are invalid fields
+            (function () {
+                'use strict';
+                window.addEventListener('load', function () {
+                    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                    var forms = document.getElementsByClassName('needs-validation');
+                    // Loop over them and prevent submission
+                    var validation = Array.prototype.filter.call(forms, function (form) {
+                        form.addEventListener('submit', function (event) {
+                            if (form.checkValidity() === false) {
+                                event.preventDefault();
+                                event.stopPropagation();
+                            }
+                            form.classList.add('was-validated');
+                        }, false);
+                    });
+                }, false);
+            })();
+        </script>
+    </div>
+</section>

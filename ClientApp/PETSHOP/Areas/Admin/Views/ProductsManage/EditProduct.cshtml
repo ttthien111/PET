@@ -1,0 +1,75 @@
+﻿@model PETSHOP.Models.Product
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "EditProduct";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3  d-sm-flex align-items-center justify-content-between mb-4">
+        <h6 class="m-0 font-weight-bold text-primary">Chỉnh sửa</h6>
+        <a asp-action="Index" class="btn btn-warning btn-icon-split btn-sm">
+            <span class="icon text-white-50">
+                <i class="fa fa-backward"></i>
+            </span>
+            <span class="text">Quay lại</span>
+        </a>
+    </div>
+    <div class="card-body">
+        <div class="table">
+            <form asp-action="EditProduct" asp-controller="ProductsManage" asp-area="Admin" asp-route-id="@Model.ProductId" method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="row" style="padding: 0 2rem">
+                    <input type="hidden" name="ProductId" class="form-control col-md-8" value="@Model.ProductId" />
+                </div>
+                <hr />
+                <div class="row" style="padding: 0 2rem">
+                    <label class="col-md-3">Tên sản phẩm: </label>
+                    <input type="text" name="ProductName" class="form-control col-md-8" value="@Model.ProductName" />
+                </div>
+                <hr />
+                <div class="row" style="padding: 0 2rem">
+                    <label class="col-md-3">Giá:  </label>
+                    <input type="text" name="ProductPrice" class="form-control col-md-8" value="@Model.ProductPrice" />
+                </div>
+                <hr />
+                <div class="row" style="padding: 0 2rem">
+                    <label class="col-md-3">Giảm giá: </label>
+                    <input type="text" name="ProductDiscount" class="form-control col-md-8" value="@Model.ProductDiscount" />
+                </div>
+                <hr />
+                <div class="row" style="padding: 0 2rem">
+                    <label class="col-md-3">Mô tả:  </label>
+                    <input type="text" name="ProductDescription" class="form-control col-md-8" value="@Model.ProductDescription" />
+                </div>
+                <hr />
+                <div class="row" style="padding: 0 2rem">
+                    <label class="col-md-3">Nhà cung cấp:  </label>
+                    <div class="col-md-8">
+                        <select class="form-control" asp-for="DistributorId" asp-items="@(new SelectList(ViewBag.Distributors as List<PETSHOP.Models.Distributor>,"DistributorId", "DistributorName"))">
+                        </select>
+                    </div>
+                </div>
+                <hr />
+                <div class="row" style="padding: 0 2rem">
+                    <label class="col-md-3">Loại hàng:  </label>
+                    <div class="col-md-8">
+                        <select class="form-control" asp-for="CategoryId" asp-items="@(new SelectList(ViewBag.Categories as List<PETSHOP.Models.Category>,"CategoryId", "CategoryName"))">
+                        </select>
+                    </div>
+                </div>
+                <hr />
+                <div class="row" style="padding: 0 2rem">
+                    <label class="col-md-3">Hình ảnh: </label>
+                    <input type="file" name="productFile" class="col-md-8" />
+                </div>
+                <hr />
+                <div class="row" style="padding: 0 2rem">
+                    <button class="btn btn-primary" type="submit">Lưu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+

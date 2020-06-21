@@ -1,0 +1,157 @@
+﻿@model PETSHOP.Models.ModelView.RegisterModel
+@section breadcumb {
+    <section>
+        <div class="container">
+            <div class="row no-gutters slider-text align-items-end">
+                <div class="col-md-9 ftco-animate pb-5">
+                    <p class="breadcrumbs mb-2"><span class="mr-2"><a href="index.html">Trang chủ <i class="ion-ios-arrow-forward"></i></a></span> </p>
+                    <h1 class="mb-0 bread">Đăng kí</h1>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+
+<style>
+    .exist{
+        color: red
+    }
+
+    .available{
+        color: blue
+    }
+</style>
+
+<section class="ftco-section bg-light ftco-faqs" style="padding: 3rem 0">
+    <div class="container">
+        <article class="card-body mx-auto" style="max-width: 600px">
+            <h4 class="card-title mt-3 text-center">Tạo tài khoản</h4>
+            <form enctype="multipart/form-data" asp-action="Register" asp-controller="Auth" method="post">
+                <label for="inputPassword5">Email</label>
+                <input name="Email" asp-for="Email" class="form-control" placeholder="Địa chỉ email" type="email" required>
+                <small id="email" name="valiEmail" class="form-text">
+                </small>
+
+                <label for="inputPassword5">Mật khẩu</label>
+                <input asp-for="Password" type="password" name="Password" class="form-control" aria-describedby="passwordHelpBlock" required>
+                <small name="passwordHelp" class="form-text">
+
+                </small>
+
+                <label for="inputPassword5">Nhập lại mật khẩu</label>
+                <input type="password" name="password-confirm" class="form-control" aria-describedby="passwordHelpBlock" required>
+                <small name="passwordHelp" class="form-text">
+
+                </small>
+
+                <p class="divider-text">
+                    <span class="bg-light">Thông tin cá nhân</span>
+                </p>
+
+                <label for="inputPassword5">Họ</label>
+                <input asp-for="FirstName" name="FirstName" class="form-control" placeholder="Họ" type="text" required>
+                <small id="firstname_help" class="form-text text-muted">
+
+                </small>
+
+                <label for="inputPassword5">Tên lót</label>
+                <input asp-for="MiddleName" name="MiddleName" class="form-control" placeholder="Lót" type="text" required>
+                <small id="middlename_help" class="form-text text-muted">
+
+                </small>
+
+                <label for="inputPassword5">Tên</label>
+                <input asp-for="LastName" name="lastname" class="form-control" placeholder="Tên" type="text" required>
+                <small id="passwordHelpBlock" class="form-text text-muted">
+
+                </small>
+
+                <label for="inputPassword5">Ngày sinh</label>
+                <input asp-for="DOB" name="DOB" class="form-control" type="date" required>
+                <small id="passwordHelpBlock" class="form-text text-muted">
+
+                </small>
+
+                <label for="inputPassword5">Số điện thoại</label>
+                <input asp-for="PhoneNumber" name="PhoneNumber" class="form-control" placeholder="ex: +841255195912" type="text" required>
+                <small id="passwordHelpBlock" class="form-text text-muted">
+
+                </small>
+
+                <p class="divider-text">
+                    <span class="bg-light">Ảnh đại diện</span>
+                </p>
+
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" name="avatarFile" id="avatarFile">
+                    <label class="custom-file-label" for="customFile">Chọn ảnh</label>
+                </div>
+
+                <div style="padding: 10px 0px">
+                    <button type="submit" id="register" class="btn btn-primary button button4">Đăng kí</button>
+                </div>
+
+            </form>
+        </article>
+    </div>
+</section>
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script type="text/javascript">
+    $(function () {
+
+        $("input[type=password][name=password-confirm]").keyup(function () {
+            var password_confirm = $(this).val();
+            var password = $("input[type=password][name=Password]").val();
+            var email = $("input[type=email][name=Email]").val();
+            if (password !== password_confirm && email != "") {
+
+                document.getElementById("register").disabled = true;
+
+                $("small[name=passwordHelp]").removeClass().addClass("form-text exist");
+                $("small[name=passwordHelp]").html("");
+                $("small[name=passwordHelp]").html("Mật khẩu xác nhận không trùng");
+            }
+            else {
+
+                $("small[name=passwordHelp]").removeClass().addClass("form-text");
+                $("small[name=passwordHelp]").html("");
+                document.getElementById("register").disabled = false;
+            }
+        });
+
+        $("input[name=Email][type=email]").keyup(function () {
+            // get value email
+            var email = $(this).val();
+            console.log(email);
+
+            if (email.toString().includes(".com")) {
+                $.ajax({
+                    url: "/auth/ExistEmailValidate",
+                    type: "GET",
+                    contentType: "application/json; charset=utf-8",
+                    data: { "email": email },
+                    async: true,
+                    success: function (res) {
+                        var noti = res;
+                        var mess = noti.split("-")[1];
+                        var status = noti.split("-")[0];
+                        if (status == "available") {
+                            $("small[name=valiEmail]").removeClass().addClass("form-text available");
+                            $("#email").html("");
+                            $("#email").html(mess)
+                        } else {
+                            $("small[name=valiEmail]").removeClass().addClass("form-text exist");
+                            $("#email").html("");
+                            $("#email").html(mess)
+                        }
+                    }
+                });
+            } else {
+                $("small[name=valiEmail]").removeClass().addClass("form-text exist");
+                $("#email").html("");
+                $("#email").html("Email không hợp lệ")
+            }
+        });
+    });
+</script>

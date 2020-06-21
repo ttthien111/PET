@@ -1,0 +1,27 @@
+﻿@model PETSHOP.Models.ModelView.RegisterModel
+@{
+    ViewData["Title"] = "Verify Email";
+}
+
+<section class="ftco-section bg-light ftco-faqs" style="padding: 3rem 0">
+    <div class="container card-body table-responsive">
+        <!-- 404 Error Text -->
+        <div class="text-center">
+            <div class="error mx-auto" data-text="404">Thông báo</div>
+            <p class="lead text-gray-800 mb-5">Xác minh thông tin email</p>
+            <p class="text-gray-500 mb-0">Chúng tôi đã gửi đến email : @Model.Email một mã xác minh để xác thực tài khoản. Vui lòng kiểm tra <a href="https://gmail.com"><span class="fa fa-mail-forward">hộp thư gmail</span></a> của bạn !</p>
+
+            <form asp-action="VerifyEmail" method="post">
+                <div class="center" style="padding: 15px;">
+                    <input type="text" class="form-control" name="codeRegister" style="max-width:400px; margin: auto;" placeholder="Mã xác minh (12 ký tự)" required>
+                    <button type="submit" class="btn btn-primary mb-2">Xác thực </button>
+                </div>
+            </form>
+
+            <div>
+                <a asp-action="Register" asp-controller="Auth">&larr; Quay lại</a>
+            </div>
+
+        </div>
+    </div>
+</section>

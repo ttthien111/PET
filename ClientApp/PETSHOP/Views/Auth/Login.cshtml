@@ -1,0 +1,152 @@
+﻿@model PETSHOP.Models.ModelView.LoginModel
+
+@{
+    ViewData["Title"] = "Đăng nhập";
+    Layout = "~/Views/Shared/login.cshtml";
+}
+
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v7.0&appId=775745366296011&autoLogAppEvents=1" nonce="g2zmi9u9"></script>
+<script>
+    function statusChangeCallback(response) {  // Called with the results from FB.getLoginStatus().
+        // The current login status of the person.
+        if (response.status === 'connected') {   // Logged into your webpage and Facebook.
+            testAPI();
+        } else {                                 // Not logged into your webpage or we are unable to tell.
+            document.getElementById('status').innerHTML = 'Please log ' +
+                'into this webpage.';
+        }
+    }
+
+
+    function checkLoginState() {               // Called when a person is finished with the Login Button.
+        FB.getLoginStatus(function (response) {   // See the onlogin handler
+            statusChangeCallback(response);
+        });
+    }
+
+    window.fbAsyncInit = function () {
+        FB.init({
+            appId: '775745366296011',
+            cookie: true,
+            xfbml: true,
+            version: 'c6a7ff7e1296343ffe3bb662797e5dfd'
+        });
+
+        FB.getLoginStatus(function (response) {   // Called after the JS SDK has been initialized.
+            statusChangeCallback(response);        // Returns the login status.
+        });
+
+    };
+
+    (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) { return; }
+        js = d.createElement(s); js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
+    function testAPI() {                      // Testing Graph API after login.  See statusChangeCallback() for when this call is made.
+        FB.api('/me?fields=id,first_name,middle_name,last_name,address,email,birthday', function (response) {
+            // request ajax get token login
+
+            var data = {
+                Email: response.email,
+                FirstName: response.first_name,
+                MiddleName: response.middle_name,
+                LastName: response.last_name
+            };
+
+            $.ajax({
+                url: "/Auth/LoginExternal",
+                type: "POST",
+                data: { loginEx: JSON.stringify(data) },
+                dataType: "text",
+                success: function (data) {
+                    window.location.href = "https://localhost:44337/";
+                },
+                error: function (err) {
+                    alert("What's wrong!");
+                    console.log(err);
+                }
+            });
+        });
+    }
+</script>
+
+
+<style>
+    div.fb-login-button.fb_iframe_widget_fluid {
+        display: block !important;
+    }
+
+    div.fb-login-button.fb_iframe_widget_fluid span, div.fb-login-button.fb_iframe_widget_fluid span iframe {
+        width: 100% !important;
+    }
+</style>
+
+<div class="limiter">
+    <div class="container-login100">
+        <div class="wrap-login100">
+            <form class="login100-form validate-form" asp-action="Login" method="post">
+                <span class="login100-form-title p-b-43">
+                    Đăng nhập
+                </span>
+
+                <div class="wrap-input100" style="border: none">
+                    @if (ViewBag.error != null)
+                    {
+
+                        <span class="alert alert-danger">@ViewBag.error</span>
+                    }
+                </div>
+
+                <div class="wrap-input100 validate-input" data-validate="Valid email is required: petshop@abc.xyz">
+                    <input class="input100" asp-for="Username" type="text" name="Username">
+                    <span class="focus-input100"></span>
+                    <span class="label-input100">Email</span>
+                </div>
+
+                <input type="hidden" asp-for="returnUrl" name="returnUrl" value="@ViewBag.returnUrl" />
+
+                <div class="wrap-input100 validate-input" data-validate="Password is required">
+                    <input class="input100" asp-for="Password" type="password" name="Password">
+                    <span class="focus-input100"></span>
+                    <span class="label-input100">Mật khẩu</span>
+                </div>
+
+                <div class="flex-sb-m w-full p-t-3 p-b-32">
+                    <div>
+                        <a asp-action="ForgetPassword" asp-controller="Auth" class="txt1">
+                            Quên mật khẩu ?
+                        </a>
+                    </div>
+                </div>
+
+
+                <div class="container-login100-form-btn">
+                    <button class="login100-form-btn" type="submit">
+                        Đăng nhập
+                    </button>
+                </div>
+
+                <div class="text-center p-t-46 p-b-20">
+                    <span class="txt2">
+                        hoặc đăng nhập với
+                    </span>
+                </div>
+
+                <div class="login100-form-social flex-c-m">
+                    
+                    @*<div class="fb-login-button" data-size="medium" data-button-type="login_with" data-layout="rounded" data-auto-logout-link="false" data-use-continue-as="true" data-width=""></div>*@
+                    <fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
+                    </fb:login-button>
+                </div>
+            </form>
+
+            <div class="login100-more" style="background-image: url('/images/bg_1.jpg');">
+            </div>
+        </div>
+    </div>
+</div>
+

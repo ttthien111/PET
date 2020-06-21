@@ -224,7 +224,7 @@ namespace PETSHOP.Controllers
             List<ProductModelView> products = new List<ProductModelView>();
 
             // get Products from api to query
-            List<Product> productsApi = GetApiProducts.GetProducts().ToList();
+            List<Product> productsApi = GetApiProducts.GetProducts().Where(p=>p.IsActivated == true).ToList();
 
             products = productsApi
                         .Where(p =>

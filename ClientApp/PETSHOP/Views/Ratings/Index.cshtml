@@ -1,0 +1,39 @@
+﻿@model IEnumerable<PETSHOP.Models.ModelView.ProductModelViewDetail>
+
+@section breadcumb {
+    <section>
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row no-gutters slider-text align-items-end">
+                <div class="col-md-9 ftco-animate pb-5">
+                    <p class="breadcrumbs mb-2"><span class="mr-2"><a asp-action="Index" asp-controller="Home">Trang chủ <i class="ion-ios-arrow-forward"></i></a></span> <span>Đánh giá sản phẩm<i class="ion-ios-arrow-forward"></i></span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+
+
+<div class="container">
+    <div class="row d-flex">
+        @foreach (var p in Model)
+        {
+            <div class="col-md-4 d-flex ftco-animate fadeInUp ftco-animated">
+                <div class="blog-entry align-self-stretch">
+                    <a href="blog-single.html" class="block-20 rounded" style="background-image: url('/images/products/@p.ProductImage');">
+                    </a>
+                    <div class="text p-4">
+                        <div class="meta mb-2">
+                            <div>@p.InitAt.ToString("dd/MM/yyyy")</div>
+                            <div><span class="fa fa-star" style="color: yellow"></span>@(Math.Round(p.Rating,1))</div>
+                            <div><span class="fa fa-comment"></span> @p.No_Ratings</div>
+                            <div><span class="fa fa-fa-house-damage" style="color: yellow"></span>@p.DistributorName</div>
+                            <div><a asp-action="CategoryById" asp-controller="Category" asp-route-slugCategory="@p.CategoryName" class="meta-chat"><span class="fa fa-rainbow"></span>@p.CategoryName</a></div>
+                        </div>
+                        <h3 class="heading"><a asp-action="RatingDetail" asp-controller="Ratings" asp-route-slugName="@p.SlugName">@p.ProductName</a></h3>
+                    </div>  
+                </div>
+            </div>
+        }
+    </div>
+</div>

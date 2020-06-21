@@ -1,6 +1,12 @@
-﻿When you have somethings in database, please running command at Package Manager Console !
-You have to change server with your sqlserver name and database to run !
+﻿Scaffolding has generated all the files and added the required dependencies.
 
----Command Here---
-Scaffold-DbContext "Server=MSI\SQL_EXPRESS;Database=PETSHOP;Trusted_Connection=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Force
+However the Application's Startup code may required additional changes for things to work end to end.
+Add the following code to the Configure method in your Application's Startup class if not already done:
 
+        app.UseMvc(routes =>
+        {
+          routes.MapRoute(
+            name : "areas",
+            template : "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+          );
+        });

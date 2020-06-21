@@ -1,0 +1,16 @@
+﻿@model PETSHOP.Models.ModelView.RegisterModel
+@{
+    ViewData["Title"] = "Successfully for this register";
+}
+
+<section class="ftco-section bg-light ftco-faqs" style="padding: 3rem 0">
+    <div class="container card-body table-responsive">
+        <!-- 404 Error Text -->
+        <div class="text-center">
+            <div class="error mx-auto" data-text="404">404</div>
+            <p class="lead text-success mb-5 ">Tạo thành công tài khoản @Model.Email</p>
+
+            <a asp-action="Index" asp-controller="Home">&larr; Quay lại trang chủ</a>
+        </div>
+    </div>
+</section>

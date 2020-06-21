@@ -1,0 +1,149 @@
+﻿@model IEnumerable<PETSHOP.Models.ModelView.BillModelView>
+<div class="row" style="text-align: center">
+    <div class="card-body">
+        <a asp-action="Index" asp-controller="Profile" class="btn btn-outline-default">Thông tin cá nhân</a>
+        <a asp-action="Index" asp-controller="MyBills" class="btn btn-outline-default">Đơn hàng</a>
+        <a asp-action="VerifyChangePassword" asp-controller="Profile" class="btn btn-outline-default">Đổi mật khẩu</a>
+    </div>
+</div>
+
+<section class="ftco-section bg-light ftco-faqs" style="padding: 2rem 0">
+    <div class="container card-body" style="border-radius: 8px;">
+        <div class="row">
+            <div class="container col-md-10 col-lg-10 col-sm-10">
+                <div class="row flex-row justify-content-end">
+                    <div>
+                        <select class="custom-select " id="sortDate">
+                            <option value="99999">Tất cả</option>
+                            <option value="30">30 ngày</option>
+                            <option value="7">7 ngày</option>
+                            <option value="0">Hôm nay</option>
+                        </select>
+                    </div>
+                    <div>
+                        <select class="custom-select " id="sortState">
+                            @foreach (var item in ViewBag.States as List<DeliveryProductState>)
+                            {
+                                <option value="@item.DeliveryProductStateId">@item.DeliveryProductStateName</option>
+                            }
+                            <option value="cancel">Đã hủy</option>
+                        </select>
+                    </div>
+                    
+                </div>
+                <hr />
+                <div id="content">
+                    <div class="card-body">Tổng số đơn hàng (@Model.Count())</div>
+                    @foreach (var bill in Model)
+                    {
+                        <div class="card-header" style=""><a asp-action="BillDetail" asp-controller="MyBills" asp-route-billId="@bill.BillId">#@bill.BillCode</a></div>
+                        <div class="card-body" style="border-radius: 0px; background-color:seashell">
+
+                            <div class="btn btn-neutral">
+                                <i class="fa fa-money"></i> Tổng giá: <span class="text text-success">@bill.TotalPrice.ToString("#,##") đ</span>
+                            </div>
+                            <div class="btn btn-neutral">
+                                <i class="fa fa-bank"></i> Phương thức thanh toán: <span class="text text-success">@bill.PaymentMethodName</span>
+                            </div>
+                            <div class="btn btn-neutral">
+                                <i class="fa fa-calendar"></i> Ngày đặt hàng :<span class="text text-success"> @bill.DateOfPurchase</span>
+                            </div>
+                            <div class="btn btn-neutral">
+                                <i class="fa fa-truck"></i> Trạng thái: <span class="btn-sm btn-info">@bill.DeliveryStateName</span>
+                            </div>
+                            @if (!bill.IsCancel)
+                            {
+                                if (!bill.IsDelivery)
+                                {
+                                    <input type="hidden" name="BillId" value="@bill.BillId" />
+                                    <div class="btn btn-neutral">
+                                        <a class="btn-sm btn-danger" asp-action="CancelBill" asp-controller="MyBills" asp-route-billId="@bill.BillId"><span class="text text-white"><i class="fa fa-trash"></i> &nbsp;Hủy đơn</span></a>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="btn btn-neutral">
+                                        <span class="text text-danger"><i class="fa fa-warning"></i> &nbsp;Đơn hàng đã ở trạng thái chuẩn bị không thể hủy</span>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="btn btn-neutral">
+                                    <span class="text text-danger"><i class="fa fa-warning"></i> &nbsp;Đơn hàng đã hủy</span>
+                                </div>
+                            }
+
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script type="text/javascript">
+    $(function () {
+
+        $('select').on('change', function () {
+            var sortState = $("#sortState").val();
+            var sortDate = $("#sortDate").val();
+            $.ajax({
+                url: "/MyBills/Filter",
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                data: {
+                    sortState,
+                    sortDate
+                },
+                async: true,
+                success: function (res) {
+                    $("#content").html("");
+                    $("#content").html(res);
+                }
+            });
+        });
+
+        $('#filter').click(function () {
+            var categorySlugName = document.getElementById("catName").textContent;
+            var priceFrom = $('input[type=text][name=priceFrom]').val();
+            var priceTo = $('input[type=text][name=priceTo]').val();
+            var isNew = $('input[type=checkbox][name=customNew]:checked').val() == "on" ? true : false;
+            var isDiscount = $('input[type=checkbox][name=customDiscount]:checked').val() == "on" ? true : false;
+            var sort = $('select').val() == "descPrice" ? true : false;
+            var ratings = "";
+
+            for (var i = 1; i <= 4; i++) {
+                var isCheck = $('input[type=checkbox][name=rating' + i + ']:checked').length > 0;
+                if (isCheck == true)
+                    if (i == 1) {
+                        ratings = i.toString();
+                    }
+                    else {
+                        ratings += "-" + i.toString();
+                    }
+            }
+            $.ajax({
+                url: "/Category/Filter",
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                data: {
+                    "categorySlugName": categorySlugName,
+                    "priceFrom": priceFrom,
+                    "priceTo": priceTo,
+                    "isNew": isNew,
+                    "isDiscount": isDiscount,
+                    "ratings": ratings,
+                    "sort": sort
+                },
+                async: true,
+                success: function (res) {
+                    $("#contentProduct").html("");
+                    $("#contentProduct").html(res);
+                }
+            });
+        });
+    });
+</script>

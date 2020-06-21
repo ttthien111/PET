@@ -28,6 +28,14 @@ namespace ASPCore_Final.Services
         //    return System.Text.Encoding.ASCII.GetString(bytes);
         //}
 
+
+        public static bool CheckExtension(string extension)
+        {
+            string[] allowedExtensions = new[] { ".jpg", ".png" };
+            return allowedExtensions.Contains(extension);
+        }
+
+
         public static string GetFriendlyTitle(string title, bool remapToAscii = false, int maxlength = 80)
         {
             if (title == null)

@@ -1,0 +1,74 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3  d-sm-flex align-items-center justify-content-between mb-4">
+        <h6 class="m-0 font-weight-bold text-primary">Thêm sản phẩm</h6>
+        <a asp-action="Index" class="btn btn-warning btn-icon-split btn-sm">
+            <span class="icon text-white-50">
+                <i class="fa fa-backward"></i>
+            </span>
+            <span class="text">Quay lại</span>
+        </a>
+    </div>
+    <div class="card-body">
+        <div class="table">
+            <form asp-action="Create" asp-controller="ProductsManage" asp-area="Admin" method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label class="control-label">Tên sản phẩm</label>
+                    <input name="ProductName" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label name="ProductPrice" class="control-label">Đơn giá</label>
+                    <input name="ProductPrice" class="form-control" />
+                   
+                </div>
+                <div class="form-group">
+                    <label name="ProductDiscount" class="control-label">Giảm giá</label>
+                    <input name="ProductDiscount" class="form-control" />
+                    
+                </div>
+                <div class="form-group">
+                    <label name="ProductDescription" class="control-label">Mô tả</label>
+                    <input name="ProductDescription" class="form-control" />
+                   
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Hình ảnh</label>
+                    <input type="file" name="productFile" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label name="DistributorId" class="control-label">Nhà phân phối</label>
+                    <select class="form-control" name="DistributorId">
+                        @foreach (var dis in ViewBag.Distributors as List<PETSHOP.Models.Distributor>)
+                        {
+                            <option value="@dis.DistributorId">@dis.DistributorName</option>
+                        }
+                    </select>
+                    
+                </div>
+                <div class="form-group">
+                    <label name="CategoryId" class="control-label">Loại hàng hóa</label>
+                    <select class="form-control" name="CategoryId">
+                        @foreach (var cat in ViewBag.Categories as List<PETSHOP.Models.Category>)
+                        {
+                            <option value="@cat.CategoryId">@cat.CategoryName</option>
+                        }
+                    </select>
+                    
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Tạo" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+

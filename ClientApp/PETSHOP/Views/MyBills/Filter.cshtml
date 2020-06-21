@@ -1,0 +1,52 @@
+﻿@model IEnumerable<PETSHOP.Models.ModelView.BillModelView>
+
+@if (Model.Count() > 0)
+{
+    <div class="card-body">Tổng số đơn hàng (@Model.Count())</div>
+    foreach (var bill in Model)
+    {
+        <div class="card-header" style=""><a href="#">#@bill.BillCode</a></div>
+        <div class="card-body" style="border-radius: 0px; background-color:seashell">
+
+        <div class="btn btn-neutral">
+            <i class="fa fa-money"></i> Tổng giá: <span class="text text-success">@bill.TotalPrice.ToString("#,##") đ</span>
+        </div>
+        <div class="btn btn-neutral">
+            <i class="fa fa-bank"></i> Phương thức thanh toán: <span class="text text-success">@bill.PaymentMethodName</span>
+        </div>
+        <div class="btn btn-neutral">
+            <i class="fa fa-calendar"></i> Ngày đặt hàng :<span class="text text-success"> @bill.DateOfPurchase</span>
+        </div>
+        <div class="btn btn-neutral">
+            <i class="fa fa-truck"></i> Trạng thái: <span class="btn-sm btn-info">@bill.DeliveryStateName</span>
+        </div>
+        @if (!bill.IsCancel)
+        {
+            if (!bill.IsDelivery)
+            {
+                <input type="hidden" name="BillId" value="@bill.BillId" />
+                <div class="btn btn-neutral">
+                    <a class="btn-sm btn-danger" asp-action="CancelBill" asp-controller="MyBills" asp-route-billId="@bill.BillId"><span class="text text-white"><i class="fa fa-trash"></i> &nbsp;Hủy đơn</span></a>
+                </div>
+            }
+            else
+            {
+                <div class="btn btn-neutral">
+                    <span class="text text-danger"><i class="fa fa-warning"></i> &nbsp;Đơn hàng đã ở trạng thái chuẩn bị không thể hủy</span>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="btn btn-neutral">
+                <span class="text text-danger"><i class="fa fa-warning"></i> &nbsp;Đơn hàng đã hủy</span>
+            </div>
+        }
+
+    </div>
+    }
+}
+else 
+{
+    <div class="text text-primary text-center">Không có đơn hàng cho bộ lọc này</div>
+}
