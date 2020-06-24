@@ -1,8 +1,480 @@
 ﻿
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Trang chủ";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+
+    DashboardModel dashboard = new DashboardModel();
+
+    if (ViewBag.Dashboard != null)
+    {
+        dashboard = ViewBag.Dashboard as DashboardModel;
+    }
 }
 
-<h2>Index</h2>
+<script src="~/Admin/js/jquery.min.js"></script>
 
+
+<div class="row">
+    <!-- Earnings (Monthly) Card Example -->
+    <div class="col-xl-4 col-md-4 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Lợi nhuận trong <span name="days"></span> ngày gần nhất</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="EarnTag"></span></div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Pending Requests Card Example -->
+    <div class="col-xl-4 col-md-4 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Tổng số đơn hàng trong <span name="days"></span> gần nhất</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800"> <span id="BillsTag"></span></div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Lọc dữ liệu thống kê</h6>
+        </div>
+        <div class="card-body">
+            <select class="form-control">
+                <option value="1">Hôm nay</option>
+                <option value="7">7 ngày</option>
+                <option value="30">1 tháng</option>
+                <option value="90">3 tháng</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid p-1">
+    <div class="row">
+        <div class="card shadow mb-4 col-md-4 col-lg-8">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Thống kê tổng hóa đơn <span name="days"></span> ngày gần nhất</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-bar">
+                    <canvas id="myBarChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="card shadow mb-4 col-md-3 col-lg-4 pl-2">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Thống kê hình thức thanh toán trong <span name="days"></span> ngày gần nhất</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-bar">
+                    <canvas id="myPieChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow mb-4 col-md-5 col-lg-12 pl-2">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Thống kê doanh thu <span name="days"></span> ngày gần nhất</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-bar">
+                    <canvas id="myAreaChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        if (sessionStorage.getItem("days") == undefined) {
+            sessionStorage.setItem("days", 7);
+        }
+
+        var days = sessionStorage.getItem("days");
+        $("select").val(days);
+
+        // set label
+        $("span[name=days]").html("").html(days);
+
+        // Set new default font family and font color to mimic Bootstrap's default styling
+        Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+        Chart.defaults.global.defaultFontColor = '#858796';
+
+        function number_format(number, decimals, dec_point, thousands_sep) {
+            // *     example: number_format(1234.56, 2, ',', ' ');
+            // *     return: '1 234,56'
+            number = (number + '').replace(',', '').replace(' ', '');
+            var n = !isFinite(+number) ? 0 : +number,
+                prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
+                sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
+                dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
+                s = '',
+                toFixedFix = function (n, prec) {
+                    var k = Math.pow(10, prec);
+                    return '' + Math.round(n * k) / k;
+                };
+            // Fix for IE parseFloat(0.55).toFixed(0) = 0;
+            s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.');
+            if (s[0].length > 3) {
+                s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
+            }
+            if ((s[1] || '').length < prec) {
+                s[1] = s[1] || '';
+                s[1] += new Array(prec - s[1].length + 1).join('0');
+            }
+            return s.join(dec);
+        }
+
+        $.ajax({
+            url: "/Admin/Home/Bills7Days",
+            type: "GET",
+            data: { "days": days },
+            contentType: "application/json",
+            success: function (res) {
+                var labels = [];
+                var datas = [];
+
+                var totalBills = 0;
+                for (var i = 0; i < res.length; i++) {
+                    totalBills += res[i].data;
+                    labels.push(res[i].label);
+                    datas.push(res[i].data);
+                }
+
+                 $("#BillsTag").html("").html(totalBills);
+
+                // Bar Chart Example
+                var ctx = document.getElementById("myBarChart");
+                var myBarChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: "Số đơn hàng",
+                            backgroundColor: "#4e73df",
+                            hoverBackgroundColor: "#2e59d9",
+                            borderColor: "#4e73df",
+                            data: datas,
+                        }],
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        layout: {
+                            padding: {
+                                left: 10,
+                                right: 25,
+                                top: 25,
+                                bottom: 0
+                            }
+                        },
+                        scales: {
+                            xAxes: [{
+                                time: {
+                                    unit: 'day'
+                                },
+                                gridLines: {
+                                    display: false,
+                                    drawBorder: false
+                                },
+                                ticks: {
+                                    maxTicksLimit: 7
+                                },
+                                maxBarThickness: 25,
+                            }],
+                            yAxes: [{
+                                ticks: {
+                                    min: 0,
+                                    max: Math.max(...datas),
+                                    maxTicksLimit: 5,
+                                    padding: 10,
+                                    // Include a dollar sign in the ticks
+                                    callback: function (value, index, values) {
+                                        return number_format(value);
+                                    }
+                                },
+                                gridLines: {
+                                    color: "rgb(234, 236, 244)",
+                                    zeroLineColor: "rgb(234, 236, 244)",
+                                    drawBorder: false,
+                                    borderDash: [2],
+                                    zeroLineBorderDash: [2]
+                                }
+                            }],
+                        },
+                        legend: {
+                            display: false
+                        },
+                        tooltips: {
+                            titleMarginBottom: 10,
+                            titleFontColor: '#6e707e',
+                            titleFontSize: 14,
+                            backgroundColor: "rgb(255,255,255)",
+                            bodyFontColor: "#858796",
+                            borderColor: '#dddfeb',
+                            borderWidth: 1,
+                            xPadding: 15,
+                            yPadding: 15,
+                            displayColors: false,
+                            caretPadding: 10,
+                            callbacks: {
+                                label: function (tooltipItem, chart) {
+                                    var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
+                                    return datasetLabel + ': ' + number_format(tooltipItem.yLabel);
+                                }
+                            }
+                        },
+                    }
+                });
+
+            },
+            error: function (err) {
+                alert("Login failed");
+                console.log(err);
+            }
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        if (sessionStorage.getItem("days") == undefined) {
+            sessionStorage.setItem("days", 7);
+        }
+        var days = sessionStorage.getItem("days");
+        // Set new default font family and font color to mimic Bootstrap's default styling
+        Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+        Chart.defaults.global.defaultFontColor = '#858796';
+
+        function number_format(number, decimals, dec_point, thousands_sep) {
+            // *     example: number_format(1234.56, 2, ',', ' ');
+            // *     return: '1 234,56'
+            number = (number + '').replace(',', '').replace(' ', '');
+            var n = !isFinite(+number) ? 0 : +number,
+                prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
+                sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
+                dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
+                s = '',
+                toFixedFix = function (n, prec) {
+                    var k = Math.pow(10, prec);
+                    return '' + Math.round(n * k) / k;
+                };
+            // Fix for IE parseFloat(0.55).toFixed(0) = 0;
+            s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.');
+            if (s[0].length > 3) {
+                s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
+            }
+            if ((s[1] || '').length < prec) {
+                s[1] = s[1] || '';
+                s[1] += new Array(prec - s[1].length + 1).join('0');
+            }
+            return s.join(dec);
+        }
+
+        var formatter = new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND',
+        });
+
+        $.ajax({
+            url: "/Admin/Home/Earning7Days",
+            type: "GET",
+            data: { "days": days},
+            contentType: "application/json",
+            success: function (res) {
+                console.log(res);
+                var labels = [];
+                var datas = [];
+                var total = 0;
+                for (var i = 0; i < res.length; i++) {
+                    total += res[i].data;
+                    labels.push(res[i].label);
+                    datas.push(res[i].data);
+                }
+
+                $("#EarnTag").html("").html(formatter.format(total));
+
+                // Area Chart Example
+                var ctx = document.getElementById("myAreaChart");
+                var myLineChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: "Doanh thu",
+                            lineTension: 0.3,
+                            backgroundColor: "rgba(78, 115, 223, 0.05)",
+                            borderColor: "rgba(78, 115, 223, 1)",
+                            pointRadius: 3,
+                            pointBackgroundColor: "rgba(78, 115, 223, 1)",
+                            pointBorderColor: "rgba(78, 115, 223, 1)",
+                            pointHoverRadius: 3,
+                            pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
+                            pointHoverBorderColor: "rgba(78, 115, 223, 1)",
+                            pointHitRadius: 10,
+                            pointBorderWidth: 2,
+                            data: datas,
+                        }],
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        layout: {
+                            padding: {
+                                left: 10,
+                                right: 25,
+                                top: 25,
+                                bottom: 0
+                            }
+                        },
+                        scales: {
+                            xAxes: [{
+                                time: {
+                                    unit: 'date'
+                                },
+                                gridLines: {
+                                    display: false,
+                                    drawBorder: false
+                                },
+                                ticks: {
+                                    maxTicksLimit: 7
+                                }
+                            }],
+                            yAxes: [{
+                                ticks: {
+                                    maxTicksLimit: 5,
+                                    padding: 10,
+                                    // Include a dollar sign in the ticks
+                                    callback: function (value, index, values) {
+                                        return 'VND ' + number_format(value);
+                                    }
+                                },
+                                gridLines: {
+                                    color: "rgb(234, 236, 244)",
+                                    zeroLineColor: "rgb(234, 236, 244)",
+                                    drawBorder: false,
+                                    borderDash: [2],
+                                    zeroLineBorderDash: [2]
+                                }
+                            }],
+                        },
+                        legend: {
+                            display: false
+                        },
+                        tooltips: {
+                            backgroundColor: "rgb(255,255,255)",
+                            bodyFontColor: "#858796",
+                            titleMarginBottom: 10,
+                            titleFontColor: '#6e707e',
+                            titleFontSize: 14,
+                            borderColor: '#dddfeb',
+                            borderWidth: 1,
+                            xPadding: 15,
+                            yPadding: 15,
+                            displayColors: false,
+                            intersect: false,
+                            mode: 'index',
+                            caretPadding: 10,
+                            callbacks: {
+                                label: function (tooltipItem, chart) {
+                                    var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
+                                    return datasetLabel + ': VND ' + number_format(tooltipItem.yLabel);
+                                }
+                            }
+                        }
+                    }
+                });
+            },
+            error: function (err) {
+
+            }
+        });
+
+    });
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        if (sessionStorage.getItem("days") == undefined) {
+            sessionStorage.setItem("days", 7);
+        }
+        var days = sessionStorage.getItem("days");
+        // Set new default font family and font color to mimic Bootstrap's default styling
+        Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+        Chart.defaults.global.defaultFontColor = '#858796';
+
+        $.ajax({
+            url: "/Admin/Home/PaymentMethod7Days",
+            type: "GET",
+            data: { "days": days },
+            contentType: "application/json",
+            success: function (res) {
+                console.log(res);
+                var labels = [];
+                var datas = [];
+
+                for (var i = 0; i < res.length; i++) {
+                    labels.push(res[i].label);
+                    datas.push(res[i].data);
+                }
+                // Pie Chart Example
+                var ctx = document.getElementById("myPieChart");
+                var myPieChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: datas,
+                            backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
+                            hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
+                            hoverBorderColor: "rgba(234, 236, 244, 1)",
+                        }],
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        tooltips: {
+                            backgroundColor: "rgb(255,255,255)",
+                            bodyFontColor: "#858796",
+                            borderColor: '#dddfeb',
+                            borderWidth: 1,
+                            xPadding: 15,
+                            yPadding: 15,
+                            displayColors: false,
+                            caretPadding: 10,
+                        },
+                        legend: {
+                            display: false
+                        },
+                        cutoutPercentage: 80,
+                    },
+                });
+            }
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        $("select").on('change', function () {
+            var days = $(this).children("option:selected").val();
+            sessionStorage.setItem("days", days);
+            window.location.reload();
+        });
+    });
+
+</script>

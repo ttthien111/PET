@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using PETSHOP.Helper;
 using PETSHOP.Models;
@@ -74,6 +76,19 @@ namespace PETSHOP
                     ValidateIssuer = false,
                     ValidateAudience = false
                 };
+            });
+
+            services.AddAuthorization(options => {
+                options.AddPolicy("AdminAccess", policy => policy.RequireRole(PETSHOP.Models.LoginModel.Role.Admin));
+
+                options.AddPolicy("UserAccess", policy => policy.RequireAssertion(context =>
+                                                            context.User.IsInRole(PETSHOP.Models.LoginModel.Role.Admin) 
+                                                            || context.User.IsInRole(PETSHOP.Models.LoginModel.Role.User)));
+
+                options.AddPolicy("CustomerAccess", policy => policy.RequireAssertion(context =>
+                                                            context.User.IsInRole(PETSHOP.Models.LoginModel.Role.Admin)
+                                                            || context.User.IsInRole(PETSHOP.Models.LoginModel.Role.User)
+                                                            || context.User.IsInRole(PETSHOP.Models.LoginModel.Role.Customer)));
             });
 
             // configure DI for application services

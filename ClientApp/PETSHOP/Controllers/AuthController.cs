@@ -53,6 +53,13 @@ namespace PETSHOP.Controllers
 
                     // get user profile
                     UserProfile profile = GetApiUserProfile.GetUserProfiles().SingleOrDefault(p => p.AccountId == Convert.ToInt32(credential.AccountId));
+
+                    // get account && role
+                    Account account = GetApiAccounts.GetAccounts().SingleOrDefault(p => p.AccountId == profile.AccountId);
+                    account.AccountRole = GetApiAccountRoles.GetAccountRoles().SingleOrDefault(p => p.AccountRoleId == account.AccountRoleId);
+
+                    profile.Account = account;
+
                     credential.Profile = profile;
 
                     // set 1 session for credential
@@ -133,6 +140,13 @@ namespace PETSHOP.Controllers
 
                     // get user profile
                     UserProfile res_profile = GetApiUserProfile.GetUserProfiles().SingleOrDefault(p => p.AccountId == Convert.ToInt32(response.AccountId));
+
+                    // get account && role
+                    Account account = GetApiAccounts.GetAccounts().SingleOrDefault(p => p.AccountId == profile.AccountId);
+                    account.AccountRole = GetApiAccountRoles.GetAccountRoles().SingleOrDefault(p => p.AccountRoleId == account.AccountRoleId);
+
+                    profile.Account = account;
+
                     response.Profile = profile;
 
                     // set 1 session for credential

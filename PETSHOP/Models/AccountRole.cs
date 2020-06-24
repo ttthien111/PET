@@ -8,6 +8,7 @@ namespace PETSHOP.Models
         public AccountRole()
         {
             Account = new HashSet<Account>();
+            AccountManage = new HashSet<AccountManage>();
         }
 
         public int AccountRoleId { get; set; }
@@ -18,5 +19,6 @@ namespace PETSHOP.Models
         public bool? AccountRoleReadApi { get; set; }
 
         public virtual ICollection<Account> Account { get; set; }
+        public virtual ICollection<AccountManage> AccountManage { get; set; }
     }
 }

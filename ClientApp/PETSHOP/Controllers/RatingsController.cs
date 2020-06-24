@@ -22,7 +22,7 @@ namespace PETSHOP.Controllers
             IEnumerable<Category> categories = GetApiCategories.GetCategories();
             IEnumerable<Distributor> distributors = GetApiDistributors.GetDistributors();
 
-            List<ProductModelViewDetail> productRatings = products.OrderBy(p => p.InitAt).Select(p => new ProductModelViewDetail()
+            List<ProductModelViewDetail> productRatings = products.Where(p => p.IsActivated ==true).Select(p => new ProductModelViewDetail()
             {
                 ProductId = p.ProductId,
                 ProductName = p.ProductName,
@@ -36,15 +36,20 @@ namespace PETSHOP.Controllers
                 No_Ratings = comment.Where(k => k.ProductId == p.ProductId).Count(),
                 InitAt = p.InitAt,
                 SlugName = p.SlugName
-            }).ToList(); 
+            }).OrderByDescending(p=>p.InitAt).ToList(); 
             return View(productRatings);
         }
 
         [HttpGet("ratings/{slugName}")]
         public IActionResult RatingDetail(string slugName)
         {
-            IEnumerable<Product> products = GetApiProducts.GetProducts();
+            IEnumerable<Product> products = GetApiProducts.GetProducts().Where(p=>p.IsActivated == true);
             Product p = products.SingleOrDefault(p => p.SlugName == slugName);
+
+            if(p== null)
+            {
+                return RedirectToAction("Index", "NotFound");
+            }
 
             ProductModelViewDetail res = new ProductModelViewDetail()
             {

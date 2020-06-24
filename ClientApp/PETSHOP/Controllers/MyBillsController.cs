@@ -35,7 +35,7 @@ namespace PETSHOP.Controllers
             string token = credential.JwToken;
 
             // get bill and billdetail
-            Bill bill = GetApiBills.GetBills().SingleOrDefault(p => p.BillId == billId);
+            Bill bill = GetApiMyBills.GetBills(credential).SingleOrDefault(p => p.BillId == billId);
             List<BillDetailModel> billDetails = GetBills().SingleOrDefault(p => p.BillId == bill.BillId).BillDetail;
 
             // Update status for bill want to be canceled
@@ -100,12 +100,12 @@ namespace PETSHOP.Controllers
         public List<BillModelView> GetBills()
         {
             //get credential
-            CredentialModel credential = HttpContext.Session.GetObject<CredentialModel>("vm");
+            CredentialModel credential = HttpContext.Session.GetObject<CredentialModel>(Constants.VM);
             // get profile
             UserProfile profile = GetApiUserProfile.GetUserProfiles().SingleOrDefault(p => p.UserProfileEmail == credential.AccountUserName);
 
             // get all Bill with profileID from server
-            List<BillModelView> bills = GetApiBills.GetBills().Where(p => p.UserProfileId == profile.UserProfileId).Select(p => new BillModelView()
+            List<BillModelView> bills = GetApiMyBills.GetBills(credential).Select(p => new BillModelView()
             {
                 BillId = p.BillId,
                 BillCode = p.GenerateCodeCheck,
@@ -114,7 +114,8 @@ namespace PETSHOP.Controllers
                 TotalPrice = p.TotalPrice,
                 PaymentMethodId = p.PaymentMethodTypeId,
                 IsDelivery = p.IsDelivery,
-                IsCancel = p.IsCancel
+                IsCancel = p.IsCancel,
+                
             }).ToList();
 
             // get payment method

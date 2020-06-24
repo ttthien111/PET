@@ -12,7 +12,7 @@ namespace PETSHOP.Common
 {
     public static class SenderEmail
     {
-        public static void SendMail(string toAddress, string subject, string emailBody)
+        public static void SendMail(string toAddress, string subject, string emailBody, string embedded = null)
         {
 			try
 			{
@@ -31,11 +31,31 @@ namespace PETSHOP.Common
 				client.UseDefaultCredentials = false;
 				client.Credentials = new NetworkCredential(username, password);
 
-				MailMessage message = new MailMessage(username, toAddress, subject, emailBody);
-				message.IsBodyHtml = true;
-				message.BodyEncoding = UTF8Encoding.UTF8;
 
-				client.Send(message);
+				if(embedded != null)
+				{
+					emailBody += "<br><img src=\"cid:" + embedded + "\">";
+
+					MailMessage message = new MailMessage(username, toAddress, subject, emailBody);
+
+					// Attachment image
+					Attachment attachment = new Attachment(Constants.EMBEDED_MAIL_URL + embedded + ".png");
+					attachment.ContentId = embedded;
+					message.Attachments.Add(attachment);
+
+					message.IsBodyHtml = true;
+					message.BodyEncoding = UTF8Encoding.UTF8;
+					client.Send(message);
+				}
+				else
+				{
+					MailMessage message = new MailMessage(username, toAddress, subject, emailBody);
+					message.IsBodyHtml = true;
+					message.BodyEncoding = UTF8Encoding.UTF8;
+					client.Send(message);
+				}
+
+				
 			}
 			catch (Exception)
 			{

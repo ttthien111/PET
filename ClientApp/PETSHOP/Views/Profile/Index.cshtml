@@ -11,25 +11,18 @@
 <section class="ftco-section bg-light ftco-faqs" style="padding: 2rem 0">
     <div class="container">
         <div class="row ">
-            <div class="card-body col-md-3">
-                <div class="profile-img">
-                    <div style="margin: 10px">
-                        @if (Model.UserProfileAvatar != null)
-                        {
-                            <img src="~/images/avatar/@Model.UserProfileAvatar" style="width:200px; border-radius: 200px" alt="" />
-                        }
-                        else
-                        {
-                            <img src="~/images/avatar/noimage.png" style="width:200px; border-radius: 200px" alt="" />
-                        }
-                    </div>
+            <div class="card-body col-md-12" style="margin-left: 10px">
+                <div style="padding: 0 1rem">
+                    @if (Model.UserProfileAvatar != null)
+                    {
+                        <img class="responsive" src="~/images/avatar/@Model.UserProfileAvatar" style="width:100px; height:100px; border-radius: 100px" alt="" />
+                    }
+                    else
+                    {
+                        <img src="~/images/avatar/noimage.png" style="width:200px; border-radius: 200px" alt="" />
+                    }
+                    <span style="margin-left:40%"><b>Hồ sơ của tôi</b></span>
                 </div>
-                <div>
-                    
-                </div>
-            </div>
-            <div class="card-body col-md-8" style="margin-left: 10px">
-                <div style="padding: 0 1rem"><b>Hồ sơ của tôi</b></div>
                 <div style="padding: 0 1rem">
                     @if(ViewBag.error != null)
                     {

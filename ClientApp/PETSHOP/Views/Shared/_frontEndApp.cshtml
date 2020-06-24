@@ -1,5 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Http;
 @using PETSHOP.Models.ModelView;
+@using PETSHOP.Common;
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -74,9 +75,8 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-4 d-flex align-items-center">
-                    <p class="mb-0 phone pl-md-2">
+                    <p class="mb-0 phone pl-md-1">
                         <a href="#" class="mr-2"><span class="fa fa-phone mr-1"></span> +00 1234 567</a>
-                        <a href="#"><span class="fa fa-paper-plane mr-1"></span> petshop@gmail.com</a>
                     </p>
                 </div>
                 <div class="col-md-8 d-flex justify-content-md-end">
@@ -84,13 +84,13 @@
                         <p class="mb-0 d-flex">
                             <a data-toggle="tooltip" title="Đăng kí" asp-action="Register" asp-controller="Auth" class="col-md-3 d-flex align-items-center justify-content-center text-white" style=""><span class="fa fa-edit"><i class="sr-only"></i></span></a>
                             @{
-                                var credential = new CredentialModel();
-                                var profile = new UserProfile();
-                                if (Context.Session.GetString("vm") != null)
-                                {
-                                    credential = Newtonsoft.Json.JsonConvert.DeserializeObject<CredentialModel>(Context.Session.GetString("vm"));
-                                    profile = credential.Profile as UserProfile;
+                                CredentialModel credential = new CredentialModel();
+                                UserProfile profile = credential.Profile;
 
+                                if (Context.Session.GetString(Constants.VM) != null)
+                                {
+                                    credential = Newtonsoft.Json.JsonConvert.DeserializeObject<CredentialModel>(Context.Session.GetString(Constants.VM));
+                                    profile = credential.Profile as UserProfile;
                                     <a data-toggle="tooltip" title="Thông tin" asp-action="Index" asp-controller="Profile" class="d-flex align-items-center justify-content-center"><span class="fa fa-user"><i class="sr-only">Thông tin</i></span></a>
                                     <a href="#" data-toggle="tooltip" title="Đăng xuất" class="d-flex align-items-center justify-content-center" id="checkLogout"><span class="fa fa-sign-out"><i class="sr-only">Đăng xuất</i></span></a>
                                 }

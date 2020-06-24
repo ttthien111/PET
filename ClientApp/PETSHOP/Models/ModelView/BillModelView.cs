@@ -19,6 +19,8 @@ namespace PETSHOP.Models.ModelView
         public string DeliveryStateName { get; set; }
         public bool IsDelivery { get; set; }
         public bool IsCancel { get; set; }
+        public bool IsApprove { get; set; }
+        public bool IsCompleted { get; set; }
         public DeliveryProduct delivery { get; set; }
     }
 }

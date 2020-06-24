@@ -2,15 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Primitives;
 using PETSHOP.Models;
+using PETSHOP.Models.LoginModel;
+using PETSHOP.Services;
 
 namespace PETSHOP.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = Role.Admin + "," + Role.User)]
     public class BillsController : ControllerBase
     {
         private readonly PETSHOPContext _context;
@@ -18,10 +23,12 @@ namespace PETSHOP.Controllers
         public BillsController(PETSHOPContext context)
         {
             _context = context;
+
         }
 
         // GET: api/Bills
         [HttpGet]
+        [Authorize(Roles = Role.Admin + ","+ Role.User)]
         public async Task<ActionResult<IEnumerable<Bill>>> GetBill()
         {
             return await _context.Bill.ToListAsync();
@@ -29,6 +36,7 @@ namespace PETSHOP.Controllers
 
         // GET: api/Bills/5
         [HttpGet("{id}")]
+        [Authorize(Roles = Role.Admin + "," + Role.User)]
         public async Task<ActionResult<Bill>> GetBill(int id)
         {
             var bill = await _context.Bill.FindAsync(id);
@@ -45,6 +53,7 @@ namespace PETSHOP.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
+        [Authorize(Roles = Role.Admin + "," + Role.User)]
         public async Task<IActionResult> PutBill(int id, Bill bill)
         {
             if (id != bill.BillId)
@@ -77,6 +86,7 @@ namespace PETSHOP.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
+        [Authorize(Roles = Role.Admin + "," + Role.User)]
         public async Task<ActionResult<Bill>> PostBill(Bill bill)
         {
             _context.Bill.Add(bill);
@@ -87,6 +97,7 @@ namespace PETSHOP.Controllers
 
         // DELETE: api/Bills/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = Role.Admin + "," + Role.User)]
         public async Task<ActionResult<Bill>> DeleteBill(int id)
         {
             var bill = await _context.Bill.FindAsync(id);

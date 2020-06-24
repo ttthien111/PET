@@ -22,5 +22,6 @@ namespace PETSHOP.Models.ModelView
         public double Rating { get; set; }
         public int NumberOfPurchases { get; set; }
         public string CatName { get; set; }
+        public string DistributorName { get; set; }
     }
 }

@@ -16,6 +16,7 @@ namespace PETSHOP.Models
         }
 
         public virtual DbSet<Account> Account { get; set; }
+        public virtual DbSet<AccountManage> AccountManage { get; set; }
         public virtual DbSet<AccountRole> AccountRole { get; set; }
         public virtual DbSet<Bill> Bill { get; set; }
         public virtual DbSet<BillDetail> BillDetail { get; set; }
@@ -76,6 +77,34 @@ namespace PETSHOP.Models
                     .HasConstraintName("FK_Account_AccountRole");
             });
 
+            modelBuilder.Entity<AccountManage>(entity =>
+            {
+                entity.HasKey(e => e.Email);
+
+                entity.Property(e => e.Email)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.AccountRoleId).HasColumnName("AccountRole_ID");
+
+                entity.Property(e => e.Address).HasMaxLength(200);
+
+                entity.Property(e => e.Avatar)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.FullName).HasMaxLength(300);
+
+                entity.Property(e => e.IsActivated).HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.Password).IsUnicode(false);
+
+                entity.HasOne(d => d.AccountRole)
+                    .WithMany(p => p.AccountManage)
+                    .HasForeignKey(d => d.AccountRoleId)
+                    .HasConstraintName("FK_AccountManage_AccountRole");
+            });
+
             modelBuilder.Entity<AccountRole>(entity =>
             {
                 entity.Property(e => e.AccountRoleId)
@@ -105,7 +134,11 @@ namespace PETSHOP.Models
 
                 entity.Property(e => e.GenerateCodeCheck).IsUnicode(false);
 
+                entity.Property(e => e.IsApprove).HasDefaultValueSql("((0))");
+
                 entity.Property(e => e.IsCancel).HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.IsCompleted).HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.IsDelivery).HasDefaultValueSql("((0))");
 

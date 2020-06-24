@@ -1,0 +1,69 @@
+﻿@model PETSHOP.Models.ModelView.LoginModel
+@using PETSHOP.Common;
+@{
+    ViewData["Title"] = "Đăng nhập";
+    Layout = "~/Views/Shared/login.cshtml";
+}
+
+<style>
+    div.fb-login-button.fb_iframe_widget_fluid {
+        display: block !important;
+    }
+
+        div.fb-login-button.fb_iframe_widget_fluid span, div.fb-login-button.fb_iframe_widget_fluid span iframe {
+            width: 100% !important;
+        }
+</style>
+
+<div class="limiter">
+    <div class="container-login100">
+        <div class="wrap-login100">
+            <form class="login100-form validate-form" asp-action="Login" asp-area="@Constants.ADMIN" method="post">
+                <span class="login100-form-title p-b-43">
+                    Đăng nhập hệ thống quản lý
+                </span>
+
+                <div class="wrap-input100" style="border: none">
+                    @if (ViewBag.error != null)
+                    {
+
+                        <span class="alert alert-danger">@ViewBag.error</span>
+                    }
+                </div>
+
+                <div class="wrap-input100 validate-input" data-validate="Valid email is required: petshop@abc.xyz">
+                    <input class="input100" asp-for="Username" type="text" name="Username">
+                    <span class="focus-input100"></span>
+                    <span class="label-input100">Email</span>
+                </div>
+
+                <input type="hidden" asp-for="returnUrl" name="returnUrl" value="@ViewBag.returnUrl" />
+
+                <div class="wrap-input100 validate-input" data-validate="Password is required">
+                    <input class="input100" asp-for="Password" type="password" name="Password">
+                    <span class="focus-input100"></span>
+                    <span class="label-input100">Mật khẩu</span>
+                </div>
+
+                <div class="flex-sb-m w-full p-t-3 p-b-32">
+                    <div>
+                        <a asp-action="ForgetPassword" asp-controller="Auth" class="txt1">
+                            Quên mật khẩu ?
+                        </a>
+                    </div>
+                </div>
+
+
+                <div class="container-login100-form-btn">
+                    <button class="login100-form-btn" type="submit">
+                        Đăng nhập
+                    </button>
+                </div>
+            </form>
+
+            <div class="login100-more" style="background-image: url('/images/bg_1.jpg');">
+            </div>
+        </div>
+    </div>
+</div>
+

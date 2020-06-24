@@ -1,0 +1,104 @@
+﻿@model IEnumerable<PETSHOP.Models.ModelView.ProductModelView>
+@{
+    ViewData["Title"] = "Sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section breadcumb {
+    <div class="card border-left-primary shadow h-100 py-2">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                    <div class="text-xl-center font-weight-bold text-primary text-uppercase mb-1">Danh mục sản phẩm</div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<!-- DataTales Example -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <div class="d-flex row">
+            <div class="justify-content-end">
+                <a asp-action="Create" asp-area="Admin" asp-controller="Products" class="btn btn-primary">Thêm hàng hóa</a>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th width="40px">Chức năng</th>
+                        <th>Mã hàng hóa</th>
+                        <th>Tên hàng hóa</th>
+                        <th>Hình ảnh</th>
+                        <th>Mô tả</th>
+                        <th>Đơn giá</th>
+                        <th>Giảm giá</th>
+                        <th>Trạng thái</th>
+                        <th>Ngày tạo</th>
+                        <th>Loại hàng hóa</th>
+                        <th>Nhà phân phối</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        var i = 1;
+                        foreach (var p in Model)
+                        {
+                            <tr>
+                                <td>@i</td>
+                                <td>
+                                    <a asp-action="EditProduct" asp-route-productId="@p.ProductId"><i class="fa fa-edit"></i></a>
+                                    &nbsp;
+                                    <a asp-action="ChangeActivated" asp-area="Admin" asp-route-productId="@p.ProductId">
+                                        @if (p.IsActivated)
+                                        {
+                                            <i data-toggle="tooltip" title="Ngừng kinh doanh" class="fa fa-lock"></i>
+                                        }
+                                        else
+                                        {
+                                            <i data-toggle="tooltip" title="Tiếp tục kinh doanh" class="fa fa-unlock-alt"></i>
+                                        }
+                                    </a>
+                                </td>
+                                <td><a href="#">#@p.ProductId</a></td>
+                                <td>@p.ProductName</td>
+                                <td><img style="width: 60px" src="~/images/products/@p.ProductImage" alt="Alternate Text" /></td>
+                                <td>@p.ProductDescription</td>
+                                <td>@p.ProductPrice.ToString("#,##")</td>
+                                <td>
+                                    @if (p.ProductDiscount > 0)
+                                    {
+                                        <span class="badge badge-danger"><i class="fa fa-arrow-down"></i>@(p.ProductDiscount * 100) %</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-info">@(p.ProductDiscount * 100) %</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (p.IsActivated)
+                                    {
+                                        <span class="badge badge-primary">Đang kinh doanh</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-danger">Ngừng kinh doanh</span>
+                                    }
+                                </td>
+                                <td>@p.InitAt</td>
+                                <td><span class="badge badge-info"><i class="fa fa-home" aria-hidden="true"></i>&nbsp; @p.CatName.ToUpper()</span></td>
+                                 <td><span class="badge badge-info"><i class="fa fa-home" aria-hidden="true"></i>&nbsp; @p.DistributorName.ToUpper()</span></td>
+                            </tr>
+                            i++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

@@ -315,7 +315,7 @@
                                 var UserProfileId = $("#userProfileId").val();
                                 var DateOfPurchase = dateTime;
                                 var TotalPrice = parseInt($("#totalPrice").val()) + parseInt($("#moneyOfTypeHidden").val());
-                                var IsDelivery = true;
+                                var IsDelivery = false;
                                 var PaymentMethodTypeId = 2;
 
                                 // Delivery
@@ -326,6 +326,7 @@
                                 var DeliveryProductStateId = 1; // Đã xác nhận
                                 var DeliveryProductTypeId = 1;
                                 var types = document.getElementsByName('deliveryType');
+                                var IsApprove = true;
                                 for (i = 0; i < types.length; i++) {
                                     if (types[i].checked) {
                                         DeliveryProductTypeId = types[i].value.split("-")[1];
@@ -342,7 +343,8 @@
                                     DeliveryProductPhoneNumber,
                                     DeliveryProductNote,
                                     DeliveryProductStateId,
-                                    DeliveryProductTypeId
+                                    DeliveryProductTypeId,
+                                    IsApprove
                                 }
 
                                 console.log(Bill);

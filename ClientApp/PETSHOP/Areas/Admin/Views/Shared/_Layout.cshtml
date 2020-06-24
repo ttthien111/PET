@@ -1,12 +1,9 @@
-﻿@{
-    Layout = null;
-}
-
-@using Microsoft.AspNetCore.Http
+﻿@using Microsoft.AspNetCore.Http
+@using PETSHOP.Areas.Admin.Models;
+@using PETSHOP.Common;
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
     <meta charset="utf-8">
@@ -25,6 +22,15 @@
 
     <!-- Custom styles for this template -->
     <link href="~/Admin/css/sb-admin-2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/flaticon.css">
+
+    <!-- dialog CSS
+    ============================================ -->
+    <link href="~/Admin/css/sweetalert2.min.css" rel="stylesheet" />
+    <link href="~/Admin/css/dialog.css" rel="stylesheet" />
+
+    <!-- Chart-->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 
     <!-- Custom styles for this page -->
     <link href="~/Admin/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
@@ -32,7 +38,13 @@
 </head>
 
 <body id="page-top">
-
+    @{
+        CredentialManage credential = Context.Session.GetObject<CredentialManage>(Constants.VM_MANAGE);
+        var nBillWaitingForApprove = PETSHOP.Utils.GetApiBills.GetBills(credential).Where(p => p.IsApprove == false && p.IsCancel == false).Count();
+        var nApprovedBill = PETSHOP.Utils.GetApiBills.GetBills(credential).Where(p => p.IsApprove == true && p.IsCancel == false && p.IsDelivery == false).Count();
+        var nFeedBacks = PETSHOP.Utils.GetApiFeedbacks.GetFeedbacks().ToList().Count();
+        var nNoti = nBillWaitingForApprove + nApprovedBill + nFeedBacks;
+    }
     <!-- Page Wrapper -->
     <div id="wrapper">
 
@@ -53,10 +65,50 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="index.html">
+                <a class="nav-link" asp-action="Index" asp-controller="Home">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Trang chủ</span>
                 </a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Mua bán
+            </div>
+
+            <!-- Nav Item - Pages Collapse Menu -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseBills" aria-expanded="true" aria-controls="collapseBills">
+                    <i class="fas fa-fw fa-sticky-note"></i>
+                    <span>Đơn hàng</span>
+                </a>
+                <div id="collapseBills" class="collapse" aria-labelledby="collapseBills" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" asp-action="Index" asp-controller="Bills">
+                            Tất cả đơn hàng
+                        </a>
+                        <a class="collapse-item" asp-action="WaitingBills" asp-controller="Bills">
+                            Đơn hàng chưa duyệt
+                            @if (nBillWaitingForApprove > 0)
+                            {
+                                <span class="badge badge-danger">@(nBillWaitingForApprove <= 99 ? nBillWaitingForApprove + "" : "99+" )</span>
+                            }
+                        </a>
+                        <a class="collapse-item" asp-action="ApprovedBills" asp-controller="Bills">
+                            Đơn hàng đã duyệt
+                            @if (nApprovedBill > 0)
+                            {
+                                <span class="badge badge-danger">@(nApprovedBill <= 99 ? nApprovedBill +"" : "99+" )</span>
+                            }
+                        </a>
+                        <a class="collapse-item" asp-action="FollowingBills" asp-controller="Bills">Theo dõi vận chuyển</a>
+                        <a class="collapse-item" asp-action="CompletedBills" asp-controller="Bills">Đơn hàng vận chuyển xong</a>
+                        <a class="collapse-item" asp-action="CanceledBills" asp-controller="Bills">Đơn hàng hủy</a>
+                    </div>
+                </div>
             </li>
 
             <!-- Divider -->
@@ -69,25 +121,19 @@
 
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                <a class="nav-link" asp-action="Index" asp-controller="Products">
                     <i class="fas fa-fw fa-cog"></i>
-                    <span>Sản phẩm - Đơn hàng</span>
+                    <span>Sản phẩm</span>
                 </a>
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="buttons.html">Sản phẩm</a>
-                        <a class="collapse-item" href="cards.html">Đơn hàng</a>
-                    </div>
-                </div>
             </li>
 
             <!-- Nav Item - Utilities Collapse Menu -->
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCustomer" aria-expanded="true" aria-controls="collapseCustomer">
                     <i class="fas fa-fw fa-user"></i>
                     <span>Chăm sóc khách hàng</span>
                 </a>
-                <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+                <div id="collapseCustomer" class="collapse" aria-labelledby="collapseCustomer" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="utilities-color.html">Feedbacks</a>
                         <a class="collapse-item" href="utilities-border.html">Đánh giá sản phẩm</a>
@@ -103,22 +149,43 @@
             <!-- Nav Item - Charts -->
             <li class="nav-item">
                 <a class="nav-link" href="charts.html">
-                    <i class="fa fa-store"></i>
+                    <i class="fa fa-home"></i>
                     <span>Nhập xuất hàng hóa</span>
                 </a>
             </li>
 
-            <!-- Divider -->
-            <hr class="sidebar-divider">
+            @if (credential.AccountRoleName == Constants.ADMIN)
+            {
+                <!-- Divider -->
+                <hr class="sidebar-divider">
+
+                <!-- Heading -->
+                <div class="sidebar-heading">
+                    Cấu hình hệ thống
+                </div>
+
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="#" aria-expanded="true" aria-controls="collapseUtilities">
+                        <i class="fas fa-fw fa-cog"></i>
+                        <span>Cấu hình</span>
+                    </a>
+                </li>
+
+                <!-- Divider -->
+                <hr class="sidebar-divider">
 
 
-            <!-- Nav Item - Charts -->
-            <li class="nav-item">
-                <a class="nav-link" href="charts.html">
-                    <i class="fas fa-fw fa-chart-area"></i>
-                    <span>Thống kê</span>
-                </a>
-            </li>
+                <!-- Nav Item - Charts -->
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Index" asp-controller="Charts" asp-area="@Constants.ADMIN">
+                        <i class="fas fa-fw fa-chart-area"></i>
+                        <span>Thống kê</span>
+                    </a>
+                </li>
+            }
+
+
+
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
@@ -167,11 +234,7 @@
                             </div>
                         </li>
 
-                        @{ 
-                            var nBill = PETSHOP.Utils.GetApiBills.GetBills().Where(p => p.IsDelivery == false && p.IsCancel == false).Count();
-                            var nFeedBacks = PETSHOP.Utils.GetApiFeedbacks.GetFeedbacks().ToList().Count();
-                            var nNoti = nBill + nFeedBacks;
-                        }
+
 
                         <!-- Nav Item - Alerts -->
                         <li class="nav-item dropdown no-arrow mx-1">
@@ -193,7 +256,7 @@
                                     </div>
                                     <div>
                                         <div class="small text-gray-500">December 12, 2019</div>
-                                        <span class="font-weight-bold">Đơn hàng mới: @nBill</span>
+                                        <span class="font-weight-bold">Đơn hàng mới: @(nBillWaitingForApprove + nApprovedBill)</span>
                                     </div>
                                 </a>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
@@ -215,27 +278,24 @@
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Valerie Luna</span>
-                                <img class="img-profile rounded-circle" src="https://source.unsplash.com/QAB-WJcbgJk/60x60">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">@credential.Email</span>
+                                <img class="img-profile rounded-circle" src="~/images/avatar/@credential.Avatar">
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
                                 <a class="dropdown-item" href="#">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Profile
+                                    Chỉnh sửa thông tin
                                 </a>
                                 <a class="dropdown-item" href="#">
                                     <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Settings
+                                    Đổi mật khẩu
                                 </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Activity Log
-                                </a>
+
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Logout
+                                    Đăng xuất
                                 </a>
                             </div>
                         </li>
@@ -286,7 +346,7 @@
                 <div class="modal-body">Chọn "Đăng xuất" bên dưới nếu bạn đã sẵn sàng kết thúc phiên đăng nhập.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
-                    <a class="btn btn-primary" asp-controller="Auth" asp-action="Logout">Đăng xuất</a>
+                    <a class="btn btn-primary" asp-controller="Auth" asp-area="@Constants.ADMIN" asp-action="Logout">Đăng xuất</a>
                 </div>
             </div>
         </div>
@@ -312,6 +372,13 @@
     <!-- Datetimepicker-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
 
+    <!--  Chart JS
+    ============================================ -->
+
+    <script src="https://cdnjs.com/libraries/Chart.js"></script>
+
+    <script src="~/Admin/js/sweetalert2.min.js"></script>
+    <script src="~/Admin/js/dialog-active.js"></script>
 </body>
 
 </html>

@@ -14,6 +14,8 @@ using System.Security.Cryptography;
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Policy;
 using PETSHOP.Models.LoginModel;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 
 namespace PETSHOP.Services
 {
@@ -22,6 +24,8 @@ namespace PETSHOP.Services
         Account Authenticate(string username, string password);
         IEnumerable<Account> GetAll();
         Account AuthenticateExternal(AuthenticateExternal external);
+        string GetRoleName(int accountIdRole);
+        AccountManage AuthenticateManage(string email, string password);
     }
 
     public class LoginService : ILoginService
@@ -29,12 +33,13 @@ namespace PETSHOP.Services
         private readonly PETSHOPContext _context;
         private readonly AppSetting _appSettings;
 
+
         public LoginService(IOptions<AppSetting> appSettings, PETSHOPContext context)
         {
             _appSettings = appSettings.Value;
             _context = context;
         }
-
+        
         public Account Authenticate(string username, string password)
         {
             var user = _context.Account.SingleOrDefault(x => x.AccountUserName == username && x.AccountPassword == Helper.Encryptor.MD5Hash(password));
@@ -44,13 +49,15 @@ namespace PETSHOP.Services
             // authentication successful so generate jwt token
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+            
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                new Claim(ClaimTypes.Name, user.AccountId.ToString())
+                    new Claim(ClaimTypes.Name, user.AccountId.ToString()),
+                    new Claim(ClaimTypes.Role, GetRoleName(user.AccountRoleId))
                 }),
-                Expires = DateTime.UtcNow.AddDays(7),
+                Expires = DateTime.UtcNow.AddHours(6),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
@@ -60,6 +67,43 @@ namespace PETSHOP.Services
             user.UserProfile.Add(profile);
 
             return user;
+            throw new NotImplementedException();
+        }
+
+        public AccountManage AuthenticateManage(string email, string password)
+        {
+            var user = _context.AccountManage.Where(x => x.Email == email && x.Password == Helper.Encryptor.MD5Hash(password)).Select(p=> new AccountManage()
+            {
+                Email = p.Email,
+                Password = Encryptor.MD5Hash(p.Password),
+                AccountRoleId = p.AccountRoleId,
+                Address = p.Address,
+                Avatar = p.Avatar,
+                FullName = p.FullName,
+                IsActivated = p.IsActivated
+            }).ToList();
+
+            if (user[0] == null)
+                return null;
+
+            // authentication successful so generate jwt token
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.Name, user[0].Email.ToString()),
+                    new Claim(ClaimTypes.Role, GetRoleName(user[0].AccountRoleId))
+                }),
+                Expires = DateTime.UtcNow.AddHours(6),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            user[0].Jwtoken = tokenHandler.WriteToken(token);
+
+            return user[0];
             throw new NotImplementedException();
         }
 
@@ -77,7 +121,8 @@ namespace PETSHOP.Services
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                new Claim(ClaimTypes.Name, user.AccountId.ToString())
+                    new Claim(ClaimTypes.Name, user.AccountId.ToString()),
+                    new Claim(ClaimTypes.Role, GetRoleName(user.AccountRoleId))
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -93,9 +138,17 @@ namespace PETSHOP.Services
            
         }
 
+        public string GetRoleName(int accountRoleId)
+        {
+            string role = _context.AccountRole.SingleOrDefault(p=> p.AccountRoleId == accountRoleId).AccountRoleName;
+            return role;
+        }
+
         public IEnumerable<Account> GetAll()
         {       
             throw new NotImplementedException();
         }
+
+
     }
 }

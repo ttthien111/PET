@@ -1,5 +1,7 @@
-﻿using PETSHOP.Common;
+﻿using PETSHOP.Areas.Admin.Models;
+using PETSHOP.Common;
 using PETSHOP.Models;
+using PETSHOP.Models.ModelView;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,13 +12,13 @@ namespace PETSHOP.Utils
 {
     public static class GetApiBills
     {
-        public static IEnumerable<Bill> GetBills()
+        public static IEnumerable<Bill> GetBills(CredentialManage credential)
         {
             IEnumerable<Bill> bills = null;
-            using (var client = new HttpClient())
+            using (var client = Common.HelperClient.GetClient(credential.JwToken))
             {
                 client.BaseAddress = new Uri(Constants.BASE_URI);
-                var responseTask = client.GetAsync("bills");
+                var responseTask = client.GetAsync(Constants.BILL);
                 responseTask.Wait();
 
                 var result = responseTask.Result;

@@ -41,9 +41,18 @@ namespace PETSHOP.Controllers
 
                     if (SlugHelper.CheckExtension(extension))
                     {
+                        // delete img current
+                        var pathCurrent = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\avatar", profile.UserProfileAvatar);
+
+                        if (System.IO.File.Exists(pathCurrent))
+                        {
+                            System.IO.File.Delete(pathCurrent);
+                        }
+
                         string avatarName = Encryptor.RandomString(12);
 
                         var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images/avatar", avatarName + extension);
+
                         using (var file = new FileStream(path, FileMode.Create))
                         {
                             avatarFile.CopyTo(file);

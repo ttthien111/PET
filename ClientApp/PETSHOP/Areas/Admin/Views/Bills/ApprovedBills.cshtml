@@ -1,0 +1,94 @@
+﻿@model IEnumerable<PETSHOP.Areas.Admin.Models.BillViewModel>
+@{
+    ViewData["Title"] = "Đơn hàng đã duyệt";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section breadcumb {
+    <div class="card border-left-primary shadow h-100 py-2">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                    <div class="text-xl-center font-weight-bold text-primary text-uppercase mb-1">Đơn hàng đã duyệt</div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+<link href="~/Admin/css/modalBill.css" rel="stylesheet" />
+
+<!-- DataTales Example -->
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr style="text-align: center">
+                        <th>STT</th>
+                        <th>Mã hóa đơn</th>
+                        <th>Email khách hàng</th>
+                        <th>Ngày mua</th>
+                        <th>Ngày vận chuyển(nếu có)</th>
+                        <th>Trạng thái vận chuyển</th>
+                        <th>Tổng hóa đơn(VNĐ)</th>
+                        <th>Phương thức thanh toán</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        var i = 1;
+                        foreach (var p in Model)
+                        {
+                            <tr style="text-align: center">
+                                <td>@i</td>
+                                <td><a href="#" class="billDetail" data-toggle="modal" data-target="#myModal" title="Xem chi tiết" data-id="@p.BillId">#@p.BillId</a></td>
+                                <td>@p.UserProfileEmail</td>
+                                <td>@p.DateOfPurchase.ToString("dd/MM/yyyy hh:mm")</td>
+                                <td>@(p.DateOfDelivered != null ? p.DateOfDelivered.ToString() :  "_" )</td>
+                                <td><span class="badge badge-info">@p.CurrentDeliveryState</span></td>
+                                <td>
+                                    <span>@p.TotalPrice.ToString("#,##")</span>
+                                </td>
+                                <td><span class="badge badge-counter">@p.PaymentMethodName</span></td>
+                                <td>
+                                    @if (p.IsCancel)
+                                    {
+                                        <span class="badge badge-danger">Đã hủy</span>
+                                    }
+                                    else
+                                    {
+                                        if (!p.IsApprove)
+                                        {
+                                            <span class="badge badge-warning">Đang chờ xử lý</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-success">Đã duyệt</span>
+                                        }
+                                    }
+                                </td>
+                            </tr>
+                            i++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- The Modal Bill Detail -->
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="billDetailContent">
+
+        </div>
+    </div>
+</div>
+
+<script src="~/js/jquery.min.js"></script>
+<script src="~/Admin/js/system/bills.js"></script>
+

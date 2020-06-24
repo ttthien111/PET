@@ -63,7 +63,10 @@
                                 else
                                 {
                                     <div class="btn btn-neutral">
-                                        <span class="text text-danger"><i class="fa fa-warning"></i> &nbsp;Đơn hàng đã ở trạng thái chuẩn bị không thể hủy</span>
+                                        <span class="text text-danger">
+                                            <i class="fa fa-warning"></i> &nbsp;Đơn hàng đã ở trạng thái đã duyệt không thể hủy
+                                            <a asp-action="Contact" asp-controller="Me"><i>(Vui lòng liên hệ để hỗ trợ nếu gặp sự cố)</i></a>
+                                        </span>
                                     </div>
                                 }
                             }

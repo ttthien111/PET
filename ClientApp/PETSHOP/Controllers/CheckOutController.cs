@@ -100,7 +100,7 @@ namespace PETSHOP.Controllers
 
         private void UpdateStock(List<BillDetail> foods, List<BillDetail> toys, List<BillDetail> costumes)
         {
-            CredentialModel credential = JsonConvert.DeserializeObject<CredentialModel>(HttpContext.Session.GetString("vm"));
+            CredentialModel credential = JsonConvert.DeserializeObject<CredentialModel>(HttpContext.Session.GetString(Constants.VM));
             string token = credential.JwToken;
 
             //HTTP PUT FOOD
@@ -165,7 +165,7 @@ namespace PETSHOP.Controllers
 
             }
 
-            CredentialModel credential = JsonConvert.DeserializeObject<CredentialModel>(HttpContext.Session.GetString("vm"));
+            CredentialModel credential = JsonConvert.DeserializeObject<CredentialModel>(HttpContext.Session.GetString(Constants.VM));
             string token = credential.JwToken;
 
             // post Delivery
@@ -175,7 +175,7 @@ namespace PETSHOP.Controllers
 
                 foreach (var detail in details)
                 {
-                    var postTask = client.PostAsJsonAsync<BillDetail>("billdetails", detail);
+                    var postTask = client.PostAsJsonAsync<BillDetail>(Constants.BILLDETAIL, detail);
                     postTask.Wait();
 
                     var result = postTask.Result;
@@ -204,7 +204,7 @@ namespace PETSHOP.Controllers
                 DeliveryProductTypeId = checkOut.DeliveryProductTypeId
             };
 
-            CredentialModel credential = JsonConvert.DeserializeObject<CredentialModel>(HttpContext.Session.GetString("vm"));
+            CredentialModel credential = JsonConvert.DeserializeObject<CredentialModel>(HttpContext.Session.GetString(Constants.VM));
             string token = credential.JwToken;
 
             // post Delivery
@@ -212,7 +212,7 @@ namespace PETSHOP.Controllers
             {
                 client.BaseAddress = new Uri(Common.Constants.BASE_URI);
 
-                var postTask = client.PostAsJsonAsync<DeliveryProduct>("deliveryproducts", delivery);
+                var postTask = client.PostAsJsonAsync<DeliveryProduct>(Constants.DELIVERY_PRODUCT, delivery);
                 postTask.Wait();
 
                 var result = postTask.Result;
@@ -240,9 +240,11 @@ namespace PETSHOP.Controllers
                     TotalPrice = checkOut.TotalPrice,
                     IsDelivery = false,
                     PaymentMethodTypeId = checkOut.PaymentMethodTypeId,
-                    GenerateCodeCheck = generateCodeCheck
+                    GenerateCodeCheck = generateCodeCheck,
+                    IsApprove = false,
+                    IsCancel = false
                 };
-                CredentialModel credential = JsonConvert.DeserializeObject<CredentialModel>(HttpContext.Session.GetString("vm"));
+                CredentialModel credential = JsonConvert.DeserializeObject<CredentialModel>(HttpContext.Session.GetString(Constants.VM));
                 string token = credential.JwToken;
 
                 // post comment
@@ -250,7 +252,7 @@ namespace PETSHOP.Controllers
                 {
                     client.BaseAddress = new Uri(Common.Constants.BASE_URI);
 
-                    var postTask = client.PostAsJsonAsync<Bill>("bills", bill);
+                    var postTask = client.PostAsJsonAsync<Bill>(Constants.BILL, bill);
                     postTask.Wait();
 
                     var result = postTask.Result;

@@ -51,24 +51,43 @@
                     <div>Số điện thoại: <span class="text text-primary">@Model.delivery.DeliveryProductPhoneNumber</span></div>
                     <div>Địa chỉ: <span class="text text-primary">@Model.delivery.DeliveryProductAddress</span></div>
                     <div>Ghi chú: <span class="text text-primary">@Model.delivery.DeliveryProductNote</span></div>
-                    <div>Phương thức thanh toán: 
-                        <span class="btn-sm btn-primary">
+                    <div>
+                        Phương thức thanh toán:
+                        <span class="text text-primary">
                             @if (Model.PaymentMethodName == "PayPal")
                             {
                                 <i class="fa fa-paypal"></i>
                             }
 
-                            &nbsp; @Model.PaymentMethodName
+                            @Model.PaymentMethodName
                         </span>
                     </div>
-                    <div>Trạng thái: 
-                        @{ 
-                            var theme = "primary";
-                            var status = Model.DeliveryStateName;
-                            if(Model.IsCancel)
+                    <div>
+                        Trạng thái vận chuyển:
+                        <span class="text text-primary">@Model.DeliveryStateName</span>
+                    </div>
+                    <div>
+                        Trạng thái đơn hàng:
+                        @{
+                            var theme = "";
+                            var status = "";
+                            if (Model.IsCancel)
                             {
                                 theme = "danger";
                                 status = "Đã hủy";
+                            }
+                            else
+                            {
+                                if (!Model.IsApprove)
+                                {
+                                    theme = "warning";
+                                    status = "Đang chờ xử lý";
+                                }
+                                else
+                                {
+                                    theme = "success";
+                                    status = "Đã duyệt";
+                                }
                             }
 
                         }

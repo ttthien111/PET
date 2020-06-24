@@ -19,7 +19,6 @@ namespace PETSHOP.Controllers
         private ILoginService _user;
         private readonly PETSHOPContext _context;
 
-
         public LoginAuthenticationController(ILoginService userService, PETSHOPContext context)
         {
             _user = userService;
@@ -31,6 +30,16 @@ namespace PETSHOP.Controllers
         public IActionResult Authenticate([FromBody] AuthenticateModel model)
         {
             var user = _user.Authenticate(model.Username, model.Password);
+            if (user == null)
+                return BadRequest(new { message = "Wrong" });
+            return Ok(user);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("AuthenticateManage")]
+        public IActionResult AuthenticateManage([FromBody] AuthenticateModel model)
+        {
+            var user = _user.AuthenticateManage(model.Username, model.Password);
             if (user == null)
                 return BadRequest(new { message = "Wrong" });
             return Ok(user);

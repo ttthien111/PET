@@ -8,6 +8,21 @@ namespace PETSHOP.Common
     public static class Constants
     {
         public const string BASE_URI = "https://localhost:44380/api/";
+        public const string CLIENT_URI = "https://localhost:44337/";
+
+        // session login 
+        public const string VM = "vm";
+        public const string VM_MANAGE = "vm_manage";
+
+        //client
+        public const string MY_BILL = "mybills";
+        //end client
+
+
+        // server
+        public const string BILL = "bills";
+        public const string DELIVERY_PRODUCT = "deliveryproducts";
+        public const string BILLDETAIL = "billdetails";
 
         public const string FOOD_PRODUCT = "foodproducts";
         public const string TOY_PRODUCT = "toyproducts";
@@ -21,6 +36,8 @@ namespace PETSHOP.Common
         public const string PRODUCT = "products";
         public const string FEEDBACK = "feedbacks";
 
+        // end server
+
         public const string S = "S";
         public const string M = "M";
         public const string L = "L";
@@ -30,5 +47,13 @@ namespace PETSHOP.Common
         public const string DISCOUNT_INVALID = "Giá trị giảm giá từ 0 đến 1";
         public const string EXTENSION_IMG_NOT_SUPPORT = "Kiểu file không hỗ trợ (jpg, png, ...)";
         public const string IMG_REQUIRED = "Yêu cầu hình cho sản phẩm";
+
+        // Imagemail
+        public const string EMBEDED_MAIL_URL = "D:\\OrderImage\\";
+
+        //Role
+        public const string ADMIN = "Admin";
+        public const string USER = "User";
+        public const string CUSTOMER = "Customer";
     }
 }
