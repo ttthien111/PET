@@ -42,7 +42,7 @@
         CredentialManage credential = Context.Session.GetObject<CredentialManage>(Constants.VM_MANAGE);
         var nBillWaitingForApprove = PETSHOP.Utils.GetApiBills.GetBills(credential).Where(p => p.IsApprove == false && p.IsCancel == false).Count();
         var nApprovedBill = PETSHOP.Utils.GetApiBills.GetBills(credential).Where(p => p.IsApprove == true && p.IsCancel == false && p.IsDelivery == false).Count();
-        var nFeedBacks = PETSHOP.Utils.GetApiFeedbacks.GetFeedbacks().ToList().Count();
+        var nFeedBacks = PETSHOP.Utils.GetApiFeedbacks.GetFeedbacks(credential.JwToken).ToList().Count();
         var nNoti = nBillWaitingForApprove + nApprovedBill + nFeedBacks;
     }
     <!-- Page Wrapper -->
@@ -135,8 +135,8 @@
                 </a>
                 <div id="collapseCustomer" class="collapse" aria-labelledby="collapseCustomer" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="utilities-color.html">Feedbacks</a>
-                        <a class="collapse-item" href="utilities-border.html">Đánh giá sản phẩm</a>
+                        <a class="collapse-item" asp-action="Index" asp-controller="Feedbacks" asp-area="@Constants.ADMIN">Feedbacks</a>
+                        <a class="collapse-item" asp-action="Index" asp-controller="Ratings">Đánh giá sản phẩm</a>
                         <a class="collapse-item" href="utilities-animation.html">Khách hàng</a>
                     </div>
                 </div>
