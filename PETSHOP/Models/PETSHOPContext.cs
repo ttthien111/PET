@@ -1,4 +1,4 @@
-﻿using System;
+﻿    using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -306,6 +306,8 @@ namespace PETSHOP.Models
                     .IsUnicode(false);
 
                 entity.Property(e => e.FullName).HasMaxLength(200);
+
+                entity.Property(e => e.IsRead).HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.Subject).HasMaxLength(100);
             });

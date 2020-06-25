@@ -1,0 +1,230 @@
+﻿@model IEnumerable<PETSHOP.Models.Feedback>
+@{
+    ViewData["Title"] = "Feedbacks";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+
+
+@section breadcumb {
+    <div class="card border-left-primary shadow h-100 py-2">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+                <div class="col">
+                    <div class="text-xl-center font-weight-bold text-primary text-uppercase mb-2">Feedbacks</div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="row" style="margin:20px 0 0 0;">
+    <div class="card shadow mb-4" id="listFeedbacks" style="width: 100%">
+        <div class="card-header py-3 d-sm-flex align-items-center justify-content-between mb-4">
+            <h6 class="m-0 font-weight-bold text-primary">Danh sách phản hồi</h6>
+            <a asp-action="UpdateAllIsRead" asp-controller="Feedbacks" asp-area="@PETSHOP.Common.Constants.ADMIN" class="btn btn-warning btn-icon-split btn-sm">
+                <span class="icon text-white-50">
+                    <i class="fa fa-backward"></i>
+                </span>
+                <span class="text" asp-ac>Đánh dấu tất cả đã đọc</span>
+            </a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th width="40px">Chức năng</th>
+                            <th>Mã phản hồi</th>
+                            <th>Họ tên</th>
+                            <th>Email</th>
+                            <th>Tiêu đề</th>
+                            <th>Nội dung</th>
+                            <th>Ngày tạo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var i = 1;
+                            foreach (var p in Model)
+                            {
+                                var key = p.FeedbackId + "," + p.Email;
+                                var checkRead = p.FeedbackId + "," + p.IsRead;
+                                var theme = "#e9f0ea";
+                                if (p.IsRead)
+                                {
+                                    theme = "white";
+                                }
+                                <tr style="background-color: @theme">
+                                    <td>@i</td>
+                                    <td>
+                                        <a data-id="@checkRead" href="#" name="checkIsRead" data-toggle="tooltip" title="Đánh dấu đã đọc/chưa đọc"><i class="fa fa-check"></i></a>
+                                        <a href="#" data-id="@key" data-index="@i" data-content="@p.FeedbackContent" name="reply" data-toggle="tooltip" title="Trả lời"><i class="fa fa-send"></i></a>
+                                    </td>
+                                    <td><a href="#">#@p.FeedbackId</a></td>
+                                    <td>@p.FullName</td>
+                                    <td>@p.Email</td>
+                                    <td><span class="badge badge-info">@p.Subject</span></td>
+                                    <td>@p.FeedbackContent</td>
+                                    <td>@p.CreatedAt.ToString("dd/MM/yyyy hh:mm")</td>
+                                </tr>
+                                i++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script src="//cdn.ckeditor.com/4.11.1/full/ckeditor.js"></script>
+
+
+
+    <div class="card shadow mb-4" id="contentReply">
+        <div class="card-header py-3">
+            <div class="d-flex row">
+                <div class="justify-content-end">
+                    Thông tin phản hồi
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <div>
+                    <label><b>Người gửi :</b> </label>
+                    <span class="text text-primary" name="email"></span>
+                    <p id="contentFb">
+
+                    </p>
+                </div>
+                <hr />
+                <div>
+                    <label><b>Nội dung :</b></label>
+                    <div class="card-body">
+                        <p id="contentRespone">
+
+                        </p>
+                    </div>
+                </div>
+                <hr />
+                <div class="form-group">
+                    <div>
+                        <textarea class="form-control" id="contentForSend"></textarea>
+                        <script>
+                            CKEDITOR.plugins.addExternal('abbr', '/myplugins/abbr/', 'plugin.js');
+                            var editor = CKEDITOR.replace('contentForSend');
+                        </script>
+                    </div>
+                    <div style="text-align: center; padding: 20px">
+                        <input type="hidden" name="feedbackId"/>
+                        <button class="btn btn-primary" name="send">Gửi mail phản hồi</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="myToast" role="alert" aria-live="assertive" aria-atomic="true" style="position:fixed; top: 20px; right: 10px; width: 400px; height: 100px; ">
+    <div class="toast-header">
+        <strong class="mr-auto">Thông báo</strong>
+        <small class="text-muted">0 giây trước</small>
+        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="toast-body">
+        Gửi phản hồi thành công đến <span id="emailNoti"></span>
+    </div>
+</div>
+
+
+<script src="~/Admin/js/jquery.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+
+        $("#contentReply").hide();
+        $("a[name=reply]").click(function () {
+            $("#contentReply").hide();
+            $("div#listFeedbacks").toggleClass("col-md-6");
+            $("div#contentReply").toggleClass("col-md-6");
+            // get value email && content
+            var email = $(this).attr("data-id").split(",")[1];
+            var content = $(this).attr("data-content");
+            // set to label
+            $("input[name=feedbackId]").val($(this).attr("data-id").split(",")[0]);
+            $("span[name=email]").html("").html(email);
+            $("p#contentRespone").html("").html(content);
+            if ($("div#contentReply").hasClass("col-md-6")) {
+                $("#contentReply").show();
+            }
+        });
+
+        $("button[name=send]").click(function () {
+            var feedbackId = $("input[name=feedbackId]").val();
+            var email = $("span[name=email]")[0].textContent;
+            var contentReply = CKEDITOR.instances["contentForSend"].getData();
+            $.ajax({
+                url: "/Admin/Feedbacks/ReplyFeedback",
+                type: "GET",
+                data: { feedbackId, "email": email, "content": contentReply },
+                contentType: "application/json",
+                success: function (res) {
+                    // set data for noti
+                    $("#emailNoti").html("").html(res);
+                    $("div#listFeedbacks").toggleClass("col-md-12");
+                    $("div#contentReply").hide();
+
+                    $('.toast').toast({
+                        delay: 3000
+                    });
+                    $("#myToast").toast('show');
+                }
+            });
+        });
+
+        $("a[name=checkIsRead]").click(function (e) {
+            e.preventDefault();
+            var feedbackId = $(this).attr("data-id").split(",")[0];
+            var status = $(this).attr("data-id").split(",")[1];
+
+            var parent = $(this).parent().parent();
+            $.ajax({
+                url: "/Admin/Feedbacks/GetStatus",
+                type: "GET",
+                data: { feedbackId },
+                contentType: "application/json",
+                success: function (res) {
+                    if (res) {
+                        parent.css({
+                            "background-color": "#e9f0ea"
+                        });
+                    } else {
+                        parent.css({
+                            "background-color": "white"
+                        });
+                    }
+                },
+                error: function (err) {
+
+                }
+            });
+
+
+            $.ajax({
+                url: "/Admin/Feedbacks/UpdateStatusIsRead",
+                type: "GET",
+                data: { feedbackId },
+                contentType: "application/json",
+                success: function (res) {
+
+                },
+                error: function () {
+
+                }
+            });
+
+        });
+    });
+</script>

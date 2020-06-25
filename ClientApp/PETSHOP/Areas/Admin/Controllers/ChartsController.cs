@@ -24,22 +24,22 @@ namespace PETSHOP.Areas.Admin.Controllers
 
         public IActionResult BillsFilter(string from, string to)
         {
-            dynamic fromValue = null;
-            dynamic toValue = null;
+            DateTime fromValue = new DateTime();
+            DateTime toValue = new DateTime();
             if (from == "nodata" && to == "nodata")
             {
-                fromValue = DateTime.Now.AddDays(-7);
+                fromValue = DateTime.Now.AddDays(-6);
                 toValue = DateTime.Now;
             }
             else if (from == "nodata" && to != "nodata")
             {
-                fromValue = DateTime.Parse(to).AddDays(-7);
+                fromValue = DateTime.Parse(to).AddDays(-6);
                 toValue = DateTime.Parse(to);
             }
             else if (from != "nodata" && to == "nodata")
             {
                 fromValue = DateTime.Parse(from);
-                toValue = DateTime.Parse(from).AddDays(7);
+                toValue = DateTime.Parse(from).AddDays(6);
             }
             else
             {
@@ -50,14 +50,12 @@ namespace PETSHOP.Areas.Admin.Controllers
             List<Earning7Day> BillsFilter = new List<Earning7Day>();
             CredentialManage credential = JsonConvert.DeserializeObject<CredentialManage>(HttpContext.Session.GetString(Constants.VM_MANAGE));
             List<DateTime> dateTimes = new List<DateTime>();
-            int days = (toValue.Date - fromValue.Date).Days;
-
-            DateTime min = fromValue;
+            int days = (toValue.Date - fromValue.Date).Days + 1;
 
             for (int i = 0; i < days; i++)
             {
-                dateTimes.Add(min.Date);
-                min = min.AddDays(1);
+                dateTimes.Add(fromValue.Date);
+                fromValue = fromValue.AddDays(1);
             }
 
             dateTimes = dateTimes.OrderBy(p => p).ToList();
@@ -77,22 +75,22 @@ namespace PETSHOP.Areas.Admin.Controllers
 
         public IActionResult PaymentMethodFilter(string from = "nodata", string to = "nodata")
         {
-            dynamic fromValue = null;
-            dynamic toValue = null;
+            DateTime fromValue = new DateTime();
+            DateTime toValue = new DateTime();
             if (from == "nodata" && to == "nodata")
             {
-                fromValue = DateTime.Now.AddDays(-7);
+                fromValue = DateTime.Now.AddDays(-6);
                 toValue = DateTime.Now;
             }
             else if (from == "nodata" && to != "nodata")
             {
-                fromValue = DateTime.Parse(to).AddDays(-7);
+                fromValue = DateTime.Parse(to).AddDays(-6);
                 toValue = DateTime.Parse(to);
             }
             else if (from != "nodata" && to == "nodata")
             {
                 fromValue = DateTime.Parse(from);
-                toValue = DateTime.Parse(from).AddDays(7);
+                toValue = DateTime.Parse(from).AddDays(6);
             }
             else
             {
@@ -105,7 +103,7 @@ namespace PETSHOP.Areas.Admin.Controllers
             List<string> paymentMethod = new List<string>();
 
             foreach (var p in GetApiPaymentMethodTypes.GetPaymentMethodTypes())
-            {
+            {   
                 paymentMethod.Add(p.PaymentMethodTypeName);
             }
 
@@ -126,22 +124,22 @@ namespace PETSHOP.Areas.Admin.Controllers
 
         public IActionResult EarningFilter(string from = "nodata", string to = "nodata")
         {
-            dynamic fromValue = null;
-            dynamic toValue = null;
+            DateTime fromValue = new DateTime();
+            DateTime toValue = new DateTime();
             if (from == "nodata" && to == "nodata")
             {
-                fromValue = DateTime.Now.AddDays(-7);
+                fromValue = DateTime.Now.AddDays(-6);
                 toValue = DateTime.Now;
             }
             else if (from == "nodata" && to != "nodata")
             {
-                fromValue = DateTime.Parse(to).AddDays(-7);
+                fromValue = DateTime.Parse(to).AddDays(-6);
                 toValue = DateTime.Parse(to);
             }
             else if (from != "nodata" && to == "nodata")
             {
                 fromValue = DateTime.Parse(from);
-                toValue = DateTime.Parse(from).AddDays(7);
+                toValue = DateTime.Parse(from).AddDays(6);
             }
             else
             {
@@ -152,14 +150,12 @@ namespace PETSHOP.Areas.Admin.Controllers
             List<Earning7Day> earningFilter = new List<Earning7Day>();
             CredentialManage credential = JsonConvert.DeserializeObject<CredentialManage>(HttpContext.Session.GetString(Constants.VM_MANAGE));
             List<DateTime> dateTimes = new List<DateTime>();
-            int days = (toValue.Date - fromValue.Date).Days;
-
-            DateTime min = fromValue;
+            int days = (toValue.Date - fromValue.Date).Days + 1;
 
             for (int i = 0; i < days; i++)
             {
-                dateTimes.Add(min.Date);
-                min = min.AddDays(1);
+                dateTimes.Add(fromValue.Date);
+                fromValue = fromValue.AddDays(1);
             }
 
             dateTimes = dateTimes.OrderBy(p => p).ToList();

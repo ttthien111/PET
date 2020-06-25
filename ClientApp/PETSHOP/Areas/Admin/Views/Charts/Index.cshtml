@@ -58,22 +58,22 @@
             <div class="row">
                 <div class="col-md-5">
                     <label>Từ ngày</label>
-                    <input type="date" name="from" value="" />
+                    <input type="text" id="start" class="form-control date input-sm" name="from" value="" />
                 </div>
-                 <div class="col-md-5">
+                <div class="col-md-5">
                     <label>đến ngày</label>
-                    <input type="date" name="to" value="" />
+                    <input type="text" id="end" class="form-control date input-sm" name="to" value="" />
                 </div>
-                 <div class="col-md-2">
-                     <button class="btn btn-primary" id="filter">Lọc dữ liệu</button>
-                 </div>
+                <div class="col-md-2">
+                    <button class="btn btn-primary" id="filter">Lọc dữ liệu</button>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <div class="container-fluid p-1">
-    
+
     <div class="row">
         <div class="card shadow mb-4 col-md-4 col-lg-8 col-xl-5">
             <div class="card-header py-3">
@@ -115,8 +115,6 @@
             sessionStorage.setItem("from", "nodata");
             sessionStorage.setItem("to", "nodata");
         }
-
-
 
         // Set new default font family and font color to mimic Bootstrap's default styling
         Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
@@ -162,9 +160,11 @@
             contentType: "application/json",
             success: function (res) {
                 if (res.length > 0) {
-                    $("span[name=days]").html("").html("từ ngày " + res[0].label + " đến ngày " + res[res.length-1].label);
+                    $("span[name=days]").html("").html("từ ngày " + res[0].label + " đến ngày " + res[res.length - 1].label);
                 }
 
+                $("#start").val(sessionStorage.getItem("from") != "nodata" ? sessionStorage.getItem("from") : "");
+                $("#end").val(sessionStorage.getItem("to") != "nodata" ? sessionStorage.getItem("to") : "");
 
                 var labels = [];
                 var datas = [];
@@ -316,7 +316,7 @@
         $.ajax({
             url: "/Admin/Charts/EarningFilter",
             type: "GET",
-            data: { "from": from, "to" : to},
+            data: { "from": from, "to": to },
             contentType: "application/json",
             success: function (res) {
                 console.log(res);
@@ -495,13 +495,14 @@
 <script type="text/javascript">
     $(function () {
         $("#filter").click(function () {
-            var from = $("input[type=date][name=from]").val();
-            var to = $("input[type=date][name=to]").val();
+            var from = $("input[type=text][name=from]").val();
+            var to = $("input[type=text][name=to]").val();
+
             if (from != "" && to != "") {
                 sessionStorage.setItem("from", from);
                 sessionStorage.setItem("to", to);
             } else if (from == "" && to != "") {
-                sessionStorage.setItem("from", "data");
+                sessionStorage.setItem("from", "nodata");
                 sessionStorage.setItem("to", to);
             } else if (from != "" && to == "") {
                 sessionStorage.setItem("from", from);
@@ -510,9 +511,23 @@
                 sessionStorage.setItem("from", "nodata");
                 sessionStorage.setItem("to", "nodata");
             }
-            
+
             window.location.reload();
+
         });
     });
 
+</script>
+
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $("#start").datepicker({
+        });
+    });
+
+    $(function () {
+        $("#end").datepicker({
+        });
+    });
 </script>

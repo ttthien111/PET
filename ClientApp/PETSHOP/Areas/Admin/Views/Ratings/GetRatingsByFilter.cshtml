@@ -1,0 +1,73 @@
+﻿@model IEnumerable<PETSHOP.Models.UserComment>
+@{
+    ViewData["Title"] = "Đánh giá sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section breadcumb {
+    <div class="card border-left-primary shadow h-100 py-2">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                    <div class="text-xl-center font-weight-bold text-primary text-uppercase mb-1">Danh mục đánh giá sản phẩm</div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="row" style="margin:20px 0 0 0;">
+    <div class="card shadow mb-4" id="listFeedbacks" style="width: 100%">
+        <div class="card-header py-3 d-sm-flex align-items-center justify-content-between mb-4">
+            <h6 class="m-0 font-weight-bold text-primary">Danh sách phản hồi</h6>
+            <span>
+                <a asp-action="GetRatingsByFilter" class="btn btn-warning" asp-route-type="0">Tất cả</a>
+                <a asp-action="GetRatingsByFilter" class="btn btn-warning" asp-route-type="1">1 <i class="fa fa-star"></i></a>
+                <a asp-action="GetRatingsByFilter" class="btn btn-warning" asp-route-type="2">2 <i class="fa fa-star"></i></a>
+                <a asp-action="GetRatingsByFilter" class="btn btn-warning" asp-route-type="3">3 <i class="fa fa-star"></i></a>
+                <a asp-action="GetRatingsByFilter" class="btn btn-warning" asp-route-type="4">4 <i class="fa fa-star"></i></a>
+                <a asp-action="GetRatingsByFilter" class="btn btn-warning" asp-route-type="5">5 <i class="fa fa-star"></i></a>
+            </span>
+        </div>
+        <div class="card-body" id="content">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th width="40px">Chức năng</th>
+                            <th>Mã bình luận</th>
+                            <th>Họ tên</th>
+                            <th>Mã sản phẩm</th>
+                            <th>Điểm đánh giá</th>
+                            <th>Nội dung</th>
+                            <th>Ngày tạo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var i = 1;
+                            foreach (var comment in Model)
+                            {
+                                <tr style="text-align: center">
+                                    <td>@i</td>
+                                    <td>
+                                        <a data-id="@comment.UserCommentId" href="#" name="commentId" data-toggle="tooltip" title="Ẩn bình luận"><i class="fa fa-ban"></i></a>
+                                    </td>
+                                    <td>@comment.UserCommentId</td>
+                                    <td>@comment.UserProfileId</td>
+                                    <td>@comment.ProductId</td>
+                                    <td><span class="badge badge-info">@comment.Score</span></td>
+                                    <td>@comment.UserCommentContent</td>
+                                    <td>@comment.UserCommentPostedDate</td>
+
+                                </tr>
+                                i++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

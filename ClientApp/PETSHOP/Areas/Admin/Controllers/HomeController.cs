@@ -64,7 +64,7 @@ namespace PETSHOP.Areas.Admin.Controllers
                 paymentMethod7Days.Add(new Earning7Day()
                 {
                     Label = payment,
-                    Data = GetBills(credential).Where(p => p.PaymentMethodTypeId == GetApiPaymentMethodTypes.GetPaymentMethodTypes().SingleOrDefault(k => k.PaymentMethodTypeName == payment).PaymentMethodTypeId && (DateTime.Now.Date - p.DateOfPurchase.Date).Days <= days).Count()
+                    Data = GetBills(credential).Where(p => p.PaymentMethodTypeId == GetApiPaymentMethodTypes.GetPaymentMethodTypes().SingleOrDefault(k => k.PaymentMethodTypeName == payment).PaymentMethodTypeId && (DateTime.Now.Date - p.DateOfPurchase.Date).Days < days).Count()
                 });
             }
 
