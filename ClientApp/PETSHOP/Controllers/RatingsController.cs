@@ -33,7 +33,7 @@ namespace PETSHOP.Controllers
                 CategoryName = categories.SingleOrDefault(k => k.CategoryId == p.CategoryId).CategoryName,
                 DistributorName = distributors.SingleOrDefault(k => k.DistributorId == p.DistributorId).DistributorName,
                 Rating = getRatingProduct(p.ProductId),
-                No_Ratings = comment.Where(k => k.ProductId == p.ProductId).Count(),
+                No_Ratings = comment.Where(k => k.ProductId == p.ProductId && k.UserCommentApproved == true).Count(),
                 InitAt = p.InitAt,
                 SlugName = p.SlugName
             }).OrderByDescending(p=>p.InitAt).ToList(); 
@@ -62,12 +62,12 @@ namespace PETSHOP.Controllers
                 CategoryName = GetApiCategories.GetCategories().SingleOrDefault(k => k.CategoryId == p.CategoryId).CategoryName,
                 DistributorName = GetApiDistributors.GetDistributors().SingleOrDefault(k => k.DistributorId == p.DistributorId).DistributorName,
                 Rating = getRatingProduct(p.ProductId),
-                No_Ratings = GetApiUserComments.GetUserComments().Where(k => k.ProductId == p.ProductId).Count(),
+                No_Ratings = GetApiUserComments.GetUserComments().Where(k => k.ProductId == p.ProductId && k.UserCommentApproved == true).Count(),
                 InitAt = p.InitAt,
                 Comments = new List<UserComment>()
             };
 
-            List<UserComment> comments = GetApiUserComments.GetUserComments().Where(k => k.ProductId == p.ProductId).OrderByDescending(p=>p.UserCommentPostedDate).ToList();
+            List<UserComment> comments = GetApiUserComments.GetUserComments().Where(k => k.ProductId == p.ProductId && k.UserCommentApproved == true).OrderByDescending(p=>p.UserCommentPostedDate).ToList();
 
             foreach (var cmt in comments)
             {
@@ -84,7 +84,7 @@ namespace PETSHOP.Controllers
         {
             // get all usercomments by productId 
             List<UserComment> userComments = GetApiUserComments.GetUserComments()
-                                            .Where(p => p.ProductId == productId)
+                                            .Where(p => p.ProductId == productId && p.UserCommentApproved == true)
                                             .ToList();
             // create rating to return
             double rating = 0.0;

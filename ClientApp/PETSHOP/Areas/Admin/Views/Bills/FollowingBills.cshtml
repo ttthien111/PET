@@ -15,7 +15,116 @@
         </div>
     </div>
 }
+<style>
+.card {
+    z-index: 0;
+    padding-bottom: 20px;
+    margin-bottom: 90px;
+    border-radius: 10px
+}
 
+.top {
+    padding-top: 40px;
+    padding-left: 13% !important;
+    padding-right: 13% !important
+}
+
+#progressbar {
+    margin-bottom: 30px;
+    overflow: hidden;
+    color: #455A64;
+    padding-left: 0px;
+    margin-top: 30px
+}
+
+    #progressbar li {
+        list-style-type: none;
+        font-size: 13px;
+        width: 25%;
+        float: left;
+        position: relative;
+        font-weight: 400
+    }
+
+    #progressbar .step0:before {
+        font-family: FontAwesome;
+        content: "\f10c";
+        color: #fff
+    }
+
+    #progressbar li:before {
+        width: 40px;
+        height: 40px;
+        line-height: 45px;
+        display: block;
+        font-size: 20px;
+        background: #C5CAE9;
+        border-radius: 50%;
+        margin: auto;
+        padding: 0px
+    }
+
+    #progressbar li:after {
+        content: '';
+        width: 100%;
+        height: 12px;
+        background: #C5CAE9;
+        position: absolute;
+        left: 0;
+        top: 16px;
+        z-index: -1
+    }
+
+    #progressbar li:last-child:after {
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+        position: absolute;
+        left: -50%
+    }
+
+    #progressbar li:nth-child(2):after,
+    #progressbar li:nth-child(3):after {
+        left: -50%
+    }
+
+    #progressbar li:first-child:after {
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+        position: absolute;
+        left: 50%
+    }
+
+    #progressbar li:last-child:after {
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px
+    }
+
+    #progressbar li:first-child:after {
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px
+    }
+
+    #progressbar li.active:before,
+    #progressbar li.active:after {
+        background: #651FFF
+    }
+
+    #progressbar li.active:before {
+        font-family: FontAwesome;
+        content: "\f00c"
+    }
+
+.icon {
+    width: 60px;
+    height: 60px;
+    margin-right: 15px
+}
+
+.icon-content {
+    padding-bottom: 20px
+}
+
+</style>
 
 <link href="~/Admin/css/modalBill.css" rel="stylesheet" />
 
@@ -27,6 +136,7 @@
                 <thead>
                     <tr style="text-align: center">
                         <th>STT</th>
+                        <th>Chức năng</th>
                         <th>Mã hóa đơn</th>
                         <th>Email khách hàng</th>
                         <th>Ngày mua</th>
@@ -44,11 +154,26 @@
                         {
                             <tr style="text-align: center">
                                 <td>@i</td>
+                                <td>
+                                    <a href="#" name="updateState" data-toggle="tooltip" title="Cập nhật trạng thái" data-billId="@p.BillId"><i class="fa fa-edit"></i></a>
+                                </td>
                                 <td><a href="#" class="billDetail" data-toggle="modal" data-target="#myModal" title="Xem chi tiết" data-id="@p.BillId">#@p.BillId</a></td>
                                 <td>@p.UserProfileEmail</td>
                                 <td>@p.DateOfPurchase.ToString("dd/MM/yyyy hh:mm")</td>
                                 <td>@(p.DateOfDelivered != null ? p.DateOfDelivered.ToString() :  "_" )</td>
-                                <td><span class="badge badge-info">@p.CurrentDeliveryState</span></td>
+                                <td>
+                                    @if (p.CurrentDeliveryStateId == (int)ViewBag.nState)
+                                    {
+                                        <span class="badge badge-success">@p.CurrentDeliveryStateId/@ViewBag.nState</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-danger">@p.CurrentDeliveryStateId/@ViewBag.nState</span>
+                                    }
+                                    <span class="badge badge-info">
+                                        @p.CurrentDeliveryState
+                                    </span>
+                                </td>
                                 <td>
                                     <span>@p.TotalPrice.ToString("#,##")</span>
                                 </td>
@@ -84,11 +209,145 @@
 <div class="modal fade" id="myModal">
     <div class="modal-dialog modal-lg">
         <div class="modal-content" id="billDetailContent">
-
         </div>
+    </div>
+</div>
+
+<!-- update modal-->
+<div class="modal fade" id="updateStateModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p>Cập nhật thông tin vận chuyển</p>
+                <button type="button" class="close" data-dismiss="modal">
+                    ×
+                </button>
+
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="row d-flex justify-content-between px-3 top">
+                        <div class="d-flex">
+                            <a class="pt-2 d-inline-block" asp-controller="Home" asp-action="Index"><span class="flaticon-pawprint-1 mr-2"></span><b>PETSHOP</b></a>
+                        </div>
+                        <div class="d-flex flex-column text-sm-right">
+                            <p class="mb-0">Ngày mua: <span id="dateOfPurchase"></span></p>
+                            <p>Đơn hàng #<span class="font-weight-bold" id="billIdUpdate"></span></p>
+                            <input type="hidden" name="nState" value="@ViewBag.nState" />
+                        </div>
+                    </div> <!-- Add class 'active' to progress -->
+                    <div class="row d-flex justify-content-center">
+                        <div class="col-12">
+                            <ul id="progressbar" class="text-center">
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row justify-content-between top">
+                        @foreach (var s in ViewBag.State as List<DeliveryProductState>)
+                        {
+                            <div class="row d-flex icon-content">
+                                <div class="d-flex flex-column">
+                                    <p class="font-weight-bold">@s.DeliveryProductStateName</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <hr />
+                <div>
+                    <select class="form-control" name="state">
+                        @foreach (var s in ViewBag.State as List<DeliveryProductState>)
+                        {
+                            <option value="@s.DeliveryProductStateId">@s.DeliveryProductStateName</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnHideModalUpdate" class="btn btn-warning button button4" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="myToast" role="alert" aria-live="assertive" aria-atomic="true" style="position:fixed; top: 20px; right: 10px; width: 400px; height: 100px; ">
+    <div class="toast-header">
+        <strong class="mr-auto">Thông báo</strong>
+        <small class="text-muted">0 giây trước</small>
+        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="toast-body">
+        Cập nhật thành công
     </div>
 </div>
 
 <script src="~/js/jquery.min.js"></script>
 <script src="~/Admin/js/system/bills.js"></script>
+<script type="text/javascript">
+    $("a[name=updateState]").click(function (e) {
+        $("#updateStateModal").modal('show');
+    });
 
+    $("#btnHideModalUpdate").click(function (e) {
+        $("#updateStateModal").modal('hide');
+    });
+
+</script>
+<script type="text/javascript">
+    $("a[name=updateState]").click(function () {
+        var billId = $(this).attr("data-billId");
+        var nState = $("input[name=nState]").val();
+        $.ajax({
+            url: "/Admin/Bills/BillDetail",
+            type: "GET",
+            data: { billId },
+            success: function (res) {
+                
+                var content = ``;
+                for (var i = 0; i < res.deliveryProductStateId; i++) {
+                    content += `<li class="active step0"></li>`
+                }
+
+                for (var i = 0; i < nState - res.deliveryProductStateId; i++) {
+                    content += `<li class="step0"></li>`
+                }
+
+                
+
+                // set data for modal
+                document.getElementById("dateOfPurchase").innerText = res.dateOfPurchase;
+                document.getElementById("billIdUpdate").innerText = res.billCode;
+                $("#progressbar").html("").html(content);
+            },
+            error: function (err) {
+
+            }
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $("select[name=state]").change(function () {
+        var billCode = document.getElementById("billIdUpdate").textContent;
+        var stateId = $(this).val();
+        $.ajax({
+            url: "/Admin/Bills/UpdateDeliveryState",
+            type: "GET",
+            data: { billCode, stateId },
+            success: function (res) {
+                $('.toast').toast({
+                    delay: 3000
+                });
+                $("#myToast").toast('show');
+
+                $("#updateStateModal").modal('hide');
+                window.location.reload();
+            },
+            error: function (err) {
+                alert("what's wrong !");
+            }
+        });
+    });
+</script>

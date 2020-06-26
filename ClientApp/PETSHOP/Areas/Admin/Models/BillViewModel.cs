@@ -13,6 +13,7 @@ namespace PETSHOP.Areas.Admin.Models
         public DateTime? DateOfDelivered { get; set; }
         public double TotalPrice { get; set; }
         public bool IsDelivery { get; set; }
+        public int CurrentDeliveryStateId { get; set; }
         public string CurrentDeliveryState { get; set; }
         public string PaymentMethodName { get; set; }
         public string GenerateCodeCheck { get; set; }

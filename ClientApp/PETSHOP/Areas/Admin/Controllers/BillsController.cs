@@ -37,7 +37,8 @@ namespace PETSHOP.Areas.Admin.Controllers
                 IsCancel = p.IsCancel,
                 TotalPrice = p.TotalPrice,
                 IsApprove = p.IsApprove,
-                IsCompleted = p.IsCompleted
+                IsCompleted = p.IsCompleted,
+                CurrentDeliveryStateId = GetApiDeliveryProducts.GetDeliveryProducts().SingleOrDefault(k => k.DeliveryProductBillId == p.BillId).DeliveryProductStateId
             }).ToList();
 
             return bills;
@@ -62,6 +63,8 @@ namespace PETSHOP.Areas.Admin.Controllers
 
         public IActionResult FollowingBills()
         {
+            ViewBag.nState = GetApiDeliveryStates.GetDeliveryProductStates().Count();
+            ViewBag.State = GetApiDeliveryStates.GetDeliveryProductStates();
             List<BillViewModel> bills = getBills().Where(p => p.IsApprove == true && p.IsCancel == false && p.IsDelivery == true).ToList();
             return View(bills);
         }
@@ -167,6 +170,25 @@ namespace PETSHOP.Areas.Admin.Controllers
             {
                 return NoContent();
             } 
+        }
+
+        public IActionResult UpdateDeliveryState(string billCode, int stateId)
+        {
+            CredentialManage credential = JsonConvert.DeserializeObject<CredentialManage>(HttpContext.Session.GetString(Constants.VM_MANAGE));
+            Bill bill = GetApiBills.GetBills(credential).SingleOrDefault(p => p.GenerateCodeCheck == billCode);
+            DeliveryProduct delivery = GetApiDeliveryProducts.GetDeliveryProducts().SingleOrDefault(p => p.DeliveryProductBillId == bill.BillId);
+            delivery.DeliveryProductStateId = stateId;
+
+            GetApiDeliveryProducts.Update(delivery, credential.JwToken);
+
+            // sender mail
+            UserProfile profile = GetApiUserProfile.GetUserProfiles().SingleOrDefault(p => p.UserProfileId == bill.UserProfileId);
+
+            string body = "Đơn hàng có mã #" + bill.GenerateCodeCheck + " đã cập nhật trạng thái vận chuyển mới: " +
+                                                GetApiDeliveryStates.GetDeliveryProductStates()
+                                                .SingleOrDefault(p => p.DeliveryProductStateId == stateId).DeliveryProductStateName;
+            SenderEmail.SendMail(profile.UserProfileEmail, "PETSHOP: UPDATE DELIVERY STATE'S YOUR BILL", body);
+            return NoContent();
         }
     }
 }

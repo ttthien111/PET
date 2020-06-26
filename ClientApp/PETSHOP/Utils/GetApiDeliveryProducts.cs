@@ -16,7 +16,7 @@ namespace PETSHOP.Utils
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri(Constants.BASE_URI);
-                var responseTask = client.GetAsync("deliveryproducts");
+                var responseTask = client.GetAsync(Constants.DELIVERY_PRODUCT);
                 responseTask.Wait();
 
                 var result = responseTask.Result;
@@ -36,6 +36,17 @@ namespace PETSHOP.Utils
             }
 
             return res;
+        }
+
+        public static void Update(DeliveryProduct delivery, string token)
+        {
+            using (var client = Common.HelperClient.GetClient(token))
+            {
+                client.BaseAddress = new Uri(Common.Constants.BASE_URI);
+
+                var putTask = client.PutAsJsonAsync<DeliveryProduct>(Constants.DELIVERY_PRODUCT + "/" + delivery.DeliveryProductId, delivery);
+                putTask.Wait();
+            }
         }
     }
 }

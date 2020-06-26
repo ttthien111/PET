@@ -52,7 +52,15 @@
                                 <tr style="text-align: center">
                                     <td>@i</td>
                                     <td>
-                                        <a data-id="@comment.UserCommentId" href="#" name="commentId" data-toggle="tooltip" title="Ẩn bình luận"><i class="fa fa-ban"></i></a>
+                                        @if (comment.UserCommentApproved == true)
+                                        {
+                                            <a data-id="@comment.UserCommentId" href="#" name="commentId" data-toggle="tooltip" title="Ẩn bình luận"><i class="fa fa-eye-slash"></i></a>
+                                        }
+                                        else
+                                        {
+                                            <a data-id="@comment.UserCommentId" href="#" name="commentId" data-toggle="tooltip" title="Hiện bình luận"><i class="fa fa-eye"></i></a>
+                                        }
+
                                     </td>
                                     <td>@comment.UserCommentId</td>
                                     <td>@comment.UserProfileId</td>
@@ -71,3 +79,33 @@
         </div>
     </div>
 </div>
+
+<script src="~/js/jquery.min.js"></script>
+<script type="text/javascript">
+    $("a[name=commentId]").click(function () {
+        var commentId = $(this).attr("data-id");
+        var $this = $(this);
+        $.ajax({
+            url: "/Admin/Ratings/DeActiveComment",
+            type: "GET",
+            data: { commentId },
+            contentType: "application/json",
+            success: function (res) {
+                // set data for noti
+                console.log(res);
+                $('.toast').toast({
+                    delay: 3000
+                });
+                $("#myToast").toast('show');
+
+                if (res.userCommentApproved) {
+                    $this.prop('title', "Ẩn bình luận");
+                    $this.children().removeClass().addClass("fa fa-eye-slash");
+                } else {
+                    $this.prop('title', "Hiển thị bình luận");
+                    $this.children().removeClass().addClass("fa fa-eye");
+                }
+            }
+        });
+    });
+</script>

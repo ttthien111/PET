@@ -189,7 +189,7 @@
                                     @{
                                         var credential = new CredentialModel();
                                         var profile = new UserProfile();
-                                        if (Context.Session.GetString("vm") != null)
+                                        if (Context.Session.GetString(PETSHOP.Common.Constants.VM) != null)
                                         {
                                             credential = Newtonsoft.Json.JsonConvert.DeserializeObject<CredentialModel>(Context.Session.GetString("vm"));
                                             profile = credential.Profile as UserProfile;
