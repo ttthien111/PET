@@ -30,7 +30,7 @@ namespace PETSHOP.Controllers
         public IActionResult CancelBill(int billId)
         {
             //get credential
-            CredentialModel credential = HttpContext.Session.GetObject<CredentialModel>("vm");
+            CredentialModel credential = HttpContext.Session.GetObject<CredentialModel>(Constants.VM);
             //get token
             string token = credential.JwToken;
 
@@ -40,7 +40,7 @@ namespace PETSHOP.Controllers
 
             // Update status for bill want to be canceled
             bill.IsCancel = true;
-            UpdateBill(bill ,token);
+            UpdateBill(bill, credential);
 
             // update amount
             foreach (var detail in billDetails)
@@ -86,13 +86,13 @@ namespace PETSHOP.Controllers
             return GetApiProducts.GetProducts().SingleOrDefault(p => p.ProductId == productId && p.CategoryId == category.CategoryId) != null;
         }
 
-        private void UpdateBill(Bill bill, string token)
+        private void UpdateBill(Bill bill, CredentialModel credential)
         {
-            using (HttpClient client = Common.HelperClient.GetClient(token))
+            using (HttpClient client = Common.HelperClient.GetClient(credential.JwToken))
             {
                 client.BaseAddress = new Uri(Common.Constants.BASE_URI);
 
-                var postTask = client.PutAsJsonAsync<Bill>("bills/"+ bill.BillId, bill);
+                var postTask = client.PutAsJsonAsync<Bill>(Constants.MY_BILL + "/" + credential.Profile.UserProfileId + "/" + bill.BillId, bill);
                 postTask.Wait();
             }
         }
