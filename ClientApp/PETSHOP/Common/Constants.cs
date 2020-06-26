@@ -7,7 +7,8 @@ namespace PETSHOP.Common
 {
     public static class Constants
     {
-        public const string BASE_URI = "https://petshopserver.azurewebsites.net/api/";
+        public const string BASE_URI = "https://localhost:44380/api/";
+        //public const string BASE_URI = "https://petshopserver.azurewebsites.net/api/";
         //public const string CLIENT_URI = "https://localhost:44337/";
 
         // session login 
