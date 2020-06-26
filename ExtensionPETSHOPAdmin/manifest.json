@@ -1,0 +1,45 @@
+{
+    "name": "PETSHOP Admin",
+    "version": "1.0.0",
+    "manifest_version": 2,
+    "description": "Chốt đơn, chốt đơn, chốt đơn,...",
+    "permissions": [
+        "activeTab",
+        "tabs",
+        "storage",
+        "contextMenus",
+        "background",
+        "pageCapture",
+        "downloads",
+        "desktopCapture",
+        "<all_urls>"
+    ],
+    "browser_action": {
+        "default_popup": "popup.html",
+        "default_icon": {
+            "48": "icons/pets.png"
+        }
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+               "js/html2canvas.min.js","js/jquery-3.2.1.min.js","jspdf.debug.js","content.js"
+            ]
+        }
+    ],
+    "background":  
+        {
+            "scripts": [
+                "background.js"
+            ],
+            "persistent": false
+        },
+    
+    "icons": {
+        "48": "icons/pets.png"
+    },
+    "content_security_policy": "script-src 'self' https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js; object-src 'self'"
+}
