@@ -6,7 +6,7 @@
     <title>NCapture</title>
     <link rel="stylesheet" href="jquery-ui-1.12.1.custom/jquery-ui.css">
     <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" href="styleNvivo.css" type="text/css">
+    <link rel="stylesheet" href="petshopStyle.css" type="text/css">
     <link rel="stylesheet" href="bootstrap.min.css">
 
     <script src="js/jquery-3.2.1.min.js"></script>
@@ -22,10 +22,11 @@
 
 
             <div class="panel panel-default">
-                <div class="panel-body" style="background-color:rgb(78, 115, 223); color:white">
+                <div class="panel-body" style="background-color:rgb(77, 148, 255); color:white">
 
                     <h2 class="row span12" style="text-align: center;">
                         <!-- <img src="icons/ncapture-48.png" /> -->
+                        <img id="catndog" width="50px" height="50px">
                         <span id="page-title">PETSHOP ADMIN</span>
                     </h2>
                 </div>
@@ -34,13 +35,13 @@
         </form>
         <div id="error-message-placeholder"></div>
         <div>
-            <table id="grid-table">
+            <table id="grid-table" style="float: right;">
                 <tr>
                     <td><a id="captured-list" href="#"><strong><span id="progress-page-link"
                                     class="hyperlink-underline"></span></strong></a></td>
                     <td id="but-column">
                         
-                        <button  id="capture" class="btn" style="background-color: rgb(78, 115, 223);color: white;">
+                        <button  id="capture" class="btn" style="color: white;">
                             <img id="pawImage" width="30px" height="30px">
                             <strong>
                                 Chốt đơn
@@ -51,7 +52,13 @@
             </table>
         </div>
     </div>
-    <br />
+    <br>
+    <footer class="footer" style="text-align: center;background-color: gainsboro;">
+        <div >
+            © <span id="year">2020</span>
+          <a class="gtx-a" target="_blank" href="https://petshopecommerce.azurewebsites.net/">PETSHOPEcommerce - HCMUE</a>
+        </div>
+      </footer>
 </body>
 
 </html>

@@ -1,0 +1,49 @@
+#container {
+    width: 400px;
+}
+
+/* JQuery UI customisation */
+
+#tabs .ui-tabs-panel {
+    border: solid #d3d3d3;
+    border-width: 0px 1px 1px 1px;
+}
+
+
+#node-tags .tagit-choice {
+    border: 1px solid #b16116;
+}
+
+#tabs li {
+    border: 1px solid #d3d3d3;
+}
+
+/* ddslick customisation */
+.dd-select {
+    background: transparent;
+}
+
+.dd-option-image,
+.dd-selected-image {
+    width: 40px;
+    height: 40px;
+}
+
+
+.tabs-textbox {
+    width: 330px;
+}
+
+.hyperlink-underline {
+    text-decoration: underline;
+}
+
+.radio-source-icon {
+    width: 30px;
+    height: 30px;
+    vertical-align: middle;
+}
+
+#but-column {
+    text-align: right;
+}

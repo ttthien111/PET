@@ -27,7 +27,7 @@ function chotdon(){
         logging: true
     })
     .then(canvas => {
-        var img = canvas.toDataURL("image/jpeg");
+        var img = canvas.toDataURL("image/png");
         saveAs(img, formatFileName(fileName));
     });
 
