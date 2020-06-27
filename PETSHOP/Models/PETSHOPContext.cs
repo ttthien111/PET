@@ -45,8 +45,8 @@ namespace PETSHOP.Models
             if (!optionsBuilder.IsConfigured)
             {
 
-               optionsBuilder.UseSqlServer("Server=.;Database=PETSHOP;Trusted_Connection=True;");
-               //optionsBuilder.UseSqlServer("Server=MSI\\SQL_EXPRESS;Database=PETSHOP;Trusted_Connection=True;");
+               //optionsBuilder.UseSqlServer("Server=.;Database=PETSHOP;Trusted_Connection=True;");
+               optionsBuilder.UseSqlServer("Server=MSI\\SQL_EXPRESS;Database=PETSHOP;Trusted_Connection=True;");
                // optionsBuilder.UseSqlServer("Server=tcp:petshopserverdbserver.database.windows.net,1433;Initial Catalog=PETSHOPServer_db;Persist Security Info=False;User ID=adminne;Password=Abcd@123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
             }
         }

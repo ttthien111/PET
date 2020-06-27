@@ -155,7 +155,14 @@
                             <tr style="text-align: center">
                                 <td>@i</td>
                                 <td>
-                                    <a href="#" name="updateState" data-toggle="tooltip" title="Cập nhật trạng thái" data-billId="@p.BillId"><i class="fa fa-edit"></i></a>
+                                    @if (!p.IsCompleted)
+                                    {
+                                        <a href="#" name="updateState" data-toggle="tooltip" title="Cập nhật trạng thái" data-billId="@p.BillId"><i class="fa fa-edit"></i></a>
+                                    }
+                                    else
+                                    {
+                                        <span>#Đơn hàng hoàn thành</span>
+                                    }
                                 </td>
                                 <td><a href="#" class="billDetail" data-toggle="modal" data-target="#myModal" title="Xem chi tiết" data-id="@p.BillId">#@p.BillId</a></td>
                                 <td>@p.UserProfileEmail</td>
@@ -165,14 +172,18 @@
                                     @if (p.CurrentDeliveryStateId == (int)ViewBag.nState)
                                     {
                                         <span class="badge badge-success">@p.CurrentDeliveryStateId/@ViewBag.nState</span>
+                                        <span class="badge badge-success">
+                                            @p.CurrentDeliveryState
+                                        </span>
                                     }
                                     else
                                     {
                                         <span class="badge badge-danger">@p.CurrentDeliveryStateId/@ViewBag.nState</span>
+                                        <span class="badge badge-info">
+                                            @p.CurrentDeliveryState
+                                        </span>
                                     }
-                                    <span class="badge badge-info">
-                                        @p.CurrentDeliveryState
-                                    </span>
+
                                 </td>
                                 <td>
                                     <span>@p.TotalPrice.ToString("#,##")</span>
@@ -343,6 +354,7 @@
                 $("#myToast").toast('show');
 
                 $("#updateStateModal").modal('hide');
+                
                 window.location.reload();
             },
             error: function (err) {
