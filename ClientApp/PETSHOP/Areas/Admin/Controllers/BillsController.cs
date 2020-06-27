@@ -179,6 +179,14 @@ namespace PETSHOP.Areas.Admin.Controllers
             DeliveryProduct delivery = GetApiDeliveryProducts.GetDeliveryProducts().SingleOrDefault(p => p.DeliveryProductBillId == bill.BillId);
             delivery.DeliveryProductStateId = stateId;
 
+            if(GetApiDeliveryStates.GetDeliveryProductStates()
+                .SingleOrDefault(p=>p.DeliveryProductStateId == stateId).DeliveryProductStateName == "Đã giao hàng")
+            {
+                bill.IsCompleted = true;
+                bill.DateOfDelivered = DateTime.Now;
+                GetApiBills.Update(bill, credential.JwToken);
+            }
+
             GetApiDeliveryProducts.Update(delivery, credential.JwToken);
 
             // sender mail
@@ -188,7 +196,7 @@ namespace PETSHOP.Areas.Admin.Controllers
                                                 GetApiDeliveryStates.GetDeliveryProductStates()
                                                 .SingleOrDefault(p => p.DeliveryProductStateId == stateId).DeliveryProductStateName;
             SenderEmail.SendMail(profile.UserProfileEmail, "PETSHOP: UPDATE DELIVERY STATE'S YOUR BILL", body);
-            return NoContent();
+            return Json(bill);
         }
     }
 }

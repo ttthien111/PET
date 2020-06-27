@@ -42,7 +42,7 @@ namespace PETSHOP.Services
         
         public Account Authenticate(string username, string password)
         {
-            var user = _context.Account.SingleOrDefault(x => x.AccountUserName == username && x.AccountPassword == Helper.Encryptor.MD5Hash(password));
+            var user = _context.Account.SingleOrDefault(x => x.AccountUserName == username && x.AccountPassword == Helper.Encryptor.MD5Hash(password) && x.IsActive == true);
             if (user == null)
                 return null;
 
@@ -72,7 +72,7 @@ namespace PETSHOP.Services
 
         public AccountManage AuthenticateManage(string email, string password)
         {
-            var user = _context.AccountManage.Where(x => x.Email == email && x.Password == Helper.Encryptor.MD5Hash(password)).Select(p=> new AccountManage()
+            var user = _context.AccountManage.Where(x => x.Email == email && x.Password == Helper.Encryptor.MD5Hash(password) && x.IsActivated == true).Select(p=> new AccountManage()
             {
                 Email = p.Email,
                 Password = Encryptor.MD5Hash(p.Password),
@@ -109,7 +109,7 @@ namespace PETSHOP.Services
 
         public Account AuthenticateExternal(AuthenticateExternal external)
         {
-            var user = _context.Account.SingleOrDefault(x => x.AccountUserName == external.Email);
+            var user = _context.Account.SingleOrDefault(x => x.AccountUserName == external.Email && x.IsActive == true);
 
             if (user == null)
                 return null;

@@ -39,5 +39,16 @@ namespace PETSHOP.Utils
 
             return bills;
         }
+
+        public static void Update(Bill bill, string token)
+        {
+            using (var client = Common.HelperClient.GetClient(token))
+            {
+                client.BaseAddress = new Uri(Common.Constants.BASE_URI);
+
+                var putTask = client.PutAsJsonAsync<Bill>(Constants.BILL + "/" + bill.BillId, bill);
+                putTask.Wait();
+            }
+        }
     }
 }

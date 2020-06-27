@@ -37,5 +37,15 @@ namespace PETSHOP.Utils
 
             return userProfiles;
         }
+        public static void Update(UserComment comment, string token)
+        {
+            using (var client = Common.HelperClient.GetClient(token))
+            {
+                client.BaseAddress = new Uri(Common.Constants.BASE_URI);
+
+                var putTask = client.PutAsJsonAsync<UserComment>(Constants.USER_COMMENT + "/" + comment.UserCommentId, comment);
+                putTask.Wait();
+            }
+        }
     }
 }
