@@ -17,7 +17,7 @@ namespace PETSHOP.Utils
             using (var client = Common.HelperClient.GetClient(credential.JwToken))
             {
                 client.BaseAddress = new Uri(Constants.BASE_URI);
-                var responseTask = client.GetAsync(Constants.MY_BILL + "/" + credential.Profile.UserProfileId);
+                var responseTask = client.GetAsync(Constants.MY_BILL);
                 responseTask.Wait();
 
                 var result = responseTask.Result;

@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using PETSHOP.Models;
 using PETSHOP.Models.LoginModel;
 
@@ -17,26 +21,29 @@ namespace PETSHOP.Controllers
     public class MyBillsController : ControllerBase
     {
         private readonly PETSHOPContext _context;
-
-        public MyBillsController(PETSHOPContext context)
+        private IHttpContextAccessor _httpContextAccessor;
+        public MyBillsController(PETSHOPContext context,IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         // GET: api/MyBills/5 -- get all user's bills
-        [HttpGet("{userProfile}")]
         [Authorize(Roles = Role.Customer)]
-        public async Task<ActionResult<IEnumerable<Bill>>> GetMyBill(int userProfile)
+        public async Task<ActionResult<IEnumerable<Bill>>> GetMyBill()
         {
-            return await _context.Bill.Where(p => p.UserProfileId == userProfile).ToListAsync();
+            int profileId = GetProfileId();
+            if(profileId != 0)
+                return await _context.Bill.Where(p => p.UserProfileId == profileId).ToListAsync();
+            return Unauthorized();
         }
 
         // GET: api/MyBills/5/10 -- get user's bill with billId = 10
-        [HttpGet("{userProfile}/{id}")]
+        [HttpGet("{id}")]
         [Authorize(Roles = Role.Customer)]
-        public async Task<ActionResult<Bill>> GetBill(int userProfile, int id)
+        public async Task<ActionResult<Bill>> GetBill(int id)
         {
-            var bill = await _context.Bill.SingleOrDefaultAsync(p => p.UserProfileId == userProfile && p.BillId == id);
+            var bill = await _context.Bill.SingleOrDefaultAsync(p => p.UserProfileId == GetProfileId() && p.BillId == id);
 
             if (bill == null)
             {
@@ -49,13 +56,13 @@ namespace PETSHOP.Controllers
         // PUT: api/MyBills/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{userProfile}/{id}")]
+        [HttpPut("{id}")]
         [Authorize(Roles = Role.Customer)]
-        public async Task<IActionResult> PutMyBill(int userProfile, int id, Bill bill)
+        public async Task<IActionResult> PutMyBill(int id, Bill bill)
         {
-            if (id == bill.BillId && bill.UserProfileId == userProfile)
+            if (id == bill.BillId && bill.UserProfileId == GetProfileId())
             {
-                if(!(_context.Bill.Find(bill.BillId).UserProfileId == userProfile))
+                if(!(_context.Bill.Find(bill.BillId).UserProfileId == GetProfileId()))
                 {
                     return Unauthorized();
                 }
@@ -99,24 +106,40 @@ namespace PETSHOP.Controllers
         // POST: api/MyBills
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPost("{userProfile}")]
+        [HttpPost]
         [Authorize(Roles = Role.Customer)]
-        public async Task<ActionResult<Bill>> PostBill(int userProfile, Bill bill)
+        public async Task<ActionResult<Bill>> PostBill([FromBody] Bill bill)
         {
-            if(userProfile != bill.UserProfileId)
+            if(GetProfileId() == bill.UserProfileId)
+            {
+                _context.Bill.Add(bill);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction("GetBill", new { id = bill.BillId }, bill);
+            }
+            else
             {
                 return BadRequest();
             }
-
-            _context.Bill.Add(bill);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetBill", new { id = bill.BillId }, bill);
         }
 
         private bool BillExists(int id)
         {
             return _context.Bill.Any(e => e.BillId == id);
+        }
+
+        private int GetProfileId()
+        {
+            string header = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+            string token = header.Split(" ")[1];
+
+            // decode jwt
+            var handler = new JwtSecurityTokenHandler();
+            var tokenS = handler.ReadJwtToken(token);
+
+            var accountId = tokenS.Claims.SingleOrDefault(p => p.Type == "unique_name").Value;
+
+            return _context.UserProfile.SingleOrDefault(p => p.AccountId == int.Parse(accountId)).UserProfileId;
         }
     }
 }

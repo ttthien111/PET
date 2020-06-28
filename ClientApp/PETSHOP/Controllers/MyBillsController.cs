@@ -92,7 +92,7 @@ namespace PETSHOP.Controllers
             {
                 client.BaseAddress = new Uri(Common.Constants.BASE_URI);
 
-                var postTask = client.PutAsJsonAsync<Bill>(Constants.MY_BILL + "/" + credential.Profile.UserProfileId + "/" + bill.BillId, bill);
+                var postTask = client.PutAsJsonAsync<Bill>(Constants.MY_BILL + "/" + bill.BillId, bill);
                 postTask.Wait();
             }
         }

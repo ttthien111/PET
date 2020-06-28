@@ -7,8 +7,8 @@
     var credential = new CredentialModel();
     var profile = new UserProfile();
 
-    credential = Newtonsoft.Json.JsonConvert.DeserializeObject<CredentialModel>(Context.Session.GetString("vm"));
-    profile = credential.Profile as UserProfile;
+    credential = Newtonsoft.Json.JsonConvert.DeserializeObject<CredentialModel>(Context.Session.GetString(PETSHOP.Common.Constants.VM));
+    profile = credential.Profile as UserProfile;     
 }
 
 @section breadcumb {

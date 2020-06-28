@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -40,6 +41,8 @@ namespace PETSHOP
                 .AddNewtonsoftJson(options =>
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
                 );
+
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddDbContext<PETSHOPContext>(options => options.UseSqlServer(Configuration.GetConnectionString("PETSHOP")));
             services.AddControllers(mvcOptions =>
                 mvcOptions.EnableEndpointRouting = false);

@@ -21,7 +21,7 @@ namespace PETSHOP.Models
         public string UserProfileAvatar { get; set; }
         public string UserProfileAddress { get; set; }
         public string UserProfileEmail { get; set; }
-        public int? AccountId { get; set; }
+        public int AccountId { get; set; }
         public int? CustomerTypeId { get; set; }
 
         public virtual Account Account { get; set; }
