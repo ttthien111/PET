@@ -1,0 +1,70 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3  d-sm-flex align-items-center justify-content-between mb-4">
+        <h6 class="m-0 font-weight-bold text-primary">Thêm tài khoản</h6>
+        <a asp-action="Index" class="btn btn-warning btn-icon-split btn-sm">
+            <span class="icon text-white-50">
+                <i class="fa fa-backward"></i>
+            </span>
+            <span class="text">Quay lại</span>
+        </a>
+    </div>
+    <div class="card-body">
+        <div class="table">
+            <form asp-action="Create" asp-controller="AccountManages" asp-area="Admin" method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label class="control-label">Email</label>
+                    <input name="Email" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label name="FullName" class="control-label">Họ và tên</label>
+                    <input name="FullName" class="form-control" />
+
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Mật khẩu</label>
+                    <input name="Password" type="password" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label name="DistributorId" class="control-label">Chức vụ</label>
+                    <select class="form-control" name="AccountRoleName">
+                        @foreach (var roleName in ViewBag.AccountRoleName as List<PETSHOP.Models.AccountRole>)
+                        {
+                            <option value="@roleName.AccountRoleName">@roleName.AccountRoleName</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group checkbox">
+                    <label name="IsActivated" class="control-label">Trạng thái tài khoản</label>
+                    <br />
+                    <label name="IsActivated" class="control-label">Kích hoạt tài khoản</label>
+                    <input type="checkbox" name="IsActivated" value="true"/>
+                    <input type="hidden" value="false" name="IsActivated">
+                </div>
+
+                <div class="form-group">
+                    <label name="Avatar" class="control-label">Avatar</label>
+                    <input type="file" name="Avatar" class="form-control" />
+
+
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Địa chỉ</label>
+                    <input name="Address" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Tạo" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+

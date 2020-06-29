@@ -16,7 +16,7 @@ namespace PETSHOP.Utils
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri(Constants.BASE_URI);
-                var responseTask = client.GetAsync("accountroles");
+                var responseTask = client.GetAsync(Constants.ACCOUNT_ROLE);
                 responseTask.Wait();
 
                 var result = responseTask.Result;
