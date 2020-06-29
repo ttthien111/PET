@@ -35,6 +35,8 @@ namespace PETSHOP.Common
         public const string COSTUME = "costume";
 
         public const string ACCOUNT = "accounts";
+        public const string ACCOUNT_MANAGE = "accountmanages";
+        public const string ACCOUNT_ROLE = "accountroles";
         public const string PRODUCT = "products";
         public const string FEEDBACK = "feedbacks";
         public const string USER_COMMENT = "usercomments";

@@ -16,6 +16,7 @@ using System.Security.Policy;
 using PETSHOP.Models.LoginModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
+using PETSHOP.Models.DataTransferObject;
 
 namespace PETSHOP.Services
 {
@@ -25,7 +26,7 @@ namespace PETSHOP.Services
         IEnumerable<Account> GetAll();
         Account AuthenticateExternal(AuthenticateExternal external);
         string GetRoleName(int accountIdRole);
-        AccountManage AuthenticateManage(string email, string password);
+        AccountManageDTO AuthenticateManage(string email, string password);
     }
 
     public class LoginService : ILoginService
@@ -70,9 +71,10 @@ namespace PETSHOP.Services
             throw new NotImplementedException();
         }
 
-        public AccountManage AuthenticateManage(string email, string password)
+        public AccountManageDTO AuthenticateManage(string email, string password)
         {
-            var user = _context.AccountManage.Where(x => x.Email == email && x.Password == Helper.Encryptor.MD5Hash(password) && x.IsActivated == true).Select(p=> new AccountManage()
+            var user = _context.AccountManage.Where(x => x.Email == email && x.Password == Helper.Encryptor.MD5Hash(password) && x.IsActivated == true)
+                .Select(p=> new AccountManageDTO()
             {
                 Email = p.Email,
                 Password = Encryptor.MD5Hash(p.Password),
@@ -83,28 +85,40 @@ namespace PETSHOP.Services
                 IsActivated = p.IsActivated
             }).ToList();
 
-            if (user[0] == null)
-                return null;
-
-            // authentication successful so generate jwt token
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
-
-            var tokenDescriptor = new SecurityTokenDescriptor
+            if (user.Count() > 0)
             {
-                Subject = new ClaimsIdentity(new Claim[]
+                if (user[0] == null)
                 {
+                    return null;
+                }
+                else
+                {
+                    var tokenHandler = new JwtSecurityTokenHandler();
+                    var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+
+                    var tokenDescriptor = new SecurityTokenDescriptor
+                    {
+                        Subject = new ClaimsIdentity(new Claim[]
+                        {
                     new Claim(ClaimTypes.Name, user[0].Email.ToString()),
                     new Claim(ClaimTypes.Role, GetRoleName(user[0].AccountRoleId))
-                }),
-                Expires = DateTime.UtcNow.AddHours(6),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            user[0].Jwtoken = tokenHandler.WriteToken(token);
+                        }),
+                        Expires = DateTime.UtcNow.AddHours(6),
+                        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                    };
+                    var token = tokenHandler.CreateToken(tokenDescriptor);
+                    user[0].Jwtoken = tokenHandler.WriteToken(token);
 
-            return user[0];
-            throw new NotImplementedException();
+                    return user[0];
+                    throw new NotImplementedException();
+                }
+            }
+            else
+            {
+                return null;
+            }
+            // authentication successful so generate jwt token
+           
         }
 
         public Account AuthenticateExternal(AuthenticateExternal external)

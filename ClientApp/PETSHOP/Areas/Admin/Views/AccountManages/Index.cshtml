@@ -1,0 +1,77 @@
+﻿@model IEnumerable<PETSHOP.Areas.Admin.Models.AccountManageDTO> 
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section breadcumb {
+    <div class="card border-left-primary shadow h-100 py-2">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                    <div class="text-xl-center font-weight-bold text-primary text-uppercase mb-1">Danh mục tài khoản</div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<!-- DataTales Example -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <div class="d-flex row">
+            <div class="justify-content-end">
+                <a asp-action="Create" asp-area="Admin" asp-controller="Products" class="btn btn-primary">Thêm tài khoản</a>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th width="40px">Chức năng</th>
+                        <th>Email</th>
+                        <th>Trạng thái</th>
+                        <th>Họ và tên</th>
+                        <th>Avatar</th>
+                        <th>Địa chỉ</th>
+                        <th>Chức vụ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        var i = 1;
+                        foreach (var p in Model)
+                        {
+                            <tr>
+                                <td>@i</td>
+                                <td>
+                                   
+                                </td>
+                                <td>@p.Email</td>
+                                <td>
+                                    @if (p.IsActivated)
+                                    {
+                                        <span class="badge badge-success">Đã kích hoạt</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-danger">Chưa kích hoạt</span>
+                                    }
+                                </td>
+                                <td>@p.FullName</td>
+                                <td><img style="width: 60px" src="~/images/avatar/@p.Avatar" alt="Alternate Text" /></td> 
+                                <td>@p.Address</td>
+                                <td>@p.AccountRoleName</td>
+                            </tr>
+                            i++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
