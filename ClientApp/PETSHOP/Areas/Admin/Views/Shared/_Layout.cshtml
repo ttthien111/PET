@@ -94,14 +94,14 @@
                             Đơn hàng chưa duyệt
                             @if (nBillWaitingForApprove > 0)
                             {
-                                <span class="badge badge-danger">@(nBillWaitingForApprove <= 99 ? nBillWaitingForApprove + "" : "99+" )</span>
+                                <span class="badge badge-danger">@(nBillWaitingForApprove <= 99 ? nBillWaitingForApprove + "" : "99+")</span>
                             }
                         </a>
                         <a class="collapse-item" asp-action="ApprovedBills" asp-controller="Bills">
                             Đơn hàng đã duyệt
                             @if (nApprovedBill > 0)
                             {
-                                <span class="badge badge-danger">@(nApprovedBill <= 99 ? nApprovedBill +"" : "99+" )</span>
+                                <span class="badge badge-danger">@(nApprovedBill <= 99 ? nApprovedBill + "" : "99+")</span>
                             }
                         </a>
                         <a class="collapse-item" asp-action="FollowingBills" asp-controller="Bills">Theo dõi vận chuyển</a>
@@ -127,10 +127,18 @@
                 </a>
             </li>
 
+            <!-- Nav Item - Pages Collapse Menu -->
+            <li class="nav-item">
+                <a class="nav-link" asp-action="Index" asp-controller="AccountManages">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Nhân viên</span>
+                </a>
+            </li>
+            
             <!-- Nav Item - Utilities Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCustomer" aria-expanded="true" aria-controls="collapseCustomer">
-                    <i class="fas fa-fw fa-user"></i>
+                    <i class="fas fa-headset"></i>
                     <span>Chăm sóc khách hàng</span>
                 </a>
                 <div id="collapseCustomer" class="collapse" aria-labelledby="collapseCustomer" data-parent="#accordionSidebar">

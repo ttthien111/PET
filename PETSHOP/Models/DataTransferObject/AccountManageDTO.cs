@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace PETSHOP.Models
+namespace PETSHOP.Models.DataTransferObject
 {
-    public partial class AccountManage
+    public class AccountManageDTO
     {
         public string Email { get; set; }
         public string Password { get; set; }
@@ -12,8 +14,7 @@ namespace PETSHOP.Models
         public string FullName { get; set; }
         public string Avatar { get; set; }
         public string Address { get; set; }
+        public string Jwtoken { get; set; }
 
-
-        public virtual AccountRole AccountRole { get; set; }
     }
 }
