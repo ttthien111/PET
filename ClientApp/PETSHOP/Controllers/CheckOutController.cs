@@ -252,7 +252,7 @@ namespace PETSHOP.Controllers
                 {
                     client.BaseAddress = new Uri(Common.Constants.BASE_URI);
 
-                    var postTask = client.PostAsJsonAsync<Bill>(Constants.BILL, bill);
+                    var postTask = client.PostAsJsonAsync<Bill>(Constants.MY_BILL, bill);
                     postTask.Wait();
 
                     var result = postTask.Result;

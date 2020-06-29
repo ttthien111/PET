@@ -344,5 +344,28 @@ namespace PETSHOP.Controllers
         }
 
         // End Function for get data quickly 
+
+        public IActionResult CheckAmountProduct(string slugName, string size = null)
+        {
+            Product product = GetApiProducts.GetProducts().SingleOrDefault(p => p.SlugName == slugName);
+            string slugCat = GetApiCategories.GetCategories().SingleOrDefault(p => p.CategoryId == product.CategoryId).CategoryName;
+
+            int amount = 0;
+
+            switch (slugCat)
+            {
+                case Constants.FOOD:
+                    amount = GetApiFoodProducts.GetFoodProducts().SingleOrDefault(p => p.ProductId == product.ProductId).FoodAmount;
+                    break;
+                case Constants.TOY:
+                    amount = GetApiToyProducts.GetToyProducts().SingleOrDefault(p => p.ProductId == product.ProductId).ToyAmount;
+                    break;
+                case Constants.COSTUME:
+                    amount = GetApiCostumeProducts.GetCostumeProducts().SingleOrDefault(p => p.ProductId == product.ProductId && p.CostumeSize == size).CostumeAmountSize;
+                    break;
+            }
+
+            return Ok(amount);
+        }
     }
 }

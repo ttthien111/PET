@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using PayPal.v1.Orders;
 using PETSHOP.Common;
 using PETSHOP.Models;
 using PETSHOP.Models.ModelView;
@@ -78,9 +79,36 @@ namespace PETSHOP.Controllers
             Name = Name.Replace("\n", "");
             List<CartItem> carts = Carts;
             CartItem item = carts.SingleOrDefault(p => p.Name == Name);
-            item.Amount = Amount;
+
+            // get current amount item cart
+
+            int currentAmount = GetAmountProduct(item.CartItemSlugName, item.Size);
+            item.Amount = Amount <= currentAmount ? Amount : currentAmount;
             HttpContext.Session.SetObject("cart", carts);
             return NoContent();
+        }
+
+        public int GetAmountProduct(string slugName, string size = null)
+        {
+            Product product = GetApiProducts.GetProducts().SingleOrDefault(p => p.SlugName == slugName);
+            string slugCat = GetApiCategories.GetCategories().SingleOrDefault(p => p.CategoryId == product.CategoryId).CategoryName;
+
+            int amount = 0;
+
+            switch (slugCat)
+            {
+                case Constants.FOOD:
+                    amount = GetApiFoodProducts.GetFoodProducts().SingleOrDefault(p => p.ProductId == product.ProductId).FoodAmount;
+                    break;
+                case Constants.TOY:
+                    amount = GetApiToyProducts.GetToyProducts().SingleOrDefault(p => p.ProductId == product.ProductId).ToyAmount;
+                    break;
+                case Constants.COSTUME:
+                    amount = GetApiCostumeProducts.GetCostumeProducts().SingleOrDefault(p => p.ProductId == product.ProductId && p.CostumeSize == size).CostumeAmountSize;
+                    break;
+            }
+
+            return amount;
         }
 
         public IActionResult DeleteItemCart(string Name)

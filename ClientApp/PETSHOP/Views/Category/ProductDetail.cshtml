@@ -115,7 +115,7 @@
                                                         </span>
                                                         @if (Model.CategoryName == "costume")
                                                         {
-                                                            <input type="text" name="quant[1]" id="amount" class="form-control-sm input-number" style="height:40px; width: 50px" value="1" min="1" max="@Model.CostumeSize.Average(p=>p.CostumeAmountSize)">
+                                                            <input type="text" name="quant[1]" id="amount" class="form-control-sm input-number" style="height:40px; width: 50px" value="1" min="1" max="@Model.CostumeSize.SingleOrDefault(p=>p.CostumeSize == "S").CostumeAmountSize">
                                                         }
                                                         else
                                                         {
@@ -132,7 +132,7 @@
                                         </div>
                                     </li>
                                     <li>
-                                        <a id="addtocart" class="btn btn-outline-danger" style="display: inline-block; padding: 15px; text-align:center; width: 50%" href="/Cart"><i class="fa fa-shopping-cart" aria-hidden="false"></i> &nbsp; Thêm vào giỏ hàng</a>
+                                        <button id="addtocart" class="btn btn-outline-danger" style="display: inline-block; padding: 15px; text-align:center; width: 50%"><i class="fa fa-shopping-cart" aria-hidden="false"></i> &nbsp; Thêm vào giỏ hàng</button>
                                     </li>
                                     <script type='text/javascript' src='https://platform-api.sharethis.com/js/sharethis.js#property=5da3c3835de3e70013e3bcee&product=inline-share-buttons&cms=website' async='async'></script>
                                     <div class="sharethis-inline-share-buttons"></div>
@@ -179,6 +179,38 @@
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script type="text/javascript">
     $(function () {
+        if ($("#amount").attr("max") == 0) {
+            document.getElementById("addtocart").innerHTML = '<i class="fa fa-shopping-cart" aria-hidden="false"></i> &nbsp; Đã hết hàng';
+            document.getElementById("addtocart").disabled = true;
+        }
+
+        $("input[type=radio]").change(function () {
+            var size = $(this).val();
+
+            if (size == undefined) {
+                size = "";
+            }
+
+            var slugName = document.getElementById("slugName").textContent;
+            // get ajax check amount
+            $.ajax({
+                url: "/Category/CheckAmountProduct",
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                data: { "slugName": slugName, "size": size },
+                async: true,
+                success: function (res) {
+                    if (res > 0) {
+                        document.getElementById("addtocart").innerHTML = '<i class="fa fa-shopping-cart" aria-hidden="false"></i> &nbsp; Thêm vào giỏ hàng';
+                        document.getElementById("addtocart").disabled = false;
+                    } else {
+                        document.getElementById("addtocart").innerHTML = '<i class="fa fa-shopping-cart" aria-hidden="false"></i> &nbsp; Đã hết hàng';
+                        document.getElementById("addtocart").disabled = true;
+                    }
+                }
+            });
+        });
+
         // spinner
         $('.btn-number').click(function (e) {
             e.preventDefault();
@@ -224,13 +256,13 @@
             if (valueCurrent >= minValue) {
                 $(".btn-number[data-type='minus'][data-field='" + name + "']").removeAttr('disabled')
             } else {
-                alert('Sorry, the minimum value was reached');
+                alert('Đã đạt số lượng tối thiểu');
                 $(this).val($(this).data('oldValue'));
             }
             if (valueCurrent <= maxValue) {
                 $(".btn-number[data-type='plus'][data-field='" + name + "']").removeAttr('disabled')
             } else {
-                alert('Sorry, the maximum value was reached');
+                alert('Đã đạt số lượng tối đa');
                 $(this).val($(this).data('oldValue'));
             }
 
@@ -284,8 +316,6 @@
                 Price,
                 SlugCategory
             }
-
-            console.log(cartItem);
             // request to server
             $.ajax({
                 url: "/Cart/AddtoCart",
@@ -294,7 +324,7 @@
                 data: { "cartItem": JSON.stringify(cartItem) },
                 async: true,
                 success: function (res) {
-
+                    window.location.reload();
                 }
             });
         });

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PETSHOP.Models;
+using PETSHOP.Models.LoginModel;
 
 namespace PETSHOP.Controllers
 {
@@ -108,14 +109,14 @@ namespace PETSHOP.Controllers
         // POST: api/Products
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
-        [Authorize]
+        [Authorize(Roles = Role.Admin + "," + Role.User)]
         [HttpPost]
         public async Task<ActionResult<Product>> PostProduct(Product product)
         {
             _context.Product.Add(product);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetProduct", new { id = product.ProductId }, product);
+            return CreatedAtAction("GetProductByCategoryAndId", new { slugCat = product.CategoryId, slugName = product.SlugName }, product);
         }
 
         // DELETE: api/Products/5

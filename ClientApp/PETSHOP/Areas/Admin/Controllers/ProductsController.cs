@@ -203,20 +203,20 @@ namespace PETSHOP.Areas.Admin.Controllers
             Product createdProduct = CreatedProduct(product);
             if(createdProduct != null)
             {
-                string catName = GetApiCategories.GetCategories().SingleOrDefault(p => p.CategoryId == product.CategoryId).CategoryName;
+                string catName = GetApiCategories.GetCategories().SingleOrDefault(p => p.CategoryId == createdProduct.CategoryId).CategoryName;
 
                 switch (catName)
                 {
                     case Constants.FOOD:
-                        CreateAmountFood(product.ProductId);
+                        CreateAmountFood(createdProduct.ProductId);
                         break;
 
                     case Constants.TOY:
-                        CreateAmountToys(product.ProductId);
+                        CreateAmountToys(createdProduct.ProductId);
                         break;
 
                     case Constants.COSTUME:
-                        CreateAmountCostume(product.ProductId);
+                        CreateAmountCostume(createdProduct.ProductId);
                         break;
                 }
 
@@ -248,7 +248,7 @@ namespace PETSHOP.Areas.Admin.Controllers
                 CostumeAmountSize = 0
             });
 
-            CredentialModel credential = JsonConvert.DeserializeObject<CredentialModel>(HttpContext.Session.GetString("vm") != null ? HttpContext.Session.GetString("vm") : "");
+            CredentialModel credential = JsonConvert.DeserializeObject<CredentialModel>(HttpContext.Session.GetString(Constants.VM_MANAGE));
             string token = credential.JwToken;
 
             using (HttpClient client = Common.HelperClient.GetClient(token))

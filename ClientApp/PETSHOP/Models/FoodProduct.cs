@@ -8,7 +8,7 @@ namespace PETSHOP.Models
         public int FoodId { get; set; }
         public int? ProductId { get; set; }
         public DateTime FoodExpiredDate { get; set; }
-        public int? FoodAmount { get; set; }
+        public int FoodAmount { get; set; }
 
         public virtual Product Product { get; set; }
     }
