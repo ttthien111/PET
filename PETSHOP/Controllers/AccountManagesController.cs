@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PETSHOP.Helper;
 using PETSHOP.Models;
 using PETSHOP.Models.LoginModel;
 

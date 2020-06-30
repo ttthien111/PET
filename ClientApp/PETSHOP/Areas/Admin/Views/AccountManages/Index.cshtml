@@ -20,7 +20,7 @@
     <div class="card-header py-3">
         <div class="d-flex row">
             <div class="justify-content-end">
-                <a asp-action="Create" asp-area="Admin" asp-controller="Products" class="btn btn-primary">Thêm tài khoản</a>
+                <a asp-action="Create" asp-area="Admin" asp-controller="AccountManages" class="btn btn-primary">Thêm tài khoản</a>
             </div>
         </div>
     </div>
@@ -29,14 +29,14 @@
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                 <thead>
                     <tr>
-                        <th>STT</th>
-                        <th width="40px">Chức năng</th>
-                        <th>Email</th>
-                        <th>Trạng thái</th>
-                        <th>Họ và tên</th>
-                        <th>Avatar</th>
-                        <th>Địa chỉ</th>
-                        <th>Chức vụ</th>
+                        <th style="text-align:center" width="5%">STT</th>
+                        <th style="text-align:center"width="15%">Chức năng</th>
+                        <th style="text-align:center"width="15%">Email</th>
+                        <th style="text-align:center"width="10%">Trạng thái</th>
+                        <th style="text-align:center"width="20%">Họ và tên</th>
+                        <th style="text-align:center"width="10%">Avatar</th>
+                        <th style="text-align:center"width="15%">Địa chỉ</th>
+                        <th style="text-align:center"width="10%">Chức vụ</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -45,12 +45,25 @@
                         foreach (var p in Model)
                         {
                             <tr>
-                                <td>@i</td>
-                                <td>
-                                   
+                                <td style="text-align:center">@i</td>
+                                <td style="text-align:center">
+                                    <a asp-action="EditProduct">
+                                        <i data-toggle="tooltip" title="Reset mật khẩu" class="fas fa-redo"></i>
+                                    </a>
+                                    &nbsp;
+                                    <a asp-action="ActivateAccount" asp-area="Admin" asp-route-accountEmail="@p.Email">
+                                        @if (p.IsActivated)
+                                        {
+                                            <i data-toggle="tooltip" title="Khóa tài khoản" class="fas fa-user-lock"></i>
+                                        }
+                                        else
+                                        {
+                                            <i data-toggle="tooltip" title="Kích hoạt tài khoản" class="fa fa-unlock-alt"></i>
+                                        }
+                                    </a>
                                 </td>
                                 <td>@p.Email</td>
-                                <td>
+                                <td style="text-align:center">
                                     @if (p.IsActivated)
                                     {
                                         <span class="badge badge-success">Đã kích hoạt</span>
@@ -61,9 +74,9 @@
                                     }
                                 </td>
                                 <td>@p.FullName</td>
-                                <td><img style="width: 60px" src="~/images/avatar/@p.Avatar" alt="Alternate Text" /></td> 
-                                <td>@p.Address</td>
-                                <td>@p.AccountRoleName</td>
+                                <td style="text-align:center"><img style="width: 60px" src="~/images/avatar/@p.Avatar" alt="Alternate Text" /></td> 
+                                <td >@p.Address</td>
+                                <td style="text-align:center">@p.AccountRoleName</td>
                             </tr>
                             i++;
                         }
