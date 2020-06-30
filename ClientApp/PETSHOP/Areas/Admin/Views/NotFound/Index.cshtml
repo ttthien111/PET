@@ -1,0 +1,18 @@
+﻿
+@{
+    ViewData["Title"] = "Not Found";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<section class="ftco-section bg-light ftco-faqs" style="padding: 3rem 0">
+    <div class="container card-body table-responsive">
+        <!-- 404 Error Text -->
+        <div class="text-center">
+            <div class="error mx-auto" data-text="404">404</div>
+            <p class="lead text-gray-800 mb-5">Page Not Found</p>
+            <p class="text-gray-500 mb-0">Trang bạn đang tìm hiện không tồn tại hoặc bạn không đủ quyền truy cập. Vui lòng kiểm tra lại</p>
+            <a asp-action="Index" asp-controller="Home">&larr; Quay lại</a>
+        </div>
+    </div>
+</section>
+
