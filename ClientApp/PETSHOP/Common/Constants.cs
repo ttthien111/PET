@@ -37,9 +37,16 @@ namespace PETSHOP.Common
         public const string ACCOUNT = "accounts";
         public const string ACCOUNT_MANAGE = "accountmanages";
         public const string ACCOUNT_ROLE = "accountroles";
+
         public const string PRODUCT = "products";
         public const string FEEDBACK = "feedbacks";
+
         public const string USER_COMMENT = "usercomments";
+
+        public const string INVENTORY_RECEIVE_NOTE = "inventoryreceivingnotes";
+        public const string INVENTORY_RECEIVE_NOTE_FOOD = "inventoryreceivingnotedetailforfoods";
+        public const string INVENTORY_RECEIVE_NOTE_TOY = "inventoryreceivingnotedetailfortoys";
+        public const string INVENTORY_RECEIVE_NOTE_COSTUME = "inventoryreceivingnotedetailforcostumes";
         // end server
 
         public const string S = "S";

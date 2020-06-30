@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace PETSHOP.Models
+namespace PETSHOP.Models.ModelView
 {
-    public partial class InventoryReceivingNote
+    public class InventoryReceiveNoteModel
     {
-        public int InventoryReceivingId { get; set; }
         public DateTime InventoryReceivingDateReceiving { get; set; }
         public double InventoryReceivingTotalPrice { get; set; }
     }

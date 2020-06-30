@@ -134,7 +134,7 @@
                     <span>Nhân viên</span>
                 </a>
             </li>
-            
+
             <!-- Nav Item - Utilities Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCustomer" aria-expanded="true" aria-controls="collapseCustomer">
@@ -153,35 +153,33 @@
             <!-- Divider -->
             <hr class="sidebar-divider">
 
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Kho && Nhập hàng
+            </div>
 
             <!-- Nav Item - Charts -->
             <li class="nav-item">
-                <a class="nav-link" href="charts.html">
+                <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapseStorage" aria-expanded="true" aria-controls="collapseStorage">
                     <i class="fa fa-home"></i>
                     <span>Nhập xuất hàng hóa</span>
                 </a>
+                <div id="collapseStorage" class="collapse" aria-labelledby="collapseStorage" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" asp-action="Storage" asp-controller="Stocks">Danh sách đơn nhập hàng</a>
+                        <a class="collapse-item" asp-action="Index" asp-controller="Stocks">Nhập hàng</a>
+                    </div>
+                </div>
             </li>
 
             @if (credential.AccountRoleName == Constants.ADMIN)
             {
                 <!-- Divider -->
                 <hr class="sidebar-divider">
-
                 <!-- Heading -->
                 <div class="sidebar-heading">
-                    Cấu hình hệ thống
+                    Thống kê
                 </div>
-
-                <li class="nav-item">
-                    <a class="nav-link collapsed" href="#" aria-expanded="true" aria-controls="collapseUtilities">
-                        <i class="fas fa-fw fa-cog"></i>
-                        <span>Cấu hình</span>
-                    </a>
-                </li>
-
-                <!-- Divider -->
-                <hr class="sidebar-divider">
-
 
                 <!-- Nav Item - Charts -->
                 <li class="nav-item">
@@ -191,9 +189,6 @@
                     </a>
                 </li>
             }
-
-
-
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">

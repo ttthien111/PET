@@ -4,9 +4,25 @@
 {
     <div class="d-flex row align-items-center justify-content-between mb-3">
         <span>
-            <img src="~/images/products/@product.ProductImage" style="border-radius:10px" width="60" height="60" alt="ảnh sản phẩm" />
-            <label><b>@product.ProductName</b></label>
+            <img src="~/images/products/@product.ProductImage" style="border-radius:10px; margin-right:10px" width="60" height="60" alt="ảnh sản phẩm" />
+            <label class="text text-primary"><b>@product.ProductName</b></label>
         </span>
-        <button data-id="@product.ProductId" data-toggle="tooltip" title="Chọn" class="btn btn-outline-primary"><i class="fa fa-step-forward"></i></button>
+        <button data-id="@product.ProductId" data-toggle="tooltip" title="Chọn" class="btn btn-outline-primary" name="selectItem"><i class="fa fa-step-forward"></i></button>
     </div>
 }
+
+<script type="text/javascript"> 
+    $("button[name=selectItem]").click(function () {
+        var productId = $(this).attr("data-id");
+        $.ajax({
+            url: "/Admin/Stocks/AddToInventoryRecieveItems",
+            type: "GET",
+            contentType: "application/json; charset=utf-8",
+            data: { productId },
+            async: true,
+            success: function (res) {
+                $("#contetInventoryRecieveNote").html("").html(res);
+            }
+        });
+    });
+</script>

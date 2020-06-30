@@ -1,4 +1,5 @@
-﻿@{
+﻿@model IEnumerable<PETSHOP.Areas.Admin.Models.InventoryRecieveItem>
+@{
     ViewData["Title"] = "Index";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
@@ -40,15 +41,60 @@
         <div class="card-header py-3">
             <div class="d-flex row">
                 <div class="justify-content-end">
-                    <a asp-action="Create" asp-area="Admin" asp-controller="Products" class="btn btn-primary">Cập nhật</a>
+                    <button class="btn btn-primary" name="Create">Lưu phiếu nhập</button>
                 </div>
             </div>
         </div>
-        <div class="card-body">
-            <div class="row card-body">
-
+        <div class="container">
+            <div class="card-body" id="contetInventoryRecieveNote">
+                @foreach (var item in Model)
+                {
+                    var key = item.ProductId + "," + item.SubProductId;
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <h3 class="text text-primary"><b>@item.ProductName</b></h3>
+                            <span>
+                                <div class="btn btn-warning" name="Update" data-id="@key"><i class="fa fa-save"></i></div>
+                                <button class="btn btn-danger" name="Delete" data-id="@key"><i class="fa fa-remove"></i></button>
+                            </span>
+                        </div>
+                        <br />
+                        <div class="row" id="@key">
+                            @if (item.Size != "")
+                            {
+                                <div class="col-md-12">
+                                    <label class="text text-primary">Kích cở</label>
+                                    <span name="size" class="badge badge-danger @key">@item.Size</span>
+                                </div>
+                            }
+                            <div class="col-md-6">
+                                <label class="text text-primary">Đơn giá nhập</label>
+                                <input type="text" class="form-control @key" name="price" value="@item.Price" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="text text-primary ">Số lượng nhập</label>
+                                <input type="text" class="form-control @key" name="amount" value="@item.Amount" placeholder="Nhập số lượng" required />
+                            </div>
+                        </div>
+                        <hr />
+                    </div>
+                }
             </div>
         </div>
+    </div>
+</div>
+
+<div class="toast" id="myToast" role="alert" aria-live="assertive" aria-atomic="true" style="position:fixed; top: 20px; right: 10px; width: 400px; height: 100px; ">
+    <div class="toast-header">
+        <strong class="mr-auto">Thông báo</strong>
+        <small class="text-muted">0 giây trước</small>
+        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="toast-body">
+        Lưu phiếu nhập hàng thành công #<span id="IRN"></span>
     </div>
 </div>
 
@@ -72,6 +118,113 @@
                 }
             });
         }, 1000);
-
     });
+
+    $("div[name=Update]").click(function () {
+        var _this = $(this);
+        _this.removeClass("btn btn-warning").addClass("btn btn-default spinner-border text-warning").html("");
+        var key = _this.attr("data-id");
+        var ProductId = _this.attr("data-id").split(",")[0];
+        var SubProductId = _this.attr("data-id").split(",")[1];
+        var Price;
+        var Amount;
+        var Size = "";
+
+        // get element
+        var div = document.getElementById(key);
+        var listElement = div.getElementsByClassName(key);
+        if (listElement.length == 2) {
+            Price = listElement[0].value; // element price
+            Amount = listElement[1].value; // element amount
+        } else {
+            Size = listElement[0].textContent;
+            Price = listElement[1].value; // element price
+            Amount = listElement[2].value; // element amount
+        }
+
+        if (Price != null && Price != "" && Amount != null && Amount != "") {
+            if (isNaN(Price) || isNaN(Amount)) {
+                alert("Dữ liệu giá tiền và số lượng phải là một số");
+                _this.removeClass("spinner-border text-warning btn-default btn").addClass("btn btn-warning").html('<i class="fa fa-save"></i>');
+            }
+            else {
+                var updateModel = {
+                    ProductId,
+                    SubProductId,
+                    Price,
+                    Amount,
+                    Size
+                }
+
+                $.ajax({
+                    url: "/Admin/Stocks/UpdateInventoryRecieveNote",
+                    type: "GET",
+                    contentType: "text",
+                    data: { "updateModel": JSON.stringify(updateModel) },
+                    async: true,
+                    success: function (res) {
+                        setTimeout(function () {
+                            _this.removeClass("spinner-border text-warning btn-default btn").addClass("btn btn-warning").html('<i class="fa fa-save"></i>');
+                        }, 1000);
+                    }
+                });
+            }
+        } else {
+            _this.removeClass("spinner-border text-warning btn-default btn").addClass("btn btn-warning").html('<i class="fa fa-save"></i>');
+            alert("Dữ liệu giá tiền và dữ liệu số lượng không được để trống");
+        }  
+    });
+
+    // delete item
+    $("button[name=Delete]").click(function () {
+        var _this = $(this);
+        var key = _this.attr("data-id");
+        var ProductId = _this.attr("data-id").split(",")[0];
+        var SubProductId = _this.attr("data-id").split(",")[1];
+
+        // get element
+        var div = document.getElementById(key).parentNode;
+        console.log(div);
+
+        $.ajax({
+            url: "/Admin/Stocks/DeleteInvetoryReceiveItem",
+            type: "GET",
+            data: { ProductId, SubProductId },
+            async: true,
+            success: function (res) {
+                // hide element
+                div.remove();
+            }
+        });
+    });
+
+    // Create
+    $("button[name=Create]").click(function () {
+        var _this = $(this);
+        _this.removeClass("btn btn-primary").addClass("btn btn-default spinner-border text-primary").html("");
+        $.ajax({
+            url: "/Admin/Stocks/SaveInventoryReceiveNote",
+            type: "POST",
+            data: {},
+            async: true,
+            success: function (res) {
+                setTimeout(function () {
+                    _this.removeClass("spinner-border text-primary btn-default btn").addClass("btn btn-primary").html("Lưu phiếu nhập");
+                }, 1000);
+
+                $("#IRN").html("").html(res.inventoryReceivingId);
+                // Toast
+                $('.toast').toast({
+                    delay: 2500
+                });
+                $("#myToast").toast('show');
+
+                $('#myToast').on('hidden.bs.toast', function () {
+                    window.location.reload();
+                })
+            }
+        });
+    });
+
+    
 </script>

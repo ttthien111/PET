@@ -203,6 +203,7 @@
                     if (res > 0) {
                         document.getElementById("addtocart").innerHTML = '<i class="fa fa-shopping-cart" aria-hidden="false"></i> &nbsp; Thêm vào giỏ hàng';
                         document.getElementById("addtocart").disabled = false;
+                        $("#amount").removeAttr("max").attr("max", res);
                     } else {
                         document.getElementById("addtocart").innerHTML = '<i class="fa fa-shopping-cart" aria-hidden="false"></i> &nbsp; Đã hết hàng';
                         document.getElementById("addtocart").disabled = true;
