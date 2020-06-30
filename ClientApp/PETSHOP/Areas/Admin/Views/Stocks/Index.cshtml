@@ -26,16 +26,12 @@
         </div>
         <div class="card-body">
             <div>
-                <input class="form-control" type="text" name="search" placeholder="Tìm kiếm sản phẩm" />
+                <input class="form-control" type="text" name="textSearch" placeholder="Tìm kiếm sản phẩm(mã sản phẩm, tên, ...)" />
             </div>
             <hr />
             <span>Kết quả tìm kiếm:</span>
-            <div class="card-body">
-                <div class="d-flex row align-items-center justify-content-between">
-                    <img src="~/images/about-1.jpg" width="60" alt="Alternate Text" />
-                    <label>Thức ăn cho chó mèo</label>
-                    <button class="btn btn-outline-primary"><i class="fa fa-step-forward"></i></button>
-                </div>
+            <div class="card-body" id="result">
+                
             </div>
         </div>
     </div>
@@ -44,14 +40,38 @@
         <div class="card-header py-3">
             <div class="d-flex row">
                 <div class="justify-content-end">
-                    <a asp-action="Create" asp-area="Admin" asp-controller="Products" class="btn btn-primary">Thêm hàng hóa</a>
+                    <a asp-action="Create" asp-area="Admin" asp-controller="Products" class="btn btn-primary">Cập nhật</a>
                 </div>
             </div>
         </div>
         <div class="card-body">
+            <div class="row card-body">
 
+            </div>
         </div>
     </div>
 </div>
 
+<script src="~/Admin/js/jquery.min.js"></script>
+<script type="text/javascript">
+    var timeout = null;
+    $('input[type=text][name=textSearch]').keyup(function () {
+        clearTimeout(timeout);
+        // get data from text search
+        var textSearch = $(this).val();
 
+        timeout = setTimeout(function () {
+            $.ajax({
+                url: "/Admin/Stocks/Filter",
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                data: { textSearch },
+                async: true,
+                success: function (res) {
+                    $("#result").html("").html(res);
+                }
+            });
+        }, 1000);
+
+    });
+</script>
