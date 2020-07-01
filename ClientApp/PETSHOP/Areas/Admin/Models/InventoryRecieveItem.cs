@@ -10,6 +10,7 @@ namespace PETSHOP.Areas.Admin.Models
         public int ProductId { get; set; }
         public int SubProductId { get; set; }
         public string ProductName { get; set; }
+        public string ProductImg { get; set; }
         public string Size { get; set; }
         public int Amount { get; set; }
         public double Price { get; set; }

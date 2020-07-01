@@ -5,7 +5,10 @@
     var key = item.ProductId + "," + item.SubProductId;
     <div class="mb-3">
         <div class="d-flex justify-content-between">
-            <h3 class="text text-primary"><b>@item.ProductName</b></h3>
+            <div class="row d-flex justify-content-between">
+                <img src="~/images/products/@item.ProductImg" alt="Ảnh sản phẩm" style="width: 60px; height: 60px; border-radius: 60px; margin-right: 10px;" />
+                <h3 class="text text-primary"><b>@item.ProductName</b></h3>
+            </div>
             <span>
                 <div class="btn btn-warning" name="Update" data-id="@key"><i class="fa fa-save"></i></div>
                 <button class="btn btn-danger" name="Delete" data-id="@key"><i class="fa fa-remove"></i></button>

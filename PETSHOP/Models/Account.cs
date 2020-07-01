@@ -13,7 +13,7 @@ namespace PETSHOP.Models
         public int AccountId { get; set; }
         public string AccountUserName { get; set; }
         public string AccountPassword { get; set; }
-        public bool? IsActive { get; set; }
+        public bool IsActive { get; set; }
         public int AccountRoleId { get; set; }
         public string Jwtoken { get; set; }
         public bool? IsLoginExternal { get; set; }

@@ -9,5 +9,6 @@ namespace PETSHOP.Models
         public int CostumeProductId { get; set; }
         public string CostumeProductSize { get; set; }
         public int CostumeProductAmount { get; set; }
+        public double CostumeProductPrice { get; set; }
     }
 }

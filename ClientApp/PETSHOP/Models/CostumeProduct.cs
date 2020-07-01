@@ -6,7 +6,7 @@ namespace PETSHOP.Models
     public partial class CostumeProduct
     {
         public int CostumeId { get; set; }
-        public int? ProductId { get; set; }
+        public int ProductId { get; set; }
         public string CostumeSize { get; set; }
         public int CostumeAmountSize { get; set; }
 

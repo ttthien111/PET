@@ -61,45 +61,62 @@ namespace PETSHOP.Areas.Admin.Controllers
             List<InventoryRecieveItem> inventoryRecieveItems = IRItems;
             Product product = GetApiProducts.GetProducts().SingleOrDefault(p => p.ProductId == productId);
             string slugCat = GetApiCategories.GetCategories().SingleOrDefault(p => p.CategoryId == product.CategoryId).CategoryName;
+
+            List<InventoryRecieveItem> addItems = new List<InventoryRecieveItem>();
+
             switch (slugCat)
             {
                 case Constants.FOOD:
-                    inventoryRecieveItems.AddRange(GetApiFoodProducts.GetFoodProducts().Where(p => p.ProductId == product.ProductId)
+                    addItems = GetApiFoodProducts.GetFoodProducts().Where(p => p.ProductId == product.ProductId)
                                         .Select(p=> new InventoryRecieveItem() {
                                             ProductId = product.ProductId,
                                             SubProductId = p.FoodId,
                                             ProductName = product.ProductName,
+                                            ProductImg = product.ProductImage,
                                             Size = "",
                                             Amount = 0,
                                             Price = product.ProductPrice
-                                        }).ToList());
+                                        }).ToList();
                     break;
 
                 case Constants.TOY:
-                    inventoryRecieveItems.AddRange(GetApiToyProducts.GetToyProducts().Where(p => p.ProductId == product.ProductId)
+                    addItems = GetApiToyProducts.GetToyProducts().Where(p => p.ProductId == product.ProductId)
                                         .Select(p => new InventoryRecieveItem()
                                         {
                                             ProductId = product.ProductId,
                                             SubProductId = p.ToyId,
                                             ProductName = product.ProductName,
+                                            ProductImg = product.ProductImage,
                                             Size = "",
                                             Amount = 1,
                                             Price = product.ProductPrice
-                                        }).ToList());
+                                        }).ToList();
                     break;
 
                 case Constants.COSTUME:
-                    inventoryRecieveItems.AddRange(GetApiCostumeProducts.GetCostumeProducts().Where(p => p.ProductId == product.ProductId)
+                    addItems = GetApiCostumeProducts.GetCostumeProducts().Where(p => p.ProductId == product.ProductId)
                                         .Select(p => new InventoryRecieveItem()
                                         {
                                             ProductId = product.ProductId,
                                             SubProductId = p.CostumeId,
                                             ProductName = product.ProductName,
+                                            ProductImg = product.ProductImage,
                                             Size = p.CostumeSize,
                                             Amount = 1,
                                             Price = product.ProductPrice
-                                        }).ToList());
+                                        }).ToList();
                     break;
+            }
+
+            // distinct data
+            foreach (var item in addItems)
+            {
+                if (inventoryRecieveItems.SingleOrDefault(p => p.ProductId == item.ProductId &&
+                                                             p.SubProductId == item.SubProductId &&
+                                                             p.Size == item.Size) == null)
+                {
+                    inventoryRecieveItems.Add(item);
+                }
             }
 
             HttpContext.Session.SetObject("inventoryRecieveItems", inventoryRecieveItems);
@@ -155,7 +172,7 @@ namespace PETSHOP.Areas.Admin.Controllers
             InventoryReceiveNoteModel inventoryReceivingNote = new InventoryReceiveNoteModel()
             {
                 InventoryReceivingDateReceiving = DateTime.Now,
-                InventoryReceivingTotalPrice = inventoryRecieveItems.Sum(p => p.Amount * p.Price)
+                InventoryReceivingTotalPrice = inventoryRecieveItems.Sum(p => p.Total)
             };
 
             // create inventory Receive Note
@@ -168,7 +185,8 @@ namespace PETSHOP.Areas.Admin.Controllers
                             InventoryReceivingId = createdReceivingNote.InventoryReceivingId,
                             FoodProductId = GetApiFoodProducts.GetFoodProducts()
                             .SingleOrDefault(k =>k.ProductId == p.ProductId).FoodId,
-                            FoodProductAmount = p.Amount
+                            FoodProductAmount = p.Amount,
+                            FoodProductPrice = p.Price
                         }).ToList();
 
             List<InventoryReceivingNoteDetailForToy> noteDetailForToys = inventoryRecieveItems
@@ -178,7 +196,8 @@ namespace PETSHOP.Areas.Admin.Controllers
                             InventoryReceivingId = createdReceivingNote.InventoryReceivingId,
                             ToyProductId = GetApiToyProducts.GetToyProducts()
                             .SingleOrDefault(k => k.ProductId == p.ProductId).ToyId,
-                            ToyProductAmount = p.Amount
+                            ToyProductAmount = p.Amount,
+                            ToyProductPrice = p.Price
                         }).ToList();
 
             List<InventoryReceivingNoteDetailForCostume> noteDetailForCostumes = inventoryRecieveItems
@@ -189,7 +208,8 @@ namespace PETSHOP.Areas.Admin.Controllers
                             CostumeProductId = GetApiCostumeProducts.GetCostumeProducts()
                             .SingleOrDefault(k => k.ProductId == p.ProductId && k.CostumeSize == p.Size).CostumeId,
                             CostumeProductAmount = p.Amount,
-                            CostumeProductSize = p.Size
+                            CostumeProductSize = p.Size,
+                            CostumeProductPrice = p.Price
                         }).ToList();
 
             // create IR food list
@@ -237,6 +257,93 @@ namespace PETSHOP.Areas.Admin.Controllers
         private InventoryReceivingNote CreateInventoryReceiveNote(InventoryReceiveNoteModel inventoryReceivingNote, string token)
         {
             return GetApiInventoryReceiveNotes.Post(inventoryReceivingNote, token);
+        }
+
+        public IActionResult InventoryReceivingNotes()
+        {
+            CredentialManage credential = JsonConvert
+                                            .DeserializeObject<CredentialManage>(HttpContext.Session.GetString(Constants.VM_MANAGE));
+            List<InventoryReceivingNote> notes = GetApiInventoryReceiveNotes
+                                                    .GetInventoryReceivingNotes(credential.JwToken).ToList();
+            return View(notes);
+        }
+
+        public IActionResult InventoryReceivingNoteDetail(int id)
+        {
+            CredentialManage credential = JsonConvert.DeserializeObject<CredentialManage>(HttpContext.Session.GetString(Constants.VM_MANAGE));
+            List<InventoryRecieveItem> details = new List<InventoryRecieveItem>();
+
+            // get foods
+            List<InventoryRecieveItem> detailForFoods = GetApiInventoryReceivingNoteDetailForFoods
+                                                                        .GetInventoryReceivingNoteDetailForFoods(credential.JwToken)
+                                                                        .Where(p => p.InventoryReceivingId == id)
+                                                                        .Select(p=> new InventoryRecieveItem() { 
+                                                                            ProductId = GetApiFoodProducts.GetFoodProducts()
+                                                                                        .SingleOrDefault(k=>k.FoodId == p.FoodProductId).ProductId,
+                                                                            ProductName = GetApiProducts.GetProducts().SingleOrDefault(h=>h.ProductId == (GetApiFoodProducts.GetFoodProducts()
+                                                                                        .SingleOrDefault(k=>k.FoodId == p.FoodProductId).ProductId)).ProductName,
+                                                                            SubProductId = p.FoodProductId,
+                                                                            ProductImg = GetApiProducts.GetProducts().SingleOrDefault(h => h.ProductId == (GetApiFoodProducts.GetFoodProducts()
+                                                                                        .SingleOrDefault(k => k.FoodId == p.FoodProductId).ProductId)).ProductImage,
+                                                                            Amount = p.FoodProductAmount,
+                                                                            Size = "",
+                                                                            Price = p.FoodProductPrice
+                                                                        }).ToList();
+
+            List<InventoryRecieveItem> detailForToys = GetApiInventoryReceiveNoteDetailForToys
+                                                                       .GetInventoryReceivingNoteDetailForToys(credential.JwToken)
+                                                                       .Where(p => p.InventoryReceivingId == id)
+                                                                       .Select(p => new InventoryRecieveItem()
+                                                                       {
+                                                                           ProductId = GetApiToyProducts.GetToyProducts()
+                                                                                       .SingleOrDefault(k => k.ToyId == p.ToyProductId).ProductId,
+                                                                           ProductName = GetApiProducts.GetProducts().SingleOrDefault(h => h.ProductId == (GetApiToyProducts.GetToyProducts()
+                                                                                       .SingleOrDefault(k => k.ToyId == p.ToyProductId).ProductId)).ProductName,
+                                                                           SubProductId = p.ToyProductId,
+                                                                           ProductImg = GetApiProducts.GetProducts().SingleOrDefault(h => h.ProductId == (GetApiToyProducts.GetToyProducts()
+                                                                                       .SingleOrDefault(k => k.ToyId == p.ToyProductId).ProductId)).ProductImage,
+                                                                           Amount = p.ToyProductAmount,
+                                                                           Size = "",
+                                                                           Price = p.ToyProductPrice
+                                                                       }).ToList();
+
+            List<InventoryRecieveItem> detailForCostumes = GetApiInventoryReceiveNoteDetailForCostumes
+                                                                       .GetInventoryReceivingNoteDetailForCostumes(credential.JwToken)
+                                                                       .Where(p => p.InventoryReceivingId == id)
+                                                                       .Select(p => new InventoryRecieveItem()
+                                                                       {
+                                                                           ProductId = GetApiCostumeProducts.GetCostumeProducts()
+                                                                                       .SingleOrDefault(k => k.CostumeId == p.CostumeProductId && k.CostumeSize == p.CostumeProductSize).ProductId,
+                                                                           ProductName = GetApiProducts.GetProducts().SingleOrDefault(h => h.ProductId == (GetApiCostumeProducts.GetCostumeProducts()
+                                                                                       .SingleOrDefault(k => k.CostumeId == p.CostumeProductId && k.CostumeSize == p.CostumeProductSize).ProductId)).ProductName,
+                                                                           SubProductId = p.CostumeProductId,
+                                                                           ProductImg = GetApiProducts.GetProducts().SingleOrDefault(h => h.ProductId == (GetApiCostumeProducts.GetCostumeProducts()
+                                                                                       .SingleOrDefault(k => k.CostumeId == p.CostumeProductId && k.CostumeSize == p.CostumeProductSize).ProductId)).ProductImage,
+                                                                           Amount = p.CostumeProductAmount,
+                                                                           Size = p.CostumeProductSize,
+                                                                           Price = p.CostumeProductPrice
+                                                                       }).ToList();
+
+            details.AddRange(detailForFoods);
+            details.AddRange(detailForToys);
+            details.AddRange(detailForCostumes);
+
+            InventoryReceivingNote note = GetApiInventoryReceiveNotes.GetInventoryReceivingNotes(credential.JwToken).SingleOrDefault(p => p.InventoryReceivingId == id); 
+
+            InventoryReceivingNoteDetailModelView inventoryReceivingNote = new InventoryReceivingNoteDetailModelView()
+            {
+                InventoryReceivingNote_ID = note.InventoryReceivingId,
+                InventoryReceivingNoteDate = note.InventoryReceivingDateReceiving,
+                TotalPrice = note.InventoryReceivingTotalPrice,
+                Details = details
+            };
+
+            return Json(inventoryReceivingNote);
+        }
+        public IActionResult DestroyList()
+        {
+            HttpContext.Session.Remove("inventoryRecieveItems");
+            return RedirectToAction("Index");
         }
 
         private bool IsCostume(int productId)

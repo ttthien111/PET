@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.IdentityModel.Protocols;
 
 namespace PETSHOP.Models
 {
@@ -46,10 +44,8 @@ namespace PETSHOP.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings["PETSHOP"].ConnectionString);
-               //optionsBuilder.UseSqlServer("Server=.;Database=PETSHOP;Trusted_Connection=True;");
-               //optionsBuilder.UseSqlServer("Server=MSI\\SQL_EXPRESS;Database=PETSHOP;Trusted_Connection=True;");
-               // optionsBuilder.UseSqlServer("Server=tcp:petshopserverdbserver.database.windows.net,1433;Initial Catalog=PETSHOPServer_db;Persist Security Info=False;User ID=adminne;Password=Abcd@123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseSqlServer("Server=MSI\\SQL_EXPRESS;Database=PETSHOP;Trusted_Connection=True;");
             }
         }
 
@@ -337,77 +333,79 @@ namespace PETSHOP.Models
                 entity.HasKey(e => e.InventoryReceivingId)
                     .HasName("PK__Inventor__1A7F13692EEEF348");
 
-                entity.Property(e => e.InventoryReceivingId)
-                    .HasColumnName("InventoryReceiving_ID")
-                    .ValueGeneratedOnAdd();
+                entity.Property(e => e.InventoryReceivingId).HasColumnName("InventoryReceiving_ID");
 
                 entity.Property(e => e.InventoryReceivingDateReceiving)
                     .HasColumnName("InventoryReceiving_DateReceiving")
                     .HasColumnType("datetime");
 
                 entity.Property(e => e.InventoryReceivingTotalPrice).HasColumnName("InventoryReceiving_TotalPrice");
-
-                entity.HasOne(d => d.InventoryReceiving)
-                    .WithOne(p => p.InventoryReceivingNote)
-                    .HasForeignKey<InventoryReceivingNote>(d => d.InventoryReceivingId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_InventoryReceivingNote_InventoryReceivingNoteDetail_ForCostume");
-
-                entity.HasOne(d => d.InventoryReceivingNavigation)
-                    .WithOne(p => p.InventoryReceivingNote)
-                    .HasForeignKey<InventoryReceivingNote>(d => d.InventoryReceivingId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_InventoryReceivingNote_InventoryReceivingNoteDetail_ForFood");
             });
 
             modelBuilder.Entity<InventoryReceivingNoteDetailForCostume>(entity =>
             {
-                entity.HasKey(e => e.InventoryReceivingId);
+                entity.HasKey(e => new { e.InventoryReceivingId, e.CostumeProductId });
 
                 entity.ToTable("InventoryReceivingNoteDetail_ForCostume");
 
                 entity.Property(e => e.InventoryReceivingId).HasColumnName("InventoryReceiving_ID");
 
+                entity.Property(e => e.CostumeProductId).HasColumnName("CostumeProduct_ID");
+
                 entity.Property(e => e.CostumeProductAmount).HasColumnName("CostumeProduct_Amount");
 
-                entity.Property(e => e.CostumeProductId).HasColumnName("CostumeProduct_ID");
+                entity.Property(e => e.CostumeProductPrice).HasColumnName("CostumeProduct_Price");
 
                 entity.Property(e => e.CostumeProductSize)
                     .HasColumnName("CostumeProduct_Size")
                     .HasMaxLength(3)
                     .IsUnicode(false);
+
+                entity.HasOne(d => d.InventoryReceiving)
+                    .WithMany(p => p.InventoryReceivingNoteDetailForCostume)
+                    .HasForeignKey(d => d.InventoryReceivingId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_InventoryReceivingNoteDetail_ForCostume_InventoryReceivingNote");
             });
 
             modelBuilder.Entity<InventoryReceivingNoteDetailForFood>(entity =>
             {
-                entity.HasKey(e => e.InventoryReceivingId);
+                entity.HasKey(e => new { e.InventoryReceivingId, e.FoodProductId });
 
                 entity.ToTable("InventoryReceivingNoteDetail_ForFood");
 
                 entity.Property(e => e.InventoryReceivingId).HasColumnName("InventoryReceiving_ID");
 
+                entity.Property(e => e.FoodProductId).HasColumnName("FoodProduct_ID");
+
                 entity.Property(e => e.FoodProductAmount).HasColumnName("FoodProduct_Amount");
 
-                entity.Property(e => e.FoodProductId).HasColumnName("FoodProduct_ID");
+                entity.Property(e => e.FoodProductPrice).HasColumnName("FoodProduct_Price");
+
+                entity.HasOne(d => d.InventoryReceiving)
+                    .WithMany(p => p.InventoryReceivingNoteDetailForFood)
+                    .HasForeignKey(d => d.InventoryReceivingId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_InventoryReceivingNoteDetail_ForFood_InventoryReceivingNote");
             });
 
             modelBuilder.Entity<InventoryReceivingNoteDetailForToy>(entity =>
             {
-                entity.HasKey(e => e.InventoryReceivingId);
+                entity.HasKey(e => new { e.InventoryReceivingId, e.ToyProductId });
 
                 entity.ToTable("InventoryReceivingNoteDetail_ForToy");
 
-                entity.Property(e => e.InventoryReceivingId)
-                    .HasColumnName("InventoryReceiving_ID")
-                    .ValueGeneratedOnAdd();
-
-                entity.Property(e => e.ToyProductAmount).HasColumnName("ToyProduct_Amount");
+                entity.Property(e => e.InventoryReceivingId).HasColumnName("InventoryReceiving_ID");
 
                 entity.Property(e => e.ToyProductId).HasColumnName("ToyProduct_ID");
 
+                entity.Property(e => e.ToyProductAmount).HasColumnName("ToyProduct_Amount");
+
+                entity.Property(e => e.ToyProductPrice).HasColumnName("ToyProduct_Price");
+
                 entity.HasOne(d => d.InventoryReceiving)
-                    .WithOne(p => p.InventoryReceivingNoteDetailForToy)
-                    .HasForeignKey<InventoryReceivingNoteDetailForToy>(d => d.InventoryReceivingId)
+                    .WithMany(p => p.InventoryReceivingNoteDetailForToy)
+                    .HasForeignKey(d => d.InventoryReceivingId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_InventoryReceivingNoteDetail_ForToy_InventoryReceivingNote");
             });

@@ -8,5 +8,6 @@ namespace PETSHOP.Models
         public int InventoryReceivingId { get; set; }
         public int FoodProductId { get; set; }
         public int FoodProductAmount { get; set; }
+        public double FoodProductPrice { get; set; }
     }
 }

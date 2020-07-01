@@ -1,0 +1,162 @@
+﻿@model IEnumerable<PETSHOP.Models.InventoryReceivingNote>
+@{
+    ViewData["Title"] = "InventoryReceivingNotes";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section breadcumb {
+    <div class="card border-left-primary shadow h-100 py-2">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                    <div class="text-xl-center font-weight-bold text-primary text-uppercase mb-1">Danh mục quản lý nhập hàng</div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+<!-- DataTales Example -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <div class="d-flex row">
+            <div class="d-flex mr-3">
+                <a asp-action="Index" asp-area="Admin" asp-controller="Stocks" class="btn btn-primary">Thêm phiếu nhập</a>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row d-flex justify-content-md-start">
+            @foreach (var item in Model)
+            {
+
+                <div class="card col-md-4 mb-3" style="text-align: center; position: relative;">
+                    <div class="card-header bg-primary text text-white">Mã đơn hàng #@item.InventoryReceivingId</div>
+                    <div class="card-body">
+                        <h4 class="text text-primary">Ngày nhập: <b>@item.InventoryReceivingDateReceiving.ToString("dd/MM/yyy HH:mm")</b></h4>
+                        <h4 class="text text-primary">Tổng giá trị nhập: <b>@item.InventoryReceivingTotalPrice.ToString("#,##")đ</b></h4>
+                        <a href="#" name="detail" data-toggle="modal" data-target="#myModal" data-id="@item.InventoryReceivingId">Xem chi tiết</a>
+                    </div>
+
+                    <span style="position: absolute; bottom: 0px; right: 5px">
+                        <img src="~/images/pin.png" width="60" height="60" alt="pin" />
+                    </span>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<link href="~/Admin/css/modalBill.css" rel="stylesheet" />
+<!-- The Modal Bill Detail -->
+<div class="modal" id="myModal">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content" id="DataContent">
+        </div>
+    </div>
+</div>
+
+
+<script src="~/js/jquery.min.js"></script>
+<script type="text/javascript">
+    $("a[name=detail]").click(function () {
+        var id = $(this).attr("data-id");
+        $.ajax({
+            url: "/Admin/Stocks/InventoryReceivingNoteDetail",
+            type: "GET",
+            data: { id },
+            async: true,
+            success: function (res) {
+                console.log(res);
+                var formatter = new Intl.NumberFormat('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND',
+                });
+
+                var detailsContent = "";
+                for (var i = 0; i < res.details.length; i++) {
+                    detailsContent +=
+                        `<tr>
+                            <td class="center">` + (i + 1) + `</td>
+                            <td class="left strong">` + res.details[i].productId + `</td>
+                            <td class="left strong">` + res.details[i].subProductId + `</td>
+                            <td class="left strong">` + res.details[i].productName + `</td>
+                            <td class="left strong">` + res.details[i].size + `</td>
+                            <td class="left"><img style="width:50px" src="/images/products/`+ res.details[i].productImg + `" alt="product image" /></td>
+                            <td class="right">` + formatter.format(res.details[i].price) + `</td >
+                            <td class="center">` + res.details[i].amount + `</td>
+                            <td class="right">` + (formatter.format(res.details[i].amount * res.details[i].price)) + `</td>
+                        </tr>`
+                }
+
+                var content = `<!-- Modal Header -->
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Chi tiết hóa đơn nhập hàng <span id="IRIdModal"></span></h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                        
+                                <!-- Modal body -->
+                                <div class="modal-body" id="DataContent">
+                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                        <div>
+                                            <div class="p-4">
+                                                <a class="pt-2 d-inline-block" asp-controller="Home" asp-action="Index"><span class="flaticon-pawprint-1 mr-2"></span><b>PETSHOP</b></a>
+                                                <div class="float-right">
+                                                    <h3 class="mb-0 text-danger text">Đơn nhập hàng #`+ res.inventoryReceivingNote_ID + `</h3>
+                                                    Ngày: ` + res.inventoryReceivingNoteDate + `
+                                                </div>
+                                            </div>
+                                            <div class="">
+                                                <div class="table-responsive-sm">
+                                                    <table class="table table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="center">#</th>
+                                                                <th>Mã hàng hóa</th>
+                                                                <th>Mã sản phẩm kho</th>
+                                                                <th>Tên hàng hóa</th>
+                                                                <th>Kích cở(nếu có)</th>
+                                                                <th>Hình ảnh</th>
+                                                                <th class="right">Giá</th>
+                                                                <th class="center">Số lượng</th>
+                                                                <th class="right">Tổng cộng</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>`
+                                                            + detailsContent + `
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-4 col-sm-4 ml-auto">
+                                                        <table class="table table-clear">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td class="left">
+                                                                        <strong class="text-dark">Tổng hóa đơn nhập</strong>
+                                                                    </td>
+                                                                    <td class="right"> <b>` + formatter.format(res.totalPrice) + `</b></td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card-footer bg-white">
+                                                <p class="mb-0">280 An Dương Vương, Phường 4, Quận 5, TPHCM</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Modal footer -->
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                                </div>`
+
+                document.getElementById("DataContent").innerHTML = content;
+            }
+        });
+    });
+</script>

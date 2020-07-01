@@ -17,7 +17,7 @@
 }
 
 <div class="row m-md-1">
-    <div class="card shadow mb-4 col-md-6">
+    <div class="card shadow mb-4 col-md-4">
         <div class="card-header py-3">
             <div class="d-flex row">
                 <div class="justify-content-end">
@@ -37,12 +37,18 @@
         </div>
     </div>
 
-    <div class="card shadow mb-4 col-md-6">
+    <div class="card shadow mb-4 col-md-8">
         <div class="card-header py-3">
-            <div class="d-flex row">
+            <div class="d-sm-flex align-items-center justify-content-between">
                 <div class="justify-content-end">
                     <button class="btn btn-primary" name="Create">Lưu phiếu nhập</button>
                 </div>
+                <a asp-action="DestroyList" asp-controller="Stocks" class="btn btn-warning btn-icon-split btn-sm">
+                    <span class="icon text-white-50">
+                        <i class="fa fa-trash"></i>
+                    </span>
+                    <span class="text">Hủy tất cả</span>
+                </a>
             </div>
         </div>
         <div class="container">
@@ -53,7 +59,11 @@
                     
                     <div class="mb-3">
                         <div class="d-flex justify-content-between">
-                            <h3 class="text text-primary"><b>@item.ProductName</b></h3>
+                            <span>
+                                <img src="~/images/products/@item.ProductImg" alt="Ảnh sản phẩm" style="width: 60px; height: 60px;" />
+                                <h3 class="text text-primary"><b>@item.ProductName</b></h3>
+                            </span>
+                           
                             <span>
                                 <div class="btn btn-warning" name="Update" data-id="@key"><i class="fa fa-save"></i></div>
                                 <button class="btn btn-danger" name="Delete" data-id="@key"><i class="fa fa-remove"></i></button>
