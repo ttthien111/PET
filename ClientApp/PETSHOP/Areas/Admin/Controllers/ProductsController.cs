@@ -248,7 +248,7 @@ namespace PETSHOP.Areas.Admin.Controllers
                 CostumeAmountSize = 0
             });
 
-            CredentialModel credential = JsonConvert.DeserializeObject<CredentialModel>(HttpContext.Session.GetString(Constants.VM_MANAGE));
+            CredentialManage credential = JsonConvert.DeserializeObject<CredentialManage>(HttpContext.Session.GetString(Constants.VM_MANAGE));
             string token = credential.JwToken;
 
             using (HttpClient client = Common.HelperClient.GetClient(token))
@@ -272,7 +272,7 @@ namespace PETSHOP.Areas.Admin.Controllers
                 ToyAmount = 0
             };
 
-            CredentialModel credential = JsonConvert.DeserializeObject<CredentialModel>(HttpContext.Session.GetString("vm") != null ? HttpContext.Session.GetString("vm") : "");
+            CredentialManage credential = JsonConvert.DeserializeObject<CredentialManage>(HttpContext.Session.GetString(Constants.VM_MANAGE));
             string token = credential.JwToken;
 
             using (HttpClient client = Common.HelperClient.GetClient(token))
@@ -292,7 +292,7 @@ namespace PETSHOP.Areas.Admin.Controllers
                 FoodExpiredDate = DateTime.MaxValue
             };
 
-            CredentialModel credential = JsonConvert.DeserializeObject<CredentialModel>(HttpContext.Session.GetString("vm") != null ? HttpContext.Session.GetString("vm") : "");
+            CredentialManage credential = JsonConvert.DeserializeObject<CredentialManage>(HttpContext.Session.GetString(Constants.VM_MANAGE));
             string token = credential.JwToken;
 
             using (HttpClient client = Common.HelperClient.GetClient(token))
