@@ -126,15 +126,16 @@
                     <span>Sản phẩm</span>
                 </a>
             </li>
-
-            <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link" asp-action="Index" asp-controller="AccountManages">
-                    <i class="fas fa-user-shield"></i>
-                    <span>Nhân viên</span>
-                </a>
-            </li>
-
+            @if (credential.AccountRoleName == Constants.ADMIN)
+            {
+                <!-- Nav Item - Pages Collapse Menu -->
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Index" asp-controller="AccountManages">
+                        <i class="fas fa-user-shield"></i>
+                        <span>Nhân viên</span>
+                    </a>
+                </li>
+            }
             <!-- Nav Item - Utilities Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCustomer" aria-expanded="true" aria-controls="collapseCustomer">
@@ -286,11 +287,11 @@
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" asp-action="UpdateProfile" asp-controller="AccountProfile" asp-route-email="@credential.Email">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Chỉnh sửa thông tin
                                 </a>
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" asp-action="VerifyPassword" asp-controller="AccountProfile">
                                     <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Đổi mật khẩu
                                 </a>

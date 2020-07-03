@@ -18,12 +18,12 @@ namespace PETSHOP.Controllers
     public class AccountManagesController : ControllerBase
     {
         private readonly PETSHOPContext _context;
-
+        
         public AccountManagesController(PETSHOPContext context)
         {
             _context = context;
         }
-
+       
         // GET: api/AccountManages
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AccountManage>>> GetAccountManage()
@@ -35,7 +35,7 @@ namespace PETSHOP.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<AccountManage>> GetAccountManage(string id)
         {
-            var accountManage = await _context.AccountManage.FindAsync(id);
+           var accountManage = await _context.AccountManage.FindAsync(id);
 
             if (accountManage == null)
             {

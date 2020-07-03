@@ -1,0 +1,53 @@
+﻿
+@{
+    ViewData["Title"] = "UpdateProfile";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3  d-sm-flex align-items-center justify-content-between mb-4">
+        <h6 class="m-0 font-weight-bold text-primary">Cập nhật tài khoản</h6>
+        <a asp-action="Index" asp-controller="Home" class="btn btn-warning btn-icon-split btn-sm">
+            <span class="icon text-white-50">
+                <i class="fa fa-backward"></i>
+            </span>
+            <span class="text">Quay lại</span>
+        </a>
+    </div>
+    <div class="card-body">
+        <div class="table">
+            <form asp-action="UpdateProfile" asp-controller="AccountProfile" asp-area="Admin" asp-route-email=@ViewBag.Email method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label class="control-label">Email</label>
+                    <input name="Email" value=@ViewBag.Email class="form-control" disabled="disabled" />
+                </div>
+                <div class="form-group">
+                    <label name="FullName" class="control-label">Họ và tên</label>
+                    <input name="FullName" placeholder="@ViewBag.FullName" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label name="DistributorId" class="control-label">Chức vụ</label>
+                    <input name="AccountRoleName" value=@ViewBag.AccountRoleName disabled="disabled" />
+                </div>
+
+                <div class="form-group">
+                    <label name="Avatar" class="control-label">Avatar</label>
+                    <input type="file" name="Avatar" class="form-control" />
+
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Địa chỉ</label>
+                    <input name="Address" placeholder="@ViewBag.DiaChi" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Cập nhật" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+

@@ -40,7 +40,6 @@ namespace PETSHOP.Areas.Admin.Controllers
         }
 
 
-
         public IActionResult Create()
         {
             ViewBag.AccountRoleName = GetApiAccountRoles.GetAccountRoles().ToList();
@@ -51,6 +50,7 @@ namespace PETSHOP.Areas.Admin.Controllers
         public IActionResult Create(AccountManageDTO dto, IFormFile Avatar)
         {
             var obj = dto;
+            if (dto.Password == null) { return NoContent(); }
 
             AccountManage accountManage = new AccountManage()
             {
@@ -105,12 +105,9 @@ namespace PETSHOP.Areas.Admin.Controllers
                     var readTask = result.Content.ReadAsAsync<Product>();
                     readTask.Wait();
 
-                    return RedirectToAction(nameof(Index));
+                   
                 }
-                else
-                {
-                    return RedirectToAction(nameof(Index));
-                }
+                return RedirectToAction(nameof(Index));
             }
             
         }
@@ -137,6 +134,28 @@ namespace PETSHOP.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
  
+        public IActionResult ResetPassword(string accountEmail)
+        {
+            CredentialManage credential = JsonConvert.DeserializeObject<CredentialManage>(HttpContext.Session.GetString(Constants.VM_MANAGE) != null ? HttpContext.Session.GetString(Constants.VM_MANAGE) : "");
+            string token = credential.JwToken;
+             
+            AccountManage acc = GetApiAccountManage.GetAccountManages(token).SingleOrDefault(p => p.Email == accountEmail);
 
+
+            string newPassword = Encryptor.RandomString(6);
+            acc.Password = Encryptor.MD5Hash(newPassword);
+
+            using (HttpClient client = HelperClient.GetClient(token))
+            {
+                client.BaseAddress = new Uri(Constants.BASE_URI);
+                var putTask = client.PutAsJsonAsync<AccountManage>(Constants.ACCOUNT_MANAGE + "/" + acc.Email, acc);
+                putTask.Wait();
+                var result = putTask.Result;
+            }
+            //send Email
+            SenderEmail.SendMail(accountEmail, "PETSHOP - Reset Your Password", String.Format("Your new password is here {0} please check it",newPassword));
+
+            return NoContent();
+        }
     }
 }
