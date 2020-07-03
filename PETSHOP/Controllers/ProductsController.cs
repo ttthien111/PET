@@ -76,7 +76,7 @@ namespace PETSHOP.Controllers
         // PUT: api/Products/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
-        [Authorize]
+        [Authorize(Roles=Role.Admin + "," + Role.User)]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProduct(int id, Product product)
         {
