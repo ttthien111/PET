@@ -158,26 +158,31 @@
                 _this.removeClass("spinner-border text-warning btn-default btn").addClass("btn btn-warning").html('<i class="fa fa-save"></i>');
             }
             else {
-                var updateModel = {
-                    ProductId,
-                    SubProductId,
-                    Price,
-                    Amount,
-                    Size
-                }
-
-                $.ajax({
-                    url: "/Admin/Stocks/UpdateInventoryRecieveNote",
-                    type: "GET",
-                    contentType: "text",
-                    data: { "updateModel": JSON.stringify(updateModel) },
-                    async: true,
-                    success: function (res) {
-                        setTimeout(function () {
-                            _this.removeClass("spinner-border text-warning btn-default btn").addClass("btn btn-warning").html('<i class="fa fa-save"></i>');
-                        }, 1000);
+                if (Amount > 0) {
+                    var updateModel = {
+                        ProductId,
+                        SubProductId,
+                        Price,
+                        Amount,
+                        Size
                     }
-                });
+
+                    $.ajax({
+                        url: "/Admin/Stocks/UpdateInventoryRecieveNote",
+                        type: "GET",
+                        contentType: "text",
+                        data: { "updateModel": JSON.stringify(updateModel) },
+                        async: true,
+                        success: function (res) {
+                            setTimeout(function () {
+                                _this.removeClass("spinner-border text-warning btn-default btn").addClass("btn btn-warning").html('<i class="fa fa-save"></i>');
+                            }, 1000);
+                        }
+                    });
+                } else {
+                    alert("Dữ liệu số lượng phải đã đạt tối thiểu");
+                }
+                
             }
         } else {
             _this.removeClass("spinner-border text-warning btn-default btn").addClass("btn btn-warning").html('<i class="fa fa-save"></i>');

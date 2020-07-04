@@ -14,7 +14,7 @@ namespace PETSHOP.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = Role.Admin)]
+    [Authorize(Roles = Role.Admin + "," + Role.User)]
     public class AccountManagesController : ControllerBase
     {
         private readonly PETSHOPContext _context;
@@ -26,6 +26,7 @@ namespace PETSHOP.Controllers
        
         // GET: api/AccountManages
         [HttpGet]
+        [Authorize(Roles = Role.Admin + "," + Role.User)]
         public async Task<ActionResult<IEnumerable<AccountManage>>> GetAccountManage()
         {
             return await _context.AccountManage.ToListAsync();
@@ -33,6 +34,7 @@ namespace PETSHOP.Controllers
 
         // GET: api/AccountManages/5
         [HttpGet("{id}")]
+        [Authorize(Roles = Role.Admin + "," + Role.User)]
         public async Task<ActionResult<AccountManage>> GetAccountManage(string id)
         {
            var accountManage = await _context.AccountManage.FindAsync(id);
@@ -49,6 +51,7 @@ namespace PETSHOP.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
+        [Authorize(Roles = Role.Admin + "," + Role.User)]
         public async Task<IActionResult> PutAccountManage(string id, AccountManage accountManage)
         {
             if (id != accountManage.Email)
@@ -81,6 +84,7 @@ namespace PETSHOP.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
+        [Authorize(Roles = Role.Admin)]
         public async Task<ActionResult<AccountManage>> PostAccountManage(AccountManage accountManage)
         {
             _context.AccountManage.Add(accountManage);
@@ -105,6 +109,7 @@ namespace PETSHOP.Controllers
 
         // DELETE: api/AccountManages/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = Role.Admin)]
         public async Task<ActionResult<AccountManage>> DeleteAccountManage(string id)
         {
             var accountManage = await _context.AccountManage.FindAsync(id);

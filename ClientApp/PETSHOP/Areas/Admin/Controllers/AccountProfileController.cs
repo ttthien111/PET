@@ -16,7 +16,7 @@ using PETSHOP.Utils;
 namespace PETSHOP.Areas.Admin.Controllers
 {
     [Area(Constants.ADMIN)]
-    public class AccountProfileController : CheckAuthenticateAdminController
+    public class AccountProfileController : CheckAuthenticateManageController
     {
 
         public IActionResult UpdateProfile(string email)
@@ -97,14 +97,13 @@ namespace PETSHOP.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult VerifyPassword(AccountProfilePassword profile)
         {
-            string result = "";
             CredentialManage credential = JsonConvert.DeserializeObject<CredentialManage>(HttpContext.Session.GetString(Constants.VM_MANAGE));
             profile.Email = credential.Email;
             if (GetApiAccountManage.GetAccountManages(credential.JwToken).Any(p=>p.Email == profile.Email && p.Password == Encryptor.MD5Hash(profile.Password)))
             {
                 return RedirectToAction("ChangePassword");
             }
-            ViewBag.result += "Sai thông tin đăng nhập";
+            ViewBag.result = "Sai thông tin đăng nhập";
             return View();
         }
 
@@ -117,7 +116,6 @@ namespace PETSHOP.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult ChangePassword(string pass1, string pass2)
         {
-            string result = "";
             if (pass1 != pass2)
             {
                 ViewBag.result += @"Mật khẩu không khớp <br>";
