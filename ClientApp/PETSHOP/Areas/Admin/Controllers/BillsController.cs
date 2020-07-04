@@ -133,6 +133,7 @@ namespace PETSHOP.Areas.Admin.Controllers
             Bill bill = GetApiBills.GetBills(credential).SingleOrDefault(p => p.BillId == billId);
             // update 
             bill.IsApprove = true;
+            bill.IsDelivery = true;
 
             if (Directory.Exists(Constants.EMBEDED_MAIL_URL) && System.IO.File.Exists(Constants.EMBEDED_MAIL_URL + bill.GenerateCodeCheck + ".png"))
             {

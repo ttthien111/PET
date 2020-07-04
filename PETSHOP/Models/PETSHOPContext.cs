@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -44,8 +45,7 @@ namespace PETSHOP.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=MSI\\SQL_EXPRESS;Database=PETSHOP;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings["PETSHOP"].ConnectionString);
             }
         }
 
