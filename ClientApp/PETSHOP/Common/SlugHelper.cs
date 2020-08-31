@@ -94,6 +94,11 @@ namespace ASPCore_Final.Services
             }
         }
 
+        internal static bool CheckExtension(object extension)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Remaps the international character to their equivalent ASCII characters. See
         /// http://meta.stackexchange.com/questions/7435/non-us-ascii-characters-dropped-from-full-profile-url/7696#7696

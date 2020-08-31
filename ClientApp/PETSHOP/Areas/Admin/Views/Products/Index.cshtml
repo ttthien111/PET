@@ -65,7 +65,7 @@
                                     </a>
                                 </td>
                                 <td><a href="#">#@p.ProductId</a></td>
-                                <td>@p.ProductName</td>
+                                <td style="font-weight:bold;"> @p.ProductName</td>
                                 <td><img style="width: 60px" src="~/images/products/@p.ProductImage" alt="Alternate Text" /></td>
                                 <td>@p.ProductDescription</td>
                                 <td>@p.ProductPrice.ToString("#,##")</td>
@@ -82,7 +82,7 @@
                                 <td>
                                     @if (p.IsActivated)
                                     {
-                                        <span class="badge badge-primary">Đang kinh doanh</span>
+                                        <span class="badge badge-warning">Đang kinh doanh</span>
                                     }
                                     else
                                     {
